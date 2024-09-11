@@ -2,25 +2,23 @@
 <project type="bio">
   <property name="target.model" value="genomic"/>
   <property name="common.os.prefix" value="common"/>
+  <property name="intermine.properties.file" value="mdrmine.properties"/>
+  <property name="default.intermine.properties.file" location="../default.intermine.integrate.properties"/>
+
   <sources>
-<!--
-<source name="who-study" type="who-study">
-    <property name="src.data.dir" location="/home/ubuntu/data/who" />
-    <property name="organisms" value="9606" />
-</source>
--->
-
+    <source name="who" type="who" version="1.0.0">
+      <property name="src.data.dir" location="/home/ubuntu/data/who"/>
+      <property name="src.data.dir.includes" value="1rec.csv"/>
+      <!-- <property name="src.data.dir.includes" value="ICTRPWeek22July2024.csv"/> -->
+    </source>
   </sources>
-
+  
   <post-processing>
-
-<post-process name="do-sources" />
-  <post-process name="create-attribute-indexes" />
-  <post-process name="summarise-objectstore" />
-  <post-process name="create-autocomplete-index" />
-  <post-process name="create-search-index" />
-
+    <post-process name="do-sources" />
+    <post-process name="create-attribute-indexes" />
+    <post-process name="summarise-objectstore" />
+    <post-process name="create-autocomplete-index" />
+    <post-process name="create-search-index" />
   </post-processing>
-
 </project>
 
