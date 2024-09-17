@@ -56,22 +56,22 @@
     <attribute name="provenanceString" type="java.lang.String"/>
     <!-- One-to-many -->
     <!-- TODO: try different names for each reverse reference? -->
-    <collection name="studyConditions" referenced-type="StudyCondition" reverse-reference="study1"/>
-    <collection name="studyCountries" referenced-type="StudyCountry" reverse-reference="study2"/>
-    <collection name="studyFeatures" referenced-type="StudyFeature" reverse-reference="study3"/>
-    <collection name="studyICDs" referenced-type="StudyICD" reverse-reference="study4"/>
-    <collection name="studyIdentifiers" referenced-type="StudyIdentifier" reverse-reference="study5"/>
-    <collection name="studyLocations" referenced-type="StudyLocation" reverse-reference="study6"/>
-    <collection name="studyObjectLinks" referenced-type="StudyObjectLink" reverse-reference="study7"/>
-    <collection name="studyOrganisations" referenced-type="StudyOrganisation" reverse-reference="study8"/>
-    <collection name="studyPeople" referenced-type="StudyPeople" reverse-reference="study9"/>
-    <collection name="studyRelationships" referenced-type="StudyRelationship" reverse-reference="study10"/>
-    <collection name="studyTitles" referenced-type="StudyTitle" reverse-reference="study11"/>
-    <collection name="studyTopics" referenced-type="StudyTopic" reverse-reference="study12"/>
+    <collection name="studyConditions" referenced-type="StudyCondition" reverse-reference="study"/>
+    <collection name="studyCountries" referenced-type="StudyCountry" reverse-reference="study"/>
+    <collection name="studyFeatures" referenced-type="StudyFeature" reverse-reference="study"/>
+    <collection name="studyICDs" referenced-type="StudyICD" reverse-reference="study"/>
+    <collection name="studyIdentifiers" referenced-type="StudyIdentifier" reverse-reference="study"/>
+    <collection name="studyLocations" referenced-type="StudyLocation" reverse-reference="study"/>
+    <collection name="studyObjectLinks" referenced-type="StudyObjectLink" reverse-reference="study"/>
+    <collection name="studyOrganisations" referenced-type="StudyOrganisation" reverse-reference="study"/>
+    <collection name="studyPeople" referenced-type="StudyPeople" reverse-reference="study"/>
+    <collection name="studyRelationships" referenced-type="StudyRelationship" reverse-reference="study"/>
+    <collection name="studyTitles" referenced-type="StudyTitle" reverse-reference="study"/>
+    <collection name="studyTopics" referenced-type="StudyTopic" reverse-reference="study"/>
   </class>
 
   <class name="StudyCondition" is-interface="true">
-    <reference name="study1" referenced-type="Study" reverse-reference="studyConditions"/>
+    <reference name="study" referenced-type="Study" reverse-reference="studyConditions"/>
     <attribute name="originalValue" type="java.lang.String"/>
     <attribute name="originalCTTypeId" type="java.lang.Integer"/>
     <attribute name="originalCTCode" type="java.lang.String"/>
@@ -80,26 +80,26 @@
   </class>
 
   <class name="StudyCountry" is-interface="true">
-    <reference name="study2" referenced-type="Study" reverse-reference="studyCountries"/>
+    <reference name="study" referenced-type="Study" reverse-reference="studyCountries"/>
     <attribute name="countryId" type="java.lang.Integer"/>
     <attribute name="countryName" type="java.lang.String"/>
     <attribute name="statusId" type="java.lang.Integer"/>
   </class>
 
   <class name="StudyFeature" is-interface="true">
-    <reference name="study3" referenced-type="Study" reverse-reference="studyFeatures"/>
+    <reference name="study" referenced-type="Study" reverse-reference="studyFeatures"/>
     <attribute name="featureTypeId" type="java.lang.Integer"/>
     <attribute name="featureValueId" type="java.lang.Integer"/>
   </class>
 
   <class name="StudyICD" is-interface="true">
-    <reference name="study4" referenced-type="Study" reverse-reference="studyICDs"/>
+    <reference name="study" referenced-type="Study" reverse-reference="studyICDs"/>
     <attribute name="icdCode" type="java.lang.String"/>
     <attribute name="icdName" type="java.lang.String"/>
   </class>
 
   <class name="StudyIdentifier" is-interface="true">
-    <reference name="study5" referenced-type="Study" reverse-reference="studyIdentifiers"/>
+    <reference name="study" referenced-type="Study" reverse-reference="studyIdentifiers"/>
     <attribute name="identifierValue" type="java.lang.String"/>
     <attribute name="identifierTypeId" type="java.lang.Integer"/>
     <attribute name="sourceId" type="java.lang.Integer"/>
@@ -110,7 +110,7 @@
   </class>
 
   <class name="StudyLocation" is-interface="true">
-    <reference name="study6" referenced-type="Study" reverse-reference="studyLocations"/>
+    <reference name="study" referenced-type="Study" reverse-reference="studyLocations"/>
     <attribute name="facilityOrgId" type="java.lang.Integer"/>
     <attribute name="facility" type="java.lang.String"/>
     <attribute name="facilityRorId" type="java.lang.String"/>
@@ -122,12 +122,12 @@
   </class>
 
   <class name="StudyObjectLink" is-interface="true">
-    <reference name="study7" referenced-type="Study" reverse-reference="studyObjectLinks"/>
+    <reference name="study" referenced-type="Study" reverse-reference="studyObjectLinks"/>
     <attribute name="dataObject" type="java.lang.Integer"/>
   </class>
 
   <class name="StudyOrganisation" is-interface="true">
-    <reference name="study8" referenced-type="Study" reverse-reference="studyOrganisations"/>
+    <reference name="study" referenced-type="Study" reverse-reference="studyOrganisations"/>
     <attribute name="contribTypeId" type="java.lang.Integer"/>
     <attribute name="organisationId" type="java.lang.Integer"/>
     <attribute name="organisationName" type="java.lang.String"/>
@@ -135,7 +135,7 @@
   </class>
 
   <class name="StudyPeople" is-interface="true">
-    <reference name="study9" referenced-type="Study" reverse-reference="studyPeople"/>
+    <reference name="study" referenced-type="Study" reverse-reference="studyPeople"/>
     <attribute name="contribTypeId" type="java.lang.Integer"/>
     <attribute name="personGivenName" type="java.lang.String"/>
     <attribute name="personFamilyName" type="java.lang.String"/>
@@ -148,14 +148,14 @@
   </class>
 
   <class name="StudyRelationship" is-interface="true">
-    <reference name="study10" referenced-type="Study" reverse-reference="studyRelationships"/>
+    <reference name="study" referenced-type="Study" reverse-reference="studyRelationships"/>
     <attribute name="relationshipTypeId" type="java.lang.Integer"/>
     <!-- TODO: reverse reference? -->
     <reference name="targetStudy" referenced-type="Study"/>
   </class>
 
   <class name="StudyTitle" is-interface="true">
-    <reference name="study11" referenced-type="Study" reverse-reference="studyTitles"/>
+    <reference name="study" referenced-type="Study" reverse-reference="studyTitles"/>
     <attribute name="titleTypeId" type="java.lang.Integer"/>
     <attribute name="titleText" type="java.lang.String"/>
     <attribute name="langCode" type="java.lang.String"/>
@@ -165,7 +165,7 @@
   </class>
 
   <class name="StudyTopic" is-interface="true">
-    <reference name="study12" referenced-type="Study" reverse-reference="studyTopics"/>
+    <reference name="study" referenced-type="Study" reverse-reference="studyTopics"/>
     <attribute name="topicTypeId" type="java.lang.Integer"/>
     <attribute name="originalValue" type="java.lang.String"/>
     <attribute name="originalCtTypeId" type="java.lang.Integer"/>
