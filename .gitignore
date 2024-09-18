@@ -25,3 +25,6 @@ failures.list
 *.iml
 out/
 .gradle/
+
+# Generated BlueGenes file
+webapp/tools
