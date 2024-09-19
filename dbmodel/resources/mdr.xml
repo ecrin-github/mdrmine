@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <classes>
-  <!-- TODO: check if FK to other tables need to be added in various classes -->
   <class name="DataObject" is-interface="true">
+    <!-- TODO: need study FK? -->
     <attribute name="title" type="java.lang.String"/>
     <attribute name="version" type="java.lang.String"/>
     <attribute name="displayTitle" type="java.lang.String"/>
@@ -66,8 +66,14 @@
     <collection name="studyOrganisations" referenced-type="StudyOrganisation" reverse-reference="study"/>
     <collection name="studyPeople" referenced-type="StudyPeople" reverse-reference="study"/>
     <collection name="studyRelationships" referenced-type="StudyRelationship" reverse-reference="study"/>
+    <collection name="studySources" referenced-type="StudySource" reverse-reference="study"/>
     <collection name="studyTitles" referenced-type="StudyTitle" reverse-reference="study"/>
     <collection name="studyTopics" referenced-type="StudyTopic" reverse-reference="study"/>
+  </class>
+
+  <class name="StudySource" is-interface="true">
+    <reference name="study" referenced-type="Study" reverse-reference="studySources"/>
+    <attribute name="sourceName" type="java.lang.String"/>
   </class>
 
   <class name="StudyCondition" is-interface="true">
