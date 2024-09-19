@@ -20,6 +20,10 @@
       <!-- <property name="src.data.dir.includes" value="ctg-studies-test.csv"/> -->
       <property name="src.data.dir.includes" value="ctg-studies.csv"/>
     </source>
+    <source name="biolincc" type="biolincc" version="1.0.0">
+      <property name="src.data.dir" location="/home/ubuntu/data/biolincc"/>
+      <property name="src.data.dir.includes" value="biolincc.csv"/>
+    </source>
   </sources>
   
   <post-processing>
