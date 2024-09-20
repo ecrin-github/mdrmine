@@ -38,13 +38,14 @@ build() {
             done
         else
             # List of sources passed as cmd-line arg
-            IFS=',' read -ra SRCS <<< "$sources"
-            for fn in "${SRCS[@]}"; do
+            j=1
+            while fn=$(echo "$sources"|cut -d "," -f $j) ; [ -n "$fn" ] ;do
                 if [[ -d $sources_path/$fn/src/main/java/org/intermine/bio/dataconversion ]]; then
                     ./gradlew integrate -Psource=$(basename $fn) --stacktrace
                 else
                     echo "Warning: ignoring source $fn, couldn't find path $sources_path/$fn/src/main/java/org/intermine/bio/dataconversion"
                 fi
+                j=$((j+1))
             done
         fi
         ./gradlew cargoRedeployRemote
@@ -74,7 +75,7 @@ for i in "$@"; do
         shift
         ;;
     -*|--*)
-        echo "Invalid option: $i" >&2
+        echo "Error: invalid option '$i'" >&2
         usage
         exit 1
         ;;
