@@ -3,12 +3,14 @@
 # Default variable values
 sources_path="/home/ubuntu/code/mdrmine-bio-sources"
 sources="auto"
+skip_install=false
 
 usage() {
     echo "Build and deploy MDRMine."
     echo "Usage: $0 [OPTIONS]"
     echo "Options:"
     echo " -v, --verbose                                                Enable verbose mode (outputs commands)"
+    echo " -x, --skip_install                                           Skip ./gradlew install in bio-sources repository"
     echo " -p=[sources_path], --path=[sources_path]                     Set sources repo path, default: $sources_path"
     echo " -s=[list of comma separated sources], --sources=[sources]    Set list of sources to integrate, default behaviour includes all in sources folder"
 }
@@ -19,11 +21,13 @@ build() {
         set -x
     fi
 
-    if [[ -f $sources_path/gradlew ]]; then
-        $sources_path/gradlew install
-    else
-        echo "Error: couldn't find sources folder gradlew file, path tried: $sources_path/gradlew install" >&2
-        exit 1
+    if [[ "$skip_install" = false ]]; then
+        if [[ -f $sources_path/gradlew ]]; then
+            $sources_path/gradlew install
+        else
+            echo "Error: couldn't find sources folder gradlew file, path tried: $sources_path/gradlew install" >&2
+            exit 1
+        fi
     fi
 
     if [[ -f ./gradlew ]]; then
@@ -61,6 +65,10 @@ for i in "$@"; do
     -h | --help)
         usage
         exit 0
+        ;;
+    -x | --skip_install)
+        skip_install=true
+        shift
         ;;
     -v | --verbose)
         verbose=true
