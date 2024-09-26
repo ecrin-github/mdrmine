@@ -28,3 +28,6 @@ out/
 
 # Generated BlueGenes file
 webapp/tools
+
+# Docker secrets
+secrets/
