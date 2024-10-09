@@ -58,9 +58,10 @@ jobs:
           #   ls -al
           #   echo $RSYNC_STDOUT
           #   echo "allo" > test.test
+          # docker compose down --volumes
+          #   docker compose build --no-cache
+          #   docker compose up
           SCRIPT_AFTER: |
             cd ${{ secrets.PROD_REMOTE_TARGET }}/mdrmine
-            docker compose down --volumes
-            docker compose build --no-cache
-            docker compose up
+            echo $RSYNC_STDOUT
           SCRIPT_AFTER_REQUIRED: true
