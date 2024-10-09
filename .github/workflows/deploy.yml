@@ -27,7 +27,7 @@ jobs:
           path: sources_jars
           github-token: ${{ secrets.ARTIFACTS_TOKEN }}
           repository: ecrin-github/mdrmine-bio-sources
-          run-id: 11015577450
+          run-id: ${{ github.run_id }}
 
       - name: Send artifacts over SSH
         uses: appleboy/scp-action@v0.1.7
