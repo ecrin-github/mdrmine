@@ -19,6 +19,21 @@ jobs:
     runs-on: ubuntu-latest
     environment: production
     steps:
+      - name: Download sources JARs GH artifacts
+      - uses: actions/download-artifact@v4
+        with:
+          name: sources JARs
+          path: sources_jars
+
+      - name: Send artifacts over SSH
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.PROD_REMOTE_HOST }}
+          username: ${{ secrets.PROD_REMOTE_USER }}
+          key: ${{ secrets.PROD_SSH_PRIVATE_KEY }}
+          source: sources_jars/*
+          target: ${{ secrets.PROD_REMOTE_TARGET }}/mdrmine/jars
+
       - name: ssh deploy
         uses: easingthemes/ssh-deploy@v5.1.0
         with:

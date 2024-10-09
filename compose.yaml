@@ -1,0 +1,68 @@
+# TODO: integrate other intermine images? -> https://hub.docker.com/u/intermine
+
+services:
+  # TODO: db backup (volumes)
+  db:
+    image: postgres:14
+    # restart: unless-stopped
+    volumes:
+      - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+    environment:
+      # TODO: define secrets using GH secrets: use ssh-action to modify properties and docker secrets files?
+      POSTGRES_MULTIPLE_DATABASES: mdrmine,items-mdrmine,userprofile-mdrmine
+      POSTGRES_USER_FILE: /run/secrets/postgres_user
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+    # TODO: change port inside container?
+    ports:
+      - "5433:5432"
+    secrets:
+      - postgres_user
+      - postgres_password
+  tomcat:
+    build:
+      context: .
+      secrets:
+        - tomcat_user
+        - tomcat_password
+      dockerfile: ./Dockerfiles/tomcat/Dockerfile
+    ports:
+      - "8080:8080"
+    volumes:
+      - webapps:/usr/local/tomcat/webapps
+  bluegenes:
+    image: intermine/bluegenes:latest
+    restart: unless-stopped
+    volumes:
+      - type: bind
+        source: ~/.intermine/tools
+        target: /tools
+    env_file: ~/.intermine/bluegenes.env
+    ports:
+      - "8090:8090"
+  mdrmine:
+    build:
+      context: .
+      dockerfile: ./Dockerfiles/main/Dockerfile
+    # restart: unless-stopped
+    volumes:
+      - webapps:/webapps
+      - type: bind
+        source: ~/.intermine
+        target: /root/.intermine
+      - type: bind
+        source: /home/ubuntu/data/
+        target: /home/ubuntu/data/
+
+# Note: change this a shared bind mount to keep the Tomcat default apps (Manager, etc.) https://stackoverflow.com/a/46111405/23455986
+volumes:
+  webapps:
+
+secrets:
+  postgres_user:
+    file: ./secrets/postgres_user
+  postgres_password:
+    file: ./secrets/postgres_password
+  tomcat_user:
+    file: ./secrets/tomcat_user
+  tomcat_password:
+    file: ./secrets/tomcat_password

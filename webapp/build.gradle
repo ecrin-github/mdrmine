@@ -30,8 +30,17 @@ dependencies {
 }
 
 war {
-    dependsOn 'mergeProperties', 'summariseObjectStore', 'unwarBioWebApp', 'addStrutsConfig'
+    dependsOn 'mergeProperties', 'summariseObjectStore', 'unwarBioWebApp', 'addStrutsConfig', 'declareExplodedWebApp'
     finalizedBy 'warWebApp'
+}
+
+// For some reason, the exploded web app files get deleted somewhere before the warWebApp task, this is a workaround to prevent this, taken from BioTestMine
+// Actually this is a known issue: https://github.com/intermine/intermine/issues/2162
+task declareExplodedWebApp() {
+    outputs.dir "$explodedWebAppDir/donotdeleteme"
+	doLast{  
+    	mkdir "$explodedWebAppDir/donotdeleteme"    
+    }
 }
 
 task warWebApp(type: War) {
