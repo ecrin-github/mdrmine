@@ -63,5 +63,6 @@ jobs:
           #   docker compose up
           SCRIPT_AFTER: |
             cd ${{ secrets.PROD_REMOTE_TARGET }}/mdrmine
+            ls ./
             echo $RSYNC_STDOUT
           SCRIPT_AFTER_REQUIRED: true
