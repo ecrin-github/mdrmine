@@ -23,6 +23,7 @@ jobs:
         uses: dawidd6/action-download-artifact@v6
         with:
           workflow: build_jars.yml
+          # 1) This must match 2)
           name: sources_jars
           github_token: ${{ secrets.ARTIFACTS_TOKEN }}
           repo: ecrin-github/mdrmine-bio-sources
@@ -34,7 +35,8 @@ jobs:
           host: ${{ secrets.PROD_REMOTE_HOST }}
           username: ${{ secrets.PROD_REMOTE_USER }}
           key: ${{ secrets.PROD_SSH_PRIVATE_KEY }}
-          source: sources_jars/*
+          # 2) This must match 1)
+          source: ./sources_jars/*
           target: ${{ secrets.PROD_REMOTE_TARGET }}/mdrmine/jars
 
       - name: ssh deploy
