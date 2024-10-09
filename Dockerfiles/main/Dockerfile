@@ -5,10 +5,12 @@ WORKDIR /mdrmine
 
 # TODO: test
 ENV LANG C.UTF-8
+ENV JARS_PATH="./sources_jars"
 
 # Copies from context dir (repo outside container) to working dir (container), see https://stackoverflow.com/a/58434551/23455986
 COPY . .
-RUN if [[ -z "$( ls -A './jars' )" ]]; then mkdir -p ~/.m2/repository/org/intermine/ && mv ./jars/* ~/.m2/repository/org/intermine/ ; fi
+# Move sources jars to directory Intermine uses
+RUN if [ -n "$( ls -A "$JARS_PATH" )" ]; then mkdir -p ~/.m2/repository/org/intermine/ && mv "$JARS_PATH"/* ~/.m2/repository/org/intermine/ ; fi
 
 # TODO: change OPTS to set more memory?
 # GRADLE_OPTS="-server -Xmx8g -XX:+UseParallelGC -Xms2g -XX:SoftRefLRUPolicyMSPerMB=1 -XX:MaxHeapFreeRatio=99 -Dorg.gradle.daemon=false"
