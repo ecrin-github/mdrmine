@@ -39,7 +39,7 @@ jobs:
           key: ${{ secrets.PROD_SSH_PRIVATE_KEY }}
           # 2) This must match 1)
           source: ./sources_jars/*
-          target: ${{ secrets.PROD_REMOTE_TARGET }}/mdrmine/jars
+          target: ${{ secrets.PROD_REMOTE_TARGET }}/mdrmine
 
       - name: ssh deploy
         uses: easingthemes/ssh-deploy@v5.1.0
@@ -50,9 +50,17 @@ jobs:
           REMOTE_HOST: ${{ secrets.PROD_REMOTE_HOST }}
           REMOTE_USER: ${{ secrets.PROD_REMOTE_USER }}
           TARGET: ${{ secrets.PROD_REMOTE_TARGET }}/mdrmine
+          SCRIPT_BEFORE: |
+            whoami
+            ls -al
           SCRIPT_AFTER: |
-            cd ${{ secrets.PROD_REMOTE_TARGET }}/mdrmine
-            docker compose down --volumes
-            docker compose build --no-cache
-            docker compose up
+            whoami
+            ls -al
+            echo $RSYNC_STDOUT
+            echo "allo" > test.test
+          # SCRIPT_AFTER: |
+          #   cd ${{ secrets.PROD_REMOTE_TARGET }}/mdrmine
+          #   docker compose down --volumes
+          #   docker compose build --no-cache
+          #   docker compose up
           SCRIPT_AFTER_REQUIRED: true
