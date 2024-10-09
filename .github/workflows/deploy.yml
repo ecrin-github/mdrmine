@@ -21,13 +21,14 @@ jobs:
     steps:
       - name: Download sources JARs GH artifacts
         run: ls -R
-      - uses: actions/download-artifact@v4
+      - uses: dawidd6/action-download-artifact@v6
         with:
+          workflow: build_jars.yml
           name: sources_jars
           path: sources_jars
-          github-token: ${{ secrets.ARTIFACTS_TOKEN }}
+          github_token: ${{ secrets.ARTIFACTS_TOKEN }}
           repository: ecrin-github/mdrmine-bio-sources
-          run-id: ${{ github.run_id }}
+          check_artifacts: true
 
       - name: Send artifacts over SSH
         uses: appleboy/scp-action@v0.1.7
