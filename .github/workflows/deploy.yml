@@ -20,6 +20,7 @@ jobs:
     environment: production
     steps:
       - name: Download sources JARs GH artifacts
+        run: ls
         uses: dawidd6/action-download-artifact@v6
         with:
           workflow: build_jars.yml
@@ -30,6 +31,7 @@ jobs:
           check_artifacts: true
 
       - name: Send artifacts over SSH
+        run: ls
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.PROD_REMOTE_HOST }}
