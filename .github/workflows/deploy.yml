@@ -27,7 +27,7 @@ jobs:
           name: sources_jars
           path: sources_jars
           github_token: ${{ secrets.ARTIFACTS_TOKEN }}
-          repository: ecrin-github/mdrmine-bio-sources
+          repo: ecrin-github/mdrmine-bio-sources
           check_artifacts: true
 
       - name: Send artifacts over SSH
