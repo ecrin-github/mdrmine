@@ -31,15 +31,15 @@ jobs:
           check_artifacts: true
       - name: debug
         run: ls -R ./
-      - name: Send artifacts over SSH
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.PROD_REMOTE_HOST }}
-          username: ${{ secrets.PROD_REMOTE_USER }}
-          key: ${{ secrets.PROD_SSH_PRIVATE_KEY }}
-          # 2) This must match 1)
-          source: ./sources_jars/*
-          target: ${{ secrets.PROD_REMOTE_TARGET }}/mdrmine
+      # - name: Send artifacts over SSH
+      #   uses: appleboy/scp-action@v0.1.7
+      #   with:
+      #     host: ${{ secrets.PROD_REMOTE_HOST }}
+      #     username: ${{ secrets.PROD_REMOTE_USER }}
+      #     key: ${{ secrets.PROD_SSH_PRIVATE_KEY }}
+      #     # 2) This must match 1)
+      #     source: ./sources_jars/*
+      #     target: ${{ secrets.PROD_REMOTE_TARGET }}/mdrmine
 
       - name: ssh deploy
         uses: easingthemes/ssh-deploy@v5.1.0
