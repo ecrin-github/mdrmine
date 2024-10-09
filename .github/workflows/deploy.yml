@@ -20,6 +20,7 @@ jobs:
     environment: production
     steps:
       - name: Download sources JARs GH artifacts
+        run: ls -R
       - uses: actions/download-artifact@v4
         with:
           name: sources JARs
