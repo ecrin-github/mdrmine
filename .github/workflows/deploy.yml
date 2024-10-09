@@ -20,12 +20,10 @@ jobs:
     environment: production
     steps:
       - name: Download sources JARs GH artifacts
-        run: ls -R
-      - uses: dawidd6/action-download-artifact@v6
+        uses: dawidd6/action-download-artifact@v6
         with:
           workflow: build_jars.yml
           name: sources_jars
-          path: sources_jars
           github_token: ${{ secrets.ARTIFACTS_TOKEN }}
           repo: ecrin-github/mdrmine-bio-sources
           check_artifacts: true
@@ -48,12 +46,9 @@ jobs:
           REMOTE_HOST: ${{ secrets.PROD_REMOTE_HOST }}
           REMOTE_USER: ${{ secrets.PROD_REMOTE_USER }}
           TARGET: ${{ secrets.PROD_REMOTE_TARGET }}/mdrmine
-          SCRIPT_BEFORE: |
-            whoami
-            ls -al
           SCRIPT_AFTER: |
-            whoami
-            ls -al
-            echo $RSYNC_STDOUT
-            echo "allo" > test.test
+            cd ${{ secrets.PROD_REMOTE_TARGET }}/mdrmine
+            docker compose down --volumes
+            docker compose build --no-cache
+            docker compose up
           SCRIPT_AFTER_REQUIRED: true
