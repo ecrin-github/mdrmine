@@ -23,8 +23,10 @@ jobs:
         run: ls -R
       - uses: actions/download-artifact@v4
         with:
-          name: sources JARs
+          name: sources_jars
           path: sources_jars
+          github-token: ${{ secrets.ARTIFACTS_TOKEN }}
+          repository: ecrin-github/mdrmine-bio-sources
 
       - name: Send artifacts over SSH
         uses: appleboy/scp-action@v0.1.7
