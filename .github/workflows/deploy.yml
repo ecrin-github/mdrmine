@@ -15,76 +15,41 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  deployment:
     runs-on: ubuntu-latest
-
+    environment: production
     steps:
-      - name: Deploy to Staging server
-        uses: easingthemes/ssh-deploy@main
+      - name: Download sources JARs GH artifacts
+        uses: dawidd6/action-download-artifact@v6
         with:
-          SSH_PRIVATE_KEY: ${{ secrets.ACTION_SSH_PRIVATE_KEY }}
-          ARGS: "-rlgoDzvc -i"
-          SOURCE: "/"
-          REMOTE_HOST: ${{ secrets.PROD_REMOTE_HOST }}
-          REMOTE_USER: ${{ secrets.PROD_REMOTE_USER }}
-          TARGET: ${{ secrets.PROD_REMOTE_TARGET }}
-          EXCLUDE: "/dist/, /node_modules/"
-          SCRIPT_BEFORE: |
-            whoami
-            ls -al
-          SCRIPT_AFTER: |
-            whoami
-            ls -al
-            echo $RSYNC_STDOUT
-  # deployment:
-  #   runs-on: ubuntu-latest
-  #   environment: production
-  #   steps:
-  #     # - name: Download sources JARs GH artifacts
-  #     #   uses: dawidd6/action-download-artifact@v6
-  #     #   with:
-  #     #     workflow: build_jars.yml
-  #     #     # 1) This must match 2)
-  #     #     name: sources_jars
-  #     #     path: ./sources_jars
-  #     #     github_token: ${{ secrets.ARTIFACTS_TOKEN }}
-  #     #     repo: ecrin-github/mdrmine-bio-sources
-  #     #     check_artifacts: true
-  #     # - name: debug
-  #     #   run: ls -R ./
-  #     # - name: Send artifacts over SSH
-  #     #   uses: appleboy/scp-action@v0.1.7
-  #     #   with:
-  #     #     host: ${{ secrets.PROD_REMOTE_HOST }}
-  #     #     username: ${{ secrets.PROD_REMOTE_USER }}
-  #     #     key: ${{ secrets.PROD_SSH_PRIVATE_KEY }}
-  #     #     # 2) This must match 1)
-  #     #     source: ./sources_jars/*
-  #     #     target: ${{ secrets.PROD_REMOTE_TARGET }}/mdrmine
+          workflow: build_jars.yml
+          # 1) This must match 2)
+          name: sources_jars
+          path: ./sources_jars
+          github_token: ${{ secrets.ARTIFACTS_TOKEN }}
+          repo: ecrin-github/mdrmine-bio-sources
+          check_artifacts: true
 
-  #     - name: ssh deploy
-  #       uses: easingthemes/ssh-deploy@v5.1.0
-  #       with:
-  #         SSH_PRIVATE_KEY: ${{ secrets.ACTION_SSH_PRIVATE_KEY }}
-  #         # rsync args
-  #         ARGS: "-rlgoDzvc -i --exclude=test"
-  #         REMOTE_HOST: ${{ secrets.PROD_REMOTE_HOST }}
-  #         REMOTE_USER: ${{ secrets.PROD_REMOTE_USER }}
-  #         TARGET: ${{ secrets.PROD_REMOTE_TARGET }}
-  #         SOURCE: "webapp/"
-          # SCRIPT_BEFORE: |
-          #   whoami
-          #   ls -al
-          # SCRIPT_AFTER: |
-          #   whoami
-          #   ls -al
-          #   echo $RSYNC_STDOUT
-          #   echo "allo" > test.test
-          # docker compose down --volumes
-          #   docker compose build --no-cache
-          #   docker compose up
-          # SCRIPT_AFTER: |
-          #   cd ${{ secrets.PROD_REMOTE_TARGET }}/mdrmine
-          #   ls ./
-          #   echo $RSYNC_STDOUT
-          # SCRIPT_AFTER_REQUIRED: true
+      - name: Send artifacts over SSH
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.PROD_REMOTE_HOST }}
+          username: ${{ secrets.PROD_REMOTE_USER }}
+          key: ${{ secrets.PROD_SSH_PRIVATE_KEY }}
+          # 2) This must match 1)
+          source: ./sources_jars/*
+          target: ${{ secrets.PROD_REMOTE_TARGET }}/mdrmine
+
+      - name: executing remote ssh commands using password
+        uses: appleboy/ssh-action@v1.1.0
+        with:
+          host: ${{ secrets.PROD_REMOTE_HOST }}
+          username: ${{ secrets.PROD_REMOTE_USER }}
+          key: ${{ secrets.ACTION_SSH_PRIVATE_KEY }}
+          # TODO: put this in a script and improve it
+          script: |
+            cd ${{ secrets.PROD_REMOTE_TARGET }}/mdrmine
+            git pull
+            docker compose down --volumes
+            docker compose build --no-cache
+            docker compose up
