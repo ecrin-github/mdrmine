@@ -49,7 +49,7 @@ jobs:
           ARGS: "-rlgoDzvc -i --exclude=test"
           REMOTE_HOST: ${{ secrets.PROD_REMOTE_HOST }}
           REMOTE_USER: ${{ secrets.PROD_REMOTE_USER }}
-          TARGET: ${{ secrets.PROD_REMOTE_TARGET }}/mdrmine
+          TARGET: ${{ secrets.PROD_REMOTE_TARGET }}
           # SCRIPT_BEFORE: |
           #   whoami
           #   ls -al
