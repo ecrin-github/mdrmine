@@ -24,6 +24,8 @@ RUN apt-get update && apt-get install -y \
 ENV JAVA_HOME="/usr/lib/jvm/java-11-openjdk-amd64/"
 
 
+# TODO: try to change Docker secret files permissions
+# TODO: create all secrets file needed + configurations + document
 # TODO: set encoding to fix mdrmine sources errors?
 
 # TODO: solr
