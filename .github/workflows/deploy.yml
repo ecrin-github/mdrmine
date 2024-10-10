@@ -15,42 +15,63 @@ on:
   workflow_dispatch:
 
 jobs:
-  deployment:
+  build:
     runs-on: ubuntu-latest
-    environment: production
-    steps:
-      # - name: Download sources JARs GH artifacts
-      #   uses: dawidd6/action-download-artifact@v6
-      #   with:
-      #     workflow: build_jars.yml
-      #     # 1) This must match 2)
-      #     name: sources_jars
-      #     path: ./sources_jars
-      #     github_token: ${{ secrets.ARTIFACTS_TOKEN }}
-      #     repo: ecrin-github/mdrmine-bio-sources
-      #     check_artifacts: true
-      # - name: debug
-      #   run: ls -R ./
-      # - name: Send artifacts over SSH
-      #   uses: appleboy/scp-action@v0.1.7
-      #   with:
-      #     host: ${{ secrets.PROD_REMOTE_HOST }}
-      #     username: ${{ secrets.PROD_REMOTE_USER }}
-      #     key: ${{ secrets.PROD_SSH_PRIVATE_KEY }}
-      #     # 2) This must match 1)
-      #     source: ./sources_jars/*
-      #     target: ${{ secrets.PROD_REMOTE_TARGET }}/mdrmine
 
-      - name: ssh deploy
-        uses: easingthemes/ssh-deploy@v5.1.0
+    steps:
+      - name: Deploy to Staging server
+        uses: easingthemes/ssh-deploy@main
         with:
           SSH_PRIVATE_KEY: ${{ secrets.ACTION_SSH_PRIVATE_KEY }}
-          # rsync args
-          ARGS: "-rlgoDzvc -i --exclude=test"
+          ARGS: "-rlgoDzvc -i"
+          SOURCE: "dist/"
           REMOTE_HOST: ${{ secrets.PROD_REMOTE_HOST }}
           REMOTE_USER: ${{ secrets.PROD_REMOTE_USER }}
           TARGET: ${{ secrets.PROD_REMOTE_TARGET }}
-          SOURCE: "webapp/"
+          EXCLUDE: "/dist/, /node_modules/"
+          SCRIPT_BEFORE: |
+            whoami
+            ls -al
+          SCRIPT_AFTER: |
+            whoami
+            ls -al
+            echo $RSYNC_STDOUT
+  # deployment:
+  #   runs-on: ubuntu-latest
+  #   environment: production
+  #   steps:
+  #     # - name: Download sources JARs GH artifacts
+  #     #   uses: dawidd6/action-download-artifact@v6
+  #     #   with:
+  #     #     workflow: build_jars.yml
+  #     #     # 1) This must match 2)
+  #     #     name: sources_jars
+  #     #     path: ./sources_jars
+  #     #     github_token: ${{ secrets.ARTIFACTS_TOKEN }}
+  #     #     repo: ecrin-github/mdrmine-bio-sources
+  #     #     check_artifacts: true
+  #     # - name: debug
+  #     #   run: ls -R ./
+  #     # - name: Send artifacts over SSH
+  #     #   uses: appleboy/scp-action@v0.1.7
+  #     #   with:
+  #     #     host: ${{ secrets.PROD_REMOTE_HOST }}
+  #     #     username: ${{ secrets.PROD_REMOTE_USER }}
+  #     #     key: ${{ secrets.PROD_SSH_PRIVATE_KEY }}
+  #     #     # 2) This must match 1)
+  #     #     source: ./sources_jars/*
+  #     #     target: ${{ secrets.PROD_REMOTE_TARGET }}/mdrmine
+
+  #     - name: ssh deploy
+  #       uses: easingthemes/ssh-deploy@v5.1.0
+  #       with:
+  #         SSH_PRIVATE_KEY: ${{ secrets.ACTION_SSH_PRIVATE_KEY }}
+  #         # rsync args
+  #         ARGS: "-rlgoDzvc -i --exclude=test"
+  #         REMOTE_HOST: ${{ secrets.PROD_REMOTE_HOST }}
+  #         REMOTE_USER: ${{ secrets.PROD_REMOTE_USER }}
+  #         TARGET: ${{ secrets.PROD_REMOTE_TARGET }}
+  #         SOURCE: "webapp/"
           # SCRIPT_BEFORE: |
           #   whoami
           #   ls -al
