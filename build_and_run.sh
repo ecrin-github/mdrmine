@@ -76,15 +76,12 @@ build() {
         fi
         # TODO: include this after solr has been set up
         # ./gradlew postProcess --stacktrace
-        # TODO: include this?
         ./gradlew buildUserDB --stacktrace
 
         if [[ "$docker" = true ]]; then
             # Generate war file
             ./gradlew war
             cp ./webapp/build/libs/webapp.war /webapps/mdrmine.war
-            # TODO: remove
-            sleep 10000
         else
             if [[ "$local" = true ]]; then
                 if [[ "$first_install" = false ]]; then
