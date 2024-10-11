@@ -44,7 +44,7 @@ services:
     build:
       context: .
       dockerfile: ./Dockerfiles/main/Dockerfile
-    restart: unless-stopped
+    # restart: unless-stopped
     volumes:
       - webapps:/webapps
       - type: bind
