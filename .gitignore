@@ -31,3 +31,9 @@ webapp/tools
 
 # Docker secrets
 secrets/
+
+# Dev env flag file
+dev_env
+
+# Compiled JARs for each source
+sources_jars
