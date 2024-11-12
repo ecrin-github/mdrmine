@@ -4,3 +4,5 @@ include ':dbmodel',':webapp'
 
 project(':dbmodel').projectDir = new File(settingsDir, './dbmodel')
 project(':webapp').projectDir = new File(settingsDir, './webapp')
+include ':bio-source-pubmed'
+project(':bio-source-pubmed').projectDir = new File(settingsDir, './pubmed')

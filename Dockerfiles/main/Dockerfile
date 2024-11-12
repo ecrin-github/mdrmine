@@ -23,26 +23,18 @@ RUN apt-get update && apt-get install -y \
     apt-get clean;
 ENV JAVA_HOME="/usr/lib/jvm/java-11-openjdk-amd64/"
 
-
-# TODO: try to change Docker secret files permissions
-# TODO: create all secrets file needed + configurations + document
-# TODO: set encoding to fix mdrmine sources errors?
-
 # TODO: solr
 
-# TODO: document all the external files needed
-
+# TODO: remove down --volumes on every run? deploy.yml
+# TODO: fix pubmed abstracttext
+# TODO: run docker compose up in FG in deploy.yml but tomcat in background?
+# TODO: partial string match for Solr
+# TODO: add params for sources selection
 # TODO: db backup? for user accounts (saved queries, etc.)
-
-# TODO: clone intermine for it not to download every run?
-
-# TODO: perl modules?
-# RUN apt-get update && apt-get install -y \
-#     libxml-writer-perl \
-#     libxml-sax-base-perl \
-#     libxml-perl \
-#     libxml-filter-saxt-perl \
-
+# TODO: try to change Docker secret files permissions
 # TODO: memcached somwhere? https://hub.docker.com/_/memcached
+# docker compose build --no-cache && docker compose up -> docker compose down --volumes --rmi "local"
+# docker rmi $(docker images --filter "dangling=true" -q --no-trunc)
 
-CMD ["./build_and_run.sh", "--skip-install", "--first-build", "--docker"]
+
+CMD ["./build_and_run.sh", "--skip-install", "--first-build", "--docker", "--update-publications"]
