@@ -3,13 +3,15 @@
 FROM ubuntu:latest AS main
 WORKDIR /mdrmine
 
-# TODO: test
-ENV LANG C.UTF-8
+ENV LANG=C.UTF-8
 ENV JARS_PATH="./sources_jars"
 
-# Copies from context dir (repo outside container) to working dir (container), see https://stackoverflow.com/a/58434551/23455986
+# Copy from context dir (repo outside container) to working dir (container), see https://stackoverflow.com/a/58434551/23455986
 COPY . .
+# Replace project.xml by dev file
+RUN if [ -f ./dev_env ]; then rm project.xml && mv project_dev.xml project.xml ; fi
 # Move sources jars to directory Intermine uses
+# TODO: add check of sources in project.xml?
 RUN if [ -n "$( ls -A "$JARS_PATH" )" ]; then mkdir -p ~/.m2/repository/org/intermine/ && mv "$JARS_PATH"/* ~/.m2/repository/org/intermine/ ; fi
 
 # TODO: change OPTS to set more memory?
