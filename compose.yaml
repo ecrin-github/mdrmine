@@ -40,6 +40,17 @@ services:
     env_file: ~/.intermine/bluegenes.env
     ports:
       - "8090:8090"
+  solr:
+    image: solr:latest
+    restart: unless-stopped
+    volumes:
+      - solr_data:/var/solr
+    entrypoint:
+      - bash
+      - "-c"
+      - "mkdir -p /var/solr/data; precreate-core mdrmine-search; precreate-core mdrmine-autocomplete; exec solr -f -Dvelocity.solr.resource.loader.enabled=true"
+    ports:
+      - "8983:8983"
   mdrmine:
     build:
       context: .
@@ -57,6 +68,7 @@ services:
 # Note: change this a shared bind mount to keep the Tomcat default apps (Manager, etc.) https://stackoverflow.com/a/46111405/23455986
 volumes:
   webapps:
+  solr_data:
 
 secrets:
   postgres_user:

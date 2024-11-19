@@ -10,6 +10,9 @@ ENV JARS_PATH="./sources_jars"
 COPY . .
 # Replace project.xml by dev file
 RUN if [ -f ./dev_env ]; then rm project.xml && mv project_dev.xml project.xml ; fi
+# Modify solr URLs to work with docker (domain is image name in compose instead of localhost)
+RUN sed -i 's/localhost/solr/' /mdrmine/dbmodel/resources/keyword_search.properties \
+ && sed -i 's/localhost/solr/' /mdrmine/dbmodel/resources/objectstoresummary.config.properties
 # Move sources jars to directory Intermine uses
 # TODO: add check of sources in project.xml?
 RUN if [ -n "$( ls -A "$JARS_PATH" )" ]; then mkdir -p ~/.m2/repository/org/intermine/ && mv "$JARS_PATH"/* ~/.m2/repository/org/intermine/ ; fi
@@ -25,17 +28,14 @@ RUN apt-get update && apt-get install -y \
     apt-get clean;
 ENV JAVA_HOME="/usr/lib/jvm/java-11-openjdk-amd64/"
 
-# TODO: solr
-
+# TODO: run docker compose up in FG in deploy.yml but tomcat in background?
 # TODO: remove down --volumes on every run? deploy.yml
 # TODO: fix pubmed abstracttext
-# TODO: run docker compose up in FG in deploy.yml but tomcat in background?
 # TODO: partial string match for Solr
 # TODO: add params for sources selection
 # TODO: db backup? for user accounts (saved queries, etc.)
 # TODO: try to change Docker secret files permissions
 # TODO: memcached somwhere? https://hub.docker.com/_/memcached
-# docker compose build --no-cache && docker compose up -> docker compose down --volumes --rmi "local"
 # docker rmi $(docker images --filter "dangling=true" -q --no-trunc)
 
 
