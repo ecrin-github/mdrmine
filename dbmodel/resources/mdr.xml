@@ -1,4 +1,5 @@
 <?xml version="1.0"?>
+<!-- Version 1.1 -->
 <classes>
   <class name="DataObject" is-interface="true">
     <!-- TODO: need study FK? -->
@@ -6,15 +7,14 @@
     <attribute name="version" type="java.lang.String"/>
     <attribute name="displayTitle" type="java.lang.String"/>
     <attribute name="doi" type="java.lang.String"/>
-    <attribute name="doiStatusId" type="java.lang.Integer"/>
+    <attribute name="doiStatus" type="java.lang.String"/>
     <attribute name="publicationYear" type="java.lang.Integer"/>
-    <attribute name="objectClassId" type="java.lang.Integer"/>
-    <attribute name="objectTypeId" type="java.lang.Integer"/>
-    <attribute name="managingOrgId" type="java.lang.Integer"/>
-    <attribute name="managingOrgRorId" type="java.lang.String"/>
+    <attribute name="objectClass" type="java.lang.String"/>
+    <attribute name="objectType" type="java.lang.String"/>
+    <attribute name="managingOrgRor" type="java.lang.String"/>
     <attribute name="managingOrg" type="java.lang.String"/>
     <attribute name="langCode" type="java.lang.String"/>
-    <attribute name="accessTypeId" type="java.lang.Integer"/>
+    <attribute name="accessType" type="java.lang.String"/>
     <attribute name="accessDetails" type="java.lang.String"/>
     <attribute name="accessDetailsUrl" type="java.lang.String"/>
     <!-- TODO: date instead of string? java.util.Date -->
@@ -44,14 +44,14 @@
     <attribute name="dataSharingStatement" type="java.lang.String"/>
     <attribute name="studyStartYear" type="java.lang.Integer"/>
     <attribute name="studyStartMonth" type="java.lang.Integer"/>
-    <attribute name="studyTypeId" type="java.lang.Integer"/>
-    <attribute name="studyStatusId" type="java.lang.Integer"/>
+    <attribute name="studyType" type="java.lang.String"/>
+    <attribute name="studyStatus" type="java.lang.String"/>
     <attribute name="studyEnrolment" type="java.lang.String"/>
-    <attribute name="studyGenderEligId" type="java.lang.Integer"/>
+    <attribute name="studyGenderElig" type="java.lang.String"/>
     <attribute name="minAge" type="java.lang.Integer"/>
-    <attribute name="minAgeUnitsId" type="java.lang.Integer"/>
+    <attribute name="minAgeUnit" type="java.lang.String"/>
     <attribute name="maxAge" type="java.lang.Integer"/>
-    <attribute name="maxAgeUnitsId" type="java.lang.Integer"/>
+    <attribute name="maxAgeUnit" type="java.lang.String"/>
     <attribute name="iecLevel" type="java.lang.Integer"/>
     <attribute name="provenanceString" type="java.lang.String"/>
     <!-- One-to-many -->
@@ -79,7 +79,7 @@
   <class name="StudyCondition" is-interface="true">
     <reference name="study" referenced-type="Study" reverse-reference="studyConditions"/>
     <attribute name="originalValue" type="java.lang.String"/>
-    <attribute name="originalCTTypeId" type="java.lang.Integer"/>
+    <attribute name="originalCTType" type="java.lang.String"/>
     <attribute name="originalCTCode" type="java.lang.String"/>
     <attribute name="icdCode" type="java.lang.String"/>
     <attribute name="icdName" type="java.lang.String"/>
@@ -87,15 +87,15 @@
 
   <class name="StudyCountry" is-interface="true">
     <reference name="study" referenced-type="Study" reverse-reference="studyCountries"/>
-    <attribute name="countryId" type="java.lang.Integer"/>
+    <attribute name="country" type="java.lang.String"/>
     <attribute name="countryName" type="java.lang.String"/>
-    <attribute name="statusId" type="java.lang.Integer"/>
+    <attribute name="status" type="java.lang.String"/>
   </class>
 
   <class name="StudyFeature" is-interface="true">
     <reference name="study" referenced-type="Study" reverse-reference="studyFeatures"/>
-    <attribute name="featureTypeId" type="java.lang.Integer"/>
-    <attribute name="featureValueId" type="java.lang.Integer"/>
+    <attribute name="featureType" type="java.lang.String"/>
+    <attribute name="featureValue" type="java.lang.String"/>
   </class>
 
   <class name="StudyICD" is-interface="true">
@@ -107,24 +107,23 @@
   <class name="StudyIdentifier" is-interface="true">
     <reference name="study" referenced-type="Study" reverse-reference="studyIdentifiers"/>
     <attribute name="identifierValue" type="java.lang.String"/>
-    <attribute name="identifierTypeId" type="java.lang.Integer"/>
-    <attribute name="sourceId" type="java.lang.Integer"/>
+    <attribute name="identifierType" type="java.lang.String"/>
     <attribute name="source" type="java.lang.String"/>
-    <attribute name="sourceRorId" type="java.lang.String"/>
+    <attribute name="sourceRor" type="java.lang.String"/>
     <attribute name="identifierDate" type="java.lang.String"/>
     <attribute name="identifierLink" type="java.lang.String"/>
   </class>
 
   <class name="StudyLocation" is-interface="true">
     <reference name="study" referenced-type="Study" reverse-reference="studyLocations"/>
-    <attribute name="facilityOrgId" type="java.lang.Integer"/>
+    <attribute name="facilityOrg" type="java.lang.String"/>
     <attribute name="facility" type="java.lang.String"/>
-    <attribute name="facilityRorId" type="java.lang.String"/>
-    <attribute name="cityId" type="java.lang.Integer"/>
+    <attribute name="facilityRor" type="java.lang.String"/>
+    <attribute name="city" type="java.lang.String"/>
     <attribute name="cityName" type="java.lang.String"/>
-    <attribute name="countryId" type="java.lang.Integer"/>
+    <attribute name="country" type="java.lang.String"/>
     <attribute name="countryName" type="java.lang.String"/>
-    <attribute name="statusId" type="java.lang.Integer"/>
+    <attribute name="status" type="java.lang.String"/>
   </class>
 
   <class name="StudyObjectLink" is-interface="true">
@@ -134,47 +133,47 @@
 
   <class name="StudyOrganisation" is-interface="true">
     <reference name="study" referenced-type="Study" reverse-reference="studyOrganisations"/>
-    <attribute name="contribTypeId" type="java.lang.Integer"/>
-    <attribute name="organisationId" type="java.lang.Integer"/>
+    <attribute name="contribType" type="java.lang.String"/>
+    <attribute name="organisation" type="java.lang.String"/>
     <attribute name="organisationName" type="java.lang.String"/>
-    <attribute name="organisationRorId" type="java.lang.String"/>
+    <attribute name="organisationRor" type="java.lang.String"/>
   </class>
 
   <class name="StudyPeople" is-interface="true">
     <reference name="study" referenced-type="Study" reverse-reference="studyPeople"/>
-    <attribute name="contribTypeId" type="java.lang.Integer"/>
+    <attribute name="contribType" type="java.lang.String"/>
     <attribute name="personGivenName" type="java.lang.String"/>
     <attribute name="personFamilyName" type="java.lang.String"/>
     <attribute name="personFullName" type="java.lang.String"/>
-    <attribute name="orcidId" type="java.lang.String"/>
+    <attribute name="orcid" type="java.lang.String"/>
     <attribute name="personAffiliation" type="java.lang.String"/>
-    <attribute name="organisationId" type="java.lang.Integer"/>
+    <attribute name="organisation" type="java.lang.String"/>
     <attribute name="organisationName" type="java.lang.String"/>
-    <attribute name="organisationRorId" type="java.lang.String"/>
+    <attribute name="organisationRor" type="java.lang.String"/>
   </class>
 
   <class name="StudyRelationship" is-interface="true">
     <reference name="study" referenced-type="Study" reverse-reference="studyRelationships"/>
-    <attribute name="relationshipTypeId" type="java.lang.Integer"/>
+    <attribute name="relationshipType" type="java.lang.String"/>
     <!-- TODO: reverse reference? -->
     <reference name="targetStudy" referenced-type="Study"/>
   </class>
 
   <class name="StudyTitle" is-interface="true">
     <reference name="study" referenced-type="Study" reverse-reference="studyTitles"/>
-    <attribute name="titleTypeId" type="java.lang.Integer"/>
+    <attribute name="titleType" type="java.lang.String"/>
     <attribute name="titleText" type="java.lang.String"/>
     <attribute name="langCode" type="java.lang.String"/>
-    <attribute name="langUsageId" type="java.lang.Integer"/>
+    <attribute name="langUsage" type="java.lang.String"/>
     <attribute name="isDefault" type="java.lang.Boolean"/>
     <attribute name="comments" type="java.lang.String"/>
   </class>
 
   <class name="StudyTopic" is-interface="true">
     <reference name="study" referenced-type="Study" reverse-reference="studyTopics"/>
-    <attribute name="topicTypeId" type="java.lang.Integer"/>
+    <attribute name="topicType" type="java.lang.String"/>
     <attribute name="originalValue" type="java.lang.String"/>
-    <attribute name="originalCtTypeId" type="java.lang.Integer"/>
+    <attribute name="originalCtType" type="java.lang.String"/>
     <attribute name="originalCtCode" type="java.lang.String"/>
     <attribute name="meshCode" type="java.lang.String"/>
     <attribute name="meshValue" type="java.lang.String"/>
@@ -182,16 +181,16 @@
 
   <class name="ObjectDataset" is-interface="true">
     <reference name="dataObject" referenced-type="DataObject" reverse-reference="objectDatasets"/>
-    <attribute name="recordKeysTypeId" type="java.lang.Integer"/>
+    <attribute name="recordKeysType" type="java.lang.String"/>
     <attribute name="recordKeysDetails" type="java.lang.String"/>
-    <attribute name="deidentTypeId" type="java.lang.Integer"/>
+    <attribute name="deidentType" type="java.lang.String"/>
     <attribute name="deidentDirect" type="java.lang.Boolean"/>
     <attribute name="deidentHipaa" type="java.lang.Boolean"/>
     <attribute name="deidentDates" type="java.lang.Boolean"/>
     <attribute name="deidentNonArr" type="java.lang.Boolean"/>
     <attribute name="deidentKanon" type="java.lang.Boolean"/>
     <attribute name="deidentDetails" type="java.lang.String"/>
-    <attribute name="consentTypeId" type="java.lang.Integer"/>
+    <attribute name="consentType" type="java.lang.String"/>
     <attribute name="consentNonCommercial" type="java.lang.Boolean"/>
     <attribute name="consentGeogRestrict" type="java.lang.Boolean"/>
     <attribute name="consentResearchType" type="java.lang.Boolean"/>
@@ -202,7 +201,7 @@
 
   <class name="ObjectDate" is-interface="true">
     <reference name="dataObject" referenced-type="DataObject" reverse-reference="objectDates"/>
-    <attribute name="dateTypeId" type="java.lang.Integer"/>
+    <attribute name="dateType" type="java.lang.String"/>
     <attribute name="dateIsRange" type="java.lang.Boolean"/>
     <attribute name="dateAsString" type="java.lang.String"/>
     <attribute name="startYear" type="java.lang.Integer"/>
@@ -216,7 +215,7 @@
 
   <class name="ObjectDescription" is-interface="true">
     <reference name="dataObject" referenced-type="DataObject" reverse-reference="objectDescriptions"/>
-    <attribute name="descriptionTypeId" type="java.lang.Integer"/>
+    <attribute name="descriptionType" type="java.lang.String"/>
     <attribute name="label" type="java.lang.String"/>
     <attribute name="descriptionText" type="java.lang.String"/>
     <attribute name="langCode" type="java.lang.String"/>
@@ -225,22 +224,21 @@
   <class name="ObjectIdentifier" is-interface="true">
     <reference name="dataObject" referenced-type="DataObject" reverse-reference="objectIdentifiers"/>
     <attribute name="identifierValue" type="java.lang.String"/>
-    <attribute name="identifierTypeId" type="java.lang.Integer"/>
-    <attribute name="sourceId" type="java.lang.Integer"/>
+    <attribute name="identifierType" type="java.lang.String"/>
     <attribute name="source" type="java.lang.String"/>
-    <attribute name="sourceRorId" type="java.lang.String"/>
+    <attribute name="source" type="java.lang.String"/>
+    <attribute name="sourceRor" type="java.lang.String"/>
     <attribute name="identifierDate" type="java.lang.String"/>
   </class>
 
   <class name="ObjectInstance" is-interface="true">
     <reference name="dataObject" referenced-type="DataObject" reverse-reference="objectInstances"/>
-    <attribute name="systemId" type="java.lang.Integer"/>
     <attribute name="system" type="java.lang.String"/>
     <attribute name="url" type="java.lang.String"/>
     <attribute name="urlAccessible" type="java.lang.Boolean"/>
     <!-- TODO: date instead of string? java.util.Date -->
     <attribute name="urlLastChecked" type="java.lang.String"/>
-    <attribute name="resourceTypeId" type="java.lang.Integer"/>
+    <attribute name="resourceType" type="java.lang.String"/>
     <attribute name="resourceSize" type="java.lang.String"/>
     <attribute name="resourceSizeUnits" type="java.lang.String"/>
     <attribute name="resourceComments" type="java.lang.String"/>
@@ -248,28 +246,28 @@
 
   <class name="ObjectOrganisation" is-interface="true">
     <reference name="dataObject" referenced-type="DataObject" reverse-reference="objectOrganisations"/>
-    <attribute name="contribTypeId" type="java.lang.Integer"/>
-    <attribute name="organisationId" type="java.lang.Integer"/>
+    <attribute name="contribType" type="java.lang.String"/>
+    <attribute name="organisation" type="java.lang.String"/>
     <attribute name="organisationName" type="java.lang.String"/>
-    <attribute name="organisationRorId" type="java.lang.String"/>
+    <attribute name="organisationRor" type="java.lang.String"/>
   </class>
 
   <class name="ObjectPeople" is-interface="true">
     <reference name="dataObject" referenced-type="DataObject" reverse-reference="objectPeople"/>
-    <attribute name="contribTypeId" type="java.lang.Integer"/>
+    <attribute name="contribType" type="java.lang.String"/>
     <attribute name="personGivenName" type="java.lang.String"/>
     <attribute name="personFamilyName" type="java.lang.String"/>
     <attribute name="personFullName" type="java.lang.String"/>
-    <attribute name="orcidId" type="java.lang.String"/>
+    <attribute name="orcid" type="java.lang.String"/>
     <attribute name="personAffiliation" type="java.lang.String"/>
-    <attribute name="organisationId" type="java.lang.Integer"/>
+    <attribute name="organisation" type="java.lang.String"/>
     <attribute name="organisationName" type="java.lang.String"/>
-    <attribute name="organisationRorId" type="java.lang.String"/>
+    <attribute name="organisationRor" type="java.lang.String"/>
   </class>
 
   <class name="ObjectRelationship" is-interface="true">
     <reference name="dataObject" referenced-type="DataObject" reverse-reference="objectRelationships"/>
-    <attribute name="relationshipTypeId" type="java.lang.Integer"/>
+    <attribute name="relationshipType" type="java.lang.String"/>
     <reference name="targetObject" referenced-type="DataObject"/>
   </class>
 
@@ -282,19 +280,19 @@
 
   <class name="ObjectTitle" is-interface="true">
     <reference name="dataObject" referenced-type="DataObject" reverse-reference="objectTitles"/>
-    <attribute name="titleTypeId" type="java.lang.Integer"/>
+    <attribute name="titleType" type="java.lang.String"/>
     <attribute name="titleText" type="java.lang.String"/>
     <attribute name="langCode" type="java.lang.String"/>
-    <attribute name="langUsageId" type="java.lang.Integer"/>
+    <attribute name="langUsage" type="java.lang.String"/>
     <attribute name="isDefault" type="java.lang.Boolean"/>
     <attribute name="comments" type="java.lang.String"/>
   </class>
 
   <class name="ObjectTopic" is-interface="true">
     <reference name="dataObject" referenced-type="DataObject" reverse-reference="objectTopics"/>
-    <attribute name="topicTypeId" type="java.lang.Integer"/>
+    <attribute name="topicType" type="java.lang.String"/>
     <attribute name="originalValue" type="java.lang.String"/>
-    <attribute name="originalCtTypeId" type="java.lang.Integer"/>
+    <attribute name="originalCtType" type="java.lang.String"/>
     <attribute name="originalCtCode" type="java.lang.String"/>
     <attribute name="meshCode" type="java.lang.String"/>
     <attribute name="meshValue" type="java.lang.String"/>
