@@ -1,4 +1,15 @@
-# TODO
+# MDRMine
+
+TODO
+
+## Data sources
+The data sources and their corresponding data files are defined in the `project.xml` file.
+
+Currently, 4 different data sources (trial registries) are partially integrated into MDRMine:
+- WHO
+- ClinicalTrials.gov
+- BioLINCC
+- PubMed
 
 ## Docker deployment
 ### Required configuration
