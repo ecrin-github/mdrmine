@@ -30,10 +30,7 @@ ENV JAVA_HOME="/usr/lib/jvm/java-11-openjdk-amd64/"
 
 # TODO: run docker compose up in FG in deploy.yml but tomcat in background?
 # TODO: remove down --volumes on every run? deploy.yml
-# TODO: fix pubmed abstracttext
-# TODO: partial string match for Solr
 # TODO: add params for sources selection
-# TODO: db backup? for user accounts (saved queries, etc.)
 # TODO: try to change Docker secret files permissions
 # TODO: memcached somwhere? https://hub.docker.com/_/memcached
 # docker rmi $(docker images --filter "dangling=true" -q --no-trunc)
