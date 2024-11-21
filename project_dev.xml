@@ -7,27 +7,28 @@
 
   <sources>
     <source name="pubmed" type="pubmed" version="1.0.0">
-      <property name="src.data.file" location="/home/ubuntu/data/pubmed/20241107_152110_pubmed_ANZCTR.xml"/>
-      <!-- <property name="src.data.dir" location="/home/ubuntu/data/pubmed"/> -->
+      <property name="src.data.dir" location="/home/ubuntu/data/pubmed"/>
+      <property name="src.data.dir.includes" value="pubmed_dev.xml"/>
       <!-- <property name="src.data.dir.includes" value="20241107_152110_pubmed_*.xml"/> -->
     </source>
     <source name="who" type="who" version="1.0.0">
       <property name="src.data.dir" location="/home/ubuntu/data/who"/>
+      <property name="src.data.dir.includes" value="who_dev.csv"/>
       <!-- <property name="src.data.dir.includes" value="1rec.csv"/> -->
       <!-- <property name="src.data.dir.includes" value="ICTRPWeek22July2024_test.csv"/> -->
-      <property name="src.data.dir.includes" value="ICTRPWeek22July2024.csv"/>
+      <!-- <property name="src.data.dir.includes" value="ICTRPWeek22July2024.csv"/> -->
       <!-- <property name="src.data.dir.includes" value="testlines.csv"/> -->
       <!-- <property name="src.data.dir.includes" value="ICTRPFullExport-1003291-20-06-2024.csv"/> -->
       <property name="headersFilePath" value="/home/ubuntu/data/who/ICTRP_headers.csv"/>
     </source>
     <source name="ctg" type="ctg" version="1.0.0">
       <property name="src.data.dir" location="/home/ubuntu/data/ctg"/>
-      <property name="src.data.dir.includes" value="ctg-studies-test.csv"/>
+      <property name="src.data.dir.includes" value="ctg_dev.csv"/>
       <!-- <property name="src.data.dir.includes" value="ctg-studies.csv"/> -->
     </source>
     <source name="biolincc" type="biolincc" version="1.0.0">
       <property name="src.data.dir" location="/home/ubuntu/data/biolincc"/>
-      <property name="src.data.dir.includes" value="biolincc.csv"/>
+      <property name="src.data.dir.includes" value="biolincc_dev.csv"/>
     </source>
     <source name="update-publications" type="update-publications" dump="true">
       <!-- this source finds the publication ids (pubmed ids) in the

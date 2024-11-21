@@ -12,12 +12,12 @@
     </source>
     <source name="who" type="who" version="1.0.0">
       <property name="src.data.dir" location="/home/ubuntu/data/who"/>
-      <property name="src.data.dir.includes" value="ICTRPFullExport-1003291-20-06-2024.csv"/>
+      <property name="src.data.dir.includes" value="who.csv"/>
       <property name="headersFilePath" value="/home/ubuntu/data/who/ICTRP_headers.csv"/>
     </source>
     <source name="ctg" type="ctg" version="1.0.0">
       <property name="src.data.dir" location="/home/ubuntu/data/ctg"/>
-      <property name="src.data.dir.includes" value="ctg-studies.csv"/>
+      <property name="src.data.dir.includes" value="ctg.csv"/>
     </source>
     <source name="biolincc" type="biolincc" version="1.0.0">
       <property name="src.data.dir" location="/home/ubuntu/data/biolincc"/>
