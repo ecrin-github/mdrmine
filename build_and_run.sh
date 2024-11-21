@@ -14,7 +14,7 @@ usage() {
     echo "Usage: $0 [OPTIONS]"
     echo "Options:"
     echo " -d, --docker                                                 Instead of ./gradlew cargoDeployRemote, uses a shared Docker volume to deploy webapp .war file"
-    echo " -f, --first-build                                            Skip ./gradlew clean and replaces ./gradlew cargoRedeployRemote by ./gradlew cargoDeployRemote"
+    echo " -f, --first-build                                            Replaces ./gradlew cargoRedeployRemote by ./gradlew cargoDeployRemote"
     echo " -p=[sources_path], --path=[sources_path]                     Set sources repo path, default: $sources_path"
     echo " -s=[list of comma separated sources], --sources=[sources]    Set list of sources to integrate, default behaviour includes all in sources folder"
     echo " -u, --update-publications                                    After integrating the sources, fetch PubMed articles from DB-inserted PMIDs"
@@ -38,9 +38,7 @@ build() {
     fi
 
     if [[ -f ./gradlew ]]; then
-        if [[ "$first_install" = false ]]; then
-            ./gradlew clean --stacktrace
-        fi
+        ./gradlew clean --stacktrace
         ./gradlew buildDB --stacktrace
         if [[ "$skip_install" = true ]]; then
             for fp in ~/.m2/repository/org/intermine/bio-source-*; do
@@ -87,20 +85,10 @@ build() {
             # Generate war file
             ./gradlew war
             cp ./webapp/build/libs/webapp.war /webapps/mdrmine.war
+        elif [[ "$first_build" = false ]]; then
+            ./gradlew cargoRedeployRemote --stacktrace
         else
-            if [[ "$local" = true ]]; then
-                if [[ "$first_install" = false ]]; then
-                    ./gradlew cargoRedeployLocal --stacktrace
-                else
-                    ./gradlew cargoStartLocal --stacktrace
-                fi
-            else
-                if [[ "$first_install" = false ]]; then
-                    ./gradlew cargoRedeployRemote --stacktrace
-                else
-                    ./gradlew cargoDeployRemote --stacktrace
-                fi
-            fi
+            ./gradlew cargoDeployRemote --stacktrace
         fi
     else
         echo "Error: couldn't find gradlew file, make sure you run the script for the root MDRMine folder." >&2
