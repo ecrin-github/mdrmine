@@ -48,9 +48,9 @@
     <attribute name="studyStatus" type="java.lang.String"/>
     <attribute name="studyEnrolment" type="java.lang.String"/>
     <attribute name="studyGenderElig" type="java.lang.String"/>
-    <attribute name="minAge" type="java.lang.Integer"/>
+    <attribute name="minAge" type="java.lang.String"/>
     <attribute name="minAgeUnit" type="java.lang.String"/>
-    <attribute name="maxAge" type="java.lang.Integer"/>
+    <attribute name="maxAge" type="java.lang.String"/>
     <attribute name="maxAgeUnit" type="java.lang.String"/>
     <attribute name="iecLevel" type="java.lang.Integer"/>
     <attribute name="provenanceString" type="java.lang.String"/>
