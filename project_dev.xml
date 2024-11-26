@@ -20,15 +20,18 @@
       <!-- <property name="src.data.dir.includes" value="testlines.csv"/> -->
       <!-- <property name="src.data.dir.includes" value="ICTRPFullExport-1003291-20-06-2024.csv"/> -->
       <property name="headersFilePath" value="/home/ubuntu/data/who/ICTRP_headers.csv"/>
+      <property name="logDir" value="./sources_logs"/>
     </source>
     <source name="ctg" type="ctg" version="1.0.0">
       <property name="src.data.dir" location="/home/ubuntu/data/ctg"/>
       <property name="src.data.dir.includes" value="ctg_dev.csv"/>
       <!-- <property name="src.data.dir.includes" value="ctg-studies.csv"/> -->
+      <property name="logDir" value="./sources_logs"/>
     </source>
     <source name="biolincc" type="biolincc" version="1.0.0">
       <property name="src.data.dir" location="/home/ubuntu/data/biolincc"/>
       <property name="src.data.dir.includes" value="biolincc_dev.csv"/>
+      <property name="logDir" value="./sources_logs"/>
     </source>
     <source name="update-publications" type="update-publications" dump="true">
       <!-- this source finds the publication ids (pubmed ids) in the
