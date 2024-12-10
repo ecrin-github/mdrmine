@@ -41,23 +41,21 @@ build() {
         ./gradlew clean --stacktrace
         ./gradlew buildDB --stacktrace
         if [[ "$skip_install" = true ]]; then
-            for fp in ~/.m2/repository/org/intermine/bio-source-*; do
-                if [[ -d $fp && $(basename $fp) =~ (bio-source-)(.*$) ]]; then
-                    echo ${BASH_REMATCH[2]}
-                    ./gradlew integrate -Psource=${BASH_REMATCH[2]} --stacktrace
-                fi
+            for fp in $(perl -ne 'while(/<source +name="([^"]+)" +type=(?!"delimited")/g){print "$1\n";}' project.xml); do
+                echo "------------- Source: $(basename $fp) -------------"
+                ./gradlew integrate -Psource=$(basename $fp) --stacktrace
             done
         else
             if [ "$sources" = "auto" ]; then
-                # Default mode for integrating sources (auto sources detection)
-                for fp in $sources_path/*; do
-                    # TODO: how to select the sources--> with the jars
+                # Getting the sources in order from the project file, excluding the "delimited" (CSV) ones
+                for fp in $(perl -ne 'while(/<source +name="([^"]+)" +type=(?!"delimited")/g){print "$1\n";}' project.xml); do
+                    # TODO: skip_install
                     if [[ "$skip_install" = true ]]; then
-                        if [[ -d $fp && -d $fp/src/main/java/org/intermine/bio/dataconversion ]]; then
+                        if [[ -d $fp && -f $fp/$fp.properties ]]; then
                             ./gradlew integrate -Psource=$(basename $fp) --stacktrace
                         fi
                     else
-                        if [[ -d $fp && -d $fp/src/main/java/org/intermine/bio/dataconversion ]]; then
+                        if [[ -d $fp && -d $fp/$fp.properties ]]; then
                             ./gradlew integrate -Psource=$(basename $fp) --stacktrace
                         fi
                     fi
