@@ -6,7 +6,8 @@
   <property name="default.intermine.properties.file" location="../default.intermine.integrate.properties"/>
 
   <sources>
-    <source name="cvt" type="delimited" version="1.0.0">
+    <!-- Don't put any version to a delimited source -->
+    <source name="cvt" type="delimited">
       <property name="delimited.dataSourceName" value="Controlled Vocabulary"/>
       <property name="delimited.dataSetTitle" value="Controlled Vocabulary terms"/>
       <property name="delimited.hasHeader" value="true"/>
