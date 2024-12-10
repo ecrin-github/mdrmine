@@ -6,13 +6,18 @@
   <property name="default.intermine.properties.file" location="../default.intermine.integrate.properties"/>
 
   <sources>
-    <source name="pubmed" type="pubmed" version="1.0.0">
-      <property name="src.data.dir" location="/home/ubuntu/data/pubmed"/>
-      <property name="src.data.dir.includes" value="pubmed_dev.xml"/>
-      <!-- <property name="src.data.dir.includes" value="20241107_152110_pubmed_*.xml"/> -->
+    <!-- Don't put any version to a delimited source -->
+    <source name="cvt" type="delimited">
+      <property name="delimited.dataSourceName" value="Controlled Vocabulary"/>
+      <property name="delimited.dataSetTitle" value="Controlled Vocabulary terms"/>
+      <property name="delimited.hasHeader" value="true"/>
+      <property name="delimited.columns" value="CVTerm.type, CVTerm.value, CVTerm.source"/>
+      <property name="src.data.dir" location="/home/ubuntu/data/cvt"/>
+      <property name="delimited.includes" value="cvt.csv"/>
     </source>
     <source name="who" type="who" version="1.0.0">
       <property name="src.data.dir" location="/home/ubuntu/data/who"/>
+      <!-- <property name="src.data.dir.includes" value="who.csv"/> -->
       <property name="src.data.dir.includes" value="who_dev.csv"/>
       <!-- <property name="src.data.dir.includes" value="1rec.csv"/> -->
       <!-- <property name="src.data.dir.includes" value="ICTRPWeek22July2024_test.csv"/> -->
@@ -32,6 +37,11 @@
       <property name="src.data.dir" location="/home/ubuntu/data/biolincc"/>
       <property name="src.data.dir.includes" value="biolincc_dev.csv"/>
       <property name="logDir" value="./sources_logs"/>
+    </source>
+    <source name="pubmed" type="pubmed" version="1.0.0">
+      <property name="src.data.dir" location="/home/ubuntu/data/pubmed"/>
+      <property name="src.data.dir.includes" value="pubmed_dev.xml"/>
+      <!-- <property name="src.data.dir.includes" value="20241107_152110_pubmed_*.xml"/> -->
     </source>
     <source name="update-publications" type="update-publications" dump="true">
       <!-- this source finds the publication ids (pubmed ids) in the
