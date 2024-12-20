@@ -11,6 +11,9 @@
   </classes>
 
   <class name="Study" is-interface="true">
+    <attribute name="testField1" type="java.lang.String"/>
+    <attribute name="testField2" type="java.lang.String"/>
+    <attribute name="testField3" type="java.lang.String"/>
     <attribute name="displayTitle" type="java.lang.String"/>
     <attribute name="titleLangCode" type="java.lang.String"/>
     <attribute name="briefDescription" type="java.lang.String"/>
@@ -25,6 +28,8 @@
     <attribute name="minAgeUnit" type="java.lang.String"/>
     <attribute name="maxAge" type="java.lang.String"/>
     <attribute name="maxAgeUnit" type="java.lang.String"/>
+    <!-- TODO: to possibly move to separate class -->
+    <attribute name="iec" type="java.lang.String"/>
     <attribute name="iecLevel" type="java.lang.Integer"/>
     <attribute name="provenanceString" type="java.lang.String"/>
     <!-- TODO: to separate class? -->
