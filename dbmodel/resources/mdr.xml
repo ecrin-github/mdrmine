@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<!-- Version 1.2 -->
+<!-- Version 1.4 -->
 <classes>
   <!-- Controlled vocabulary -->
   <classes>
@@ -11,6 +11,9 @@
   </classes>
 
   <class name="Study" is-interface="true">
+    <attribute name="testField1" type="java.lang.String"/>
+    <attribute name="testField2" type="java.lang.String"/>
+    <attribute name="testField3" type="java.lang.String"/>
     <attribute name="displayTitle" type="java.lang.String"/>
     <attribute name="titleLangCode" type="java.lang.String"/>
     <attribute name="briefDescription" type="java.lang.String"/>
@@ -19,14 +22,22 @@
     <attribute name="studyStartMonth" type="java.lang.Integer"/>
     <attribute name="studyType" type="java.lang.String"/>
     <attribute name="studyStatus" type="java.lang.String"/>
-    <attribute name="studyEnrolment" type="java.lang.String"/>
+    <attribute name="studyEnrolment" type="java.lang.Integer"/>
     <attribute name="studyGenderElig" type="java.lang.String"/>
     <attribute name="minAge" type="java.lang.String"/>
     <attribute name="minAgeUnit" type="java.lang.String"/>
     <attribute name="maxAge" type="java.lang.String"/>
     <attribute name="maxAgeUnit" type="java.lang.String"/>
+    <!-- TODO: to possibly move to separate class -->
+    <attribute name="iec" type="java.lang.String"/>
     <attribute name="iecLevel" type="java.lang.Integer"/>
     <attribute name="provenanceString" type="java.lang.String"/>
+    <!-- TODO: to separate class? -->
+    <attribute name="interventions" type="java.lang.String"/>
+    <!-- TODO: to same class as secondaryOutcomes? -->
+    <attribute name="primaryOutcome" type="java.lang.String"/>
+    <!-- TODO: to separate class? -->
+    <attribute name="secondaryOutcomes" type="java.lang.String"/>
     <!-- One-to-many -->
     <!-- TODO: try different names for each reverse reference? -->
     <collection name="studyConditions" referenced-type="StudyCondition" reverse-reference="study"/>
@@ -96,7 +107,7 @@
 
   <class name="StudyCountry" is-interface="true">
     <reference name="study" referenced-type="Study" reverse-reference="studyCountries"/>
-    <attribute name="country" type="java.lang.String"/>
+    <!-- TODO: add countries table and reference to it here -->
     <attribute name="countryName" type="java.lang.String"/>
     <attribute name="status" type="java.lang.String"/>
   </class>
