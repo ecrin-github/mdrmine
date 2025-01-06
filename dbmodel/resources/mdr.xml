@@ -22,7 +22,7 @@
     <attribute name="studyStartMonth" type="java.lang.Integer"/>
     <attribute name="studyType" type="java.lang.String"/>
     <attribute name="studyStatus" type="java.lang.String"/>
-    <attribute name="studyEnrolment" type="java.lang.Integer"/>
+    <attribute name="studyEnrolment" type="java.lang.Long"/>
     <attribute name="studyGenderElig" type="java.lang.String"/>
     <attribute name="minAge" type="java.lang.String"/>
     <attribute name="minAgeUnit" type="java.lang.String"/>
