@@ -26,7 +26,6 @@
     <attribute name="testField13" type="java.lang.String"/>
     <attribute name="testField14" type="java.lang.String"/>
     <attribute name="testField15" type="java.lang.String"/>
-    <attribute name="testField16" type="java.lang.String"/>
     <attribute name="displayTitle" type="java.lang.String"/>
     <attribute name="titleLangCode" type="java.lang.String"/>
     <attribute name="briefDescription" type="java.lang.String"/>
