@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<!-- Version 1.4 -->
+<!-- Version 1.5 -->
 <classes>
   <!-- Controlled vocabulary -->
   <classes>
@@ -14,6 +14,18 @@
     <attribute name="testField1" type="java.lang.String"/>
     <attribute name="testField2" type="java.lang.String"/>
     <attribute name="testField3" type="java.lang.String"/>
+    <attribute name="testField4" type="java.lang.String"/>
+    <attribute name="testField5" type="java.lang.String"/>
+    <attribute name="testField6" type="java.lang.String"/>
+    <attribute name="testField7" type="java.lang.String"/>
+    <attribute name="testField8" type="java.lang.String"/>
+    <attribute name="testField9" type="java.lang.String"/>
+    <attribute name="testField10" type="java.lang.String"/>
+    <attribute name="testField11" type="java.lang.String"/>
+    <attribute name="testField12" type="java.lang.String"/>
+    <attribute name="testField13" type="java.lang.String"/>
+    <attribute name="testField14" type="java.lang.String"/>
+    <attribute name="testField15" type="java.lang.String"/>
     <attribute name="displayTitle" type="java.lang.String"/>
     <attribute name="titleLangCode" type="java.lang.String"/>
     <attribute name="briefDescription" type="java.lang.String"/>
@@ -22,7 +34,7 @@
     <attribute name="studyStartMonth" type="java.lang.Integer"/>
     <attribute name="studyType" type="java.lang.String"/>
     <attribute name="studyStatus" type="java.lang.String"/>
-    <attribute name="studyEnrolment" type="java.lang.Long"/>
+    <attribute name="studyEnrolment" type="java.lang.Integer"/>
     <attribute name="studyGenderElig" type="java.lang.String"/>
     <attribute name="minAge" type="java.lang.String"/>
     <attribute name="minAgeUnit" type="java.lang.String"/>
@@ -46,13 +58,14 @@
     <collection name="studyICDs" referenced-type="StudyICD" reverse-reference="study"/>
     <collection name="studyIdentifiers" referenced-type="StudyIdentifier" reverse-reference="study"/>
     <collection name="studyLocations" referenced-type="StudyLocation" reverse-reference="study"/>
-    <collection name="studyObjectLinks" referenced-type="StudyObjectLink" reverse-reference="study"/>
+    <!-- <collection name="studyObjectLinks" referenced-type="StudyObjectLink" reverse-reference="study"/> -->
     <collection name="studyOrganisations" referenced-type="StudyOrganisation" reverse-reference="study"/>
     <collection name="studyPeople" referenced-type="StudyPeople" reverse-reference="study"/>
     <collection name="studyRelationships" referenced-type="StudyRelationship" reverse-reference="study"/>
     <collection name="studySources" referenced-type="StudySource" reverse-reference="study"/>
     <collection name="studyTitles" referenced-type="StudyTitle" reverse-reference="study"/>
     <collection name="studyTopics" referenced-type="StudyTopic" reverse-reference="study"/>
+    <collection name="studyObjects" referenced-type="DataObject" reverse-reference="linkedStudy"/>
   </class>
 
   <class name="DataObject" is-interface="true">
@@ -77,6 +90,7 @@
     <attribute name="addStudyContribs" type="java.lang.Boolean"/>
     <attribute name="addStudyTopics" type="java.lang.Boolean"/>
     <attribute name="provenanceString" type="java.lang.String"/>
+    <reference name="linkedStudy" referenced-type="Study" reverse-reference="studyObjects"/>
     <!-- One-to-many -->
     <collection name="objectDatasets" referenced-type="ObjectDataset" reverse-reference="dataObject"/>
     <collection name="objectDates" referenced-type="ObjectDate" reverse-reference="dataObject"/>
@@ -146,10 +160,10 @@
     <attribute name="status" type="java.lang.String"/>
   </class>
 
-  <class name="StudyObjectLink" is-interface="true">
+  <!-- <class name="StudyObjectLink" is-interface="true">
     <reference name="study" referenced-type="Study" reverse-reference="studyObjectLinks"/>
-    <attribute name="dataObject" type="java.lang.Integer"/>
-  </class>
+    <attribute name="dataObject" referenced-type="DataObject" reverse-reference="objectStudyLinks"/>
+  </class> -->
 
   <class name="StudyOrganisation" is-interface="true">
     <reference name="study" referenced-type="Study" reverse-reference="studyOrganisations"/>
