@@ -49,15 +49,8 @@ build() {
             if [ "$sources" = "auto" ]; then
                 # Getting the sources in order from the project file, excluding the "delimited" (CSV) ones
                 for fp in $(perl -ne 'while(/<source +name="([^"]+)" +type=(?!"delimited")/g){print "$1\n";}' project.xml); do
-                    # TODO: skip_install
-                    if [[ "$skip_install" = true ]]; then
-                        if [[ -d $fp && -f $fp/$fp.properties ]]; then
-                            ./gradlew integrate -Psource=$(basename $fp) --stacktrace
-                        fi
-                    else
-                        if [[ -d $fp && -d $fp/$fp.properties ]]; then
-                            ./gradlew integrate -Psource=$(basename $fp) --stacktrace
-                        fi
+                    if [[ -d $fp && -f $fp/$fp.properties ]]; then
+                        ./gradlew integrate -Psource=$(basename $fp) --stacktrace
                     fi
                 done
             else
