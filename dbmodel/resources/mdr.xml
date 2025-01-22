@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<!-- Version 1.5 -->
+<!-- Version 1.6 -->
 <classes>
   <!-- Controlled vocabulary -->
   <classes>
@@ -207,8 +207,8 @@
     <reference name="study" referenced-type="Study" reverse-reference="studyTopics"/>
     <attribute name="topicType" type="java.lang.String"/>
     <attribute name="originalValue" type="java.lang.String"/>
-    <attribute name="originalCtType" type="java.lang.String"/>
-    <attribute name="originalCtCode" type="java.lang.String"/>
+    <attribute name="originalCTType" type="java.lang.String"/>
+    <attribute name="originalCTCode" type="java.lang.String"/>
     <attribute name="meshCode" type="java.lang.String"/>
     <attribute name="meshValue" type="java.lang.String"/>
   </class>
@@ -326,8 +326,8 @@
     <reference name="dataObject" referenced-type="DataObject" reverse-reference="objectTopics"/>
     <attribute name="topicType" type="java.lang.String"/>
     <attribute name="originalValue" type="java.lang.String"/>
-    <attribute name="originalCtType" type="java.lang.String"/>
-    <attribute name="originalCtCode" type="java.lang.String"/>
+    <attribute name="originalCTType" type="java.lang.String"/>
+    <attribute name="originalCTCode" type="java.lang.String"/>
     <attribute name="meshCode" type="java.lang.String"/>
     <attribute name="meshValue" type="java.lang.String"/>
   </class>
