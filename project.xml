@@ -15,6 +15,10 @@
       <property name="src.data.dir" location="/home/ubuntu/data/cvt"/>
       <property name="delimited.includes" value="cvt.csv"/>
     </source>
+    <source name="euctr" type="euctr" version="1.0.0">
+      <property name="src.data.dir" location="/home/ubuntu/data/euctr/allfiles"/>
+      <property name="src.data.dir.includes" value="*.xml"/>
+    </source>
     <source name="ctis" type="ctis" version="1.0.0">
       <property name="src.data.dir" location="/home/ubuntu/data/ctis"/>
       <property name="src.data.dir.includes" value="ctis.csv"/>
