@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<!-- Version 1.5 -->
+<!-- Version 1.7 -->
 <classes>
   <!-- Controlled vocabulary -->
   <classes>
@@ -30,8 +30,14 @@
     <attribute name="titleLangCode" type="java.lang.String"/>
     <attribute name="briefDescription" type="java.lang.String"/>
     <attribute name="dataSharingStatement" type="java.lang.String"/>
-    <attribute name="studyStartYear" type="java.lang.Integer"/>
+    <!-- TODO: to strings? -->
+    <!-- TOOD: remove study prefix from these attributes? -->
+    <attribute name="studyStartDay" type="java.lang.Integer"/>
     <attribute name="studyStartMonth" type="java.lang.Integer"/>
+    <attribute name="studyStartYear" type="java.lang.Integer"/>
+    <attribute name="studyEndDay" type="java.lang.Integer"/>
+    <attribute name="studyEndMonth" type="java.lang.Integer"/>
+    <attribute name="studyEndYear" type="java.lang.Integer"/>
     <attribute name="studyType" type="java.lang.String"/>
     <attribute name="studyStatus" type="java.lang.String"/>
     <attribute name="studyEnrolment" type="java.lang.Integer"/>
@@ -51,7 +57,6 @@
     <!-- TODO: to separate class? -->
     <attribute name="secondaryOutcomes" type="java.lang.String"/>
     <!-- One-to-many -->
-    <!-- TODO: try different names for each reverse reference? -->
     <collection name="studyConditions" referenced-type="StudyCondition" reverse-reference="study"/>
     <collection name="studyCountries" referenced-type="StudyCountry" reverse-reference="study"/>
     <collection name="studyFeatures" referenced-type="StudyFeature" reverse-reference="study"/>
@@ -69,7 +74,6 @@
   </class>
 
   <class name="DataObject" is-interface="true">
-    <!-- TODO: need study FK? -->
     <attribute name="title" type="java.lang.String"/>
     <attribute name="version" type="java.lang.String"/>
     <attribute name="displayTitle" type="java.lang.String"/>
@@ -84,7 +88,6 @@
     <attribute name="accessType" type="java.lang.String"/>
     <attribute name="accessDetails" type="java.lang.String"/>
     <attribute name="accessDetailsUrl" type="java.lang.String"/>
-    <!-- TODO: date instead of string? java.util.Date -->
     <attribute name="urlLastChecked" type="java.lang.String"/>
     <attribute name="eoscCategory" type="java.lang.Integer"/>
     <attribute name="addStudyContribs" type="java.lang.Boolean"/>
@@ -165,14 +168,6 @@
     <attribute name="dataObject" referenced-type="DataObject" reverse-reference="objectStudyLinks"/>
   </class> -->
 
-  <class name="StudyOrganisation" is-interface="true">
-    <reference name="study" referenced-type="Study" reverse-reference="studyOrganisations"/>
-    <attribute name="contribType" type="java.lang.String"/>
-    <attribute name="organisation" type="java.lang.String"/>
-    <attribute name="organisationName" type="java.lang.String"/>
-    <attribute name="organisationRor" type="java.lang.String"/>
-  </class>
-
   <class name="StudyPeople" is-interface="true">
     <reference name="study" referenced-type="Study" reverse-reference="studyPeople"/>
     <attribute name="contribType" type="java.lang.String"/>
@@ -181,15 +176,20 @@
     <attribute name="personFullName" type="java.lang.String"/>
     <attribute name="personAffiliation" type="java.lang.String"/>
     <attribute name="orcid" type="java.lang.String"/>
+  </class>
+
+  <class name="StudyOrganisation" is-interface="true">
+    <reference name="study" referenced-type="Study" reverse-reference="studyOrganisations"/>
+    <attribute name="contribType" type="java.lang.String"/>
     <attribute name="organisation" type="java.lang.String"/>
+    <attribute name="organisationType" type="java.lang.String"/>
     <attribute name="organisationName" type="java.lang.String"/>
-    <attribute name="organisationRor" type="java.lang.String"/>
+    <attribute name="ror" type="java.lang.String"/>
   </class>
 
   <class name="StudyRelationship" is-interface="true">
     <reference name="study" referenced-type="Study" reverse-reference="studyRelationships"/>
     <attribute name="relationshipType" type="java.lang.String"/>
-    <!-- TODO: reverse reference? -->
     <reference name="targetStudy" referenced-type="Study"/>
   </class>
 
@@ -207,8 +207,8 @@
     <reference name="study" referenced-type="Study" reverse-reference="studyTopics"/>
     <attribute name="topicType" type="java.lang.String"/>
     <attribute name="originalValue" type="java.lang.String"/>
-    <attribute name="originalCtType" type="java.lang.String"/>
-    <attribute name="originalCtCode" type="java.lang.String"/>
+    <attribute name="originalCTType" type="java.lang.String"/>
+    <attribute name="originalCTCode" type="java.lang.String"/>
     <attribute name="meshCode" type="java.lang.String"/>
     <attribute name="meshValue" type="java.lang.String"/>
   </class>
@@ -270,7 +270,6 @@
     <attribute name="system" type="java.lang.String"/>
     <attribute name="url" type="java.lang.String"/>
     <attribute name="urlAccessible" type="java.lang.Boolean"/>
-    <!-- TODO: date instead of string? java.util.Date -->
     <attribute name="urlLastChecked" type="java.lang.String"/>
     <attribute name="resourceType" type="java.lang.String"/>
     <attribute name="resourceSize" type="java.lang.String"/>
@@ -326,8 +325,8 @@
     <reference name="dataObject" referenced-type="DataObject" reverse-reference="objectTopics"/>
     <attribute name="topicType" type="java.lang.String"/>
     <attribute name="originalValue" type="java.lang.String"/>
-    <attribute name="originalCtType" type="java.lang.String"/>
-    <attribute name="originalCtCode" type="java.lang.String"/>
+    <attribute name="originalCTType" type="java.lang.String"/>
+    <attribute name="originalCTCode" type="java.lang.String"/>
     <attribute name="meshCode" type="java.lang.String"/>
     <attribute name="meshValue" type="java.lang.String"/>
   </class>

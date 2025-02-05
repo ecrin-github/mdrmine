@@ -15,10 +15,23 @@
       <property name="src.data.dir" location="/home/ubuntu/data/cvt"/>
       <property name="delimited.includes" value="cvt.csv"/>
     </source>
+    <source name="euctr" type="euctr" version="1.0.0">
+      <property name="src.data.dir" location="/home/ubuntu/data/euctr/allfiles"/>
+      <property name="src.data.dir.includes" value="testdata.xml"/>
+      <!-- <property name="src.data.dir.includes" value="20210822.xml"/> -->
+      <!-- <property name="src.data.dir.includes" value="20241107_152110_pubmed_*.xml"/> -->
+      <property name="logDir" value="./sources_logs"/>
+    </source>
+    <source name="ctis" type="ctis" version="1.0.0">
+      <property name="src.data.dir" location="/home/ubuntu/data/ctis"/>
+      <property name="src.data.dir.includes" value="ctis_dev.csv"/>
+      <property name="logDir" value="./sources_logs"/>
+    </source>
     <source name="who" type="who" version="1.0.0">
       <property name="src.data.dir" location="/home/ubuntu/data/who"/>
       <!-- <property name="src.data.dir.includes" value="who.csv"/> -->
-      <property name="src.data.dir.includes" value="who_dev.csv"/>
+      <!-- <property name="src.data.dir.includes" value="who_dev.csv"/> -->
+      <property name="src.data.dir.includes" value="weekh1000.csv"/>
       <!-- <property name="src.data.dir.includes" value="1rec.csv"/> -->
       <!-- <property name="src.data.dir.includes" value="ICTRPWeek22July2024_test.csv"/> -->
       <!-- <property name="src.data.dir.includes" value="ICTRPWeek22July2024.csv"/> -->
