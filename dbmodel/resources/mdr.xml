@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<!-- Version 1.7 -->
+<!-- Version 1.8 -->
 <classes>
   <!-- Controlled vocabulary -->
   <classes>
@@ -30,18 +30,15 @@
     <attribute name="titleLangCode" type="java.lang.String"/>
     <attribute name="briefDescription" type="java.lang.String"/>
     <attribute name="dataSharingStatement" type="java.lang.String"/>
-    <!-- TODO: to strings? -->
+    <attribute name="startDate" type="java.util.Date"/>
+    <attribute name="endDate" type="java.util.Date"/>
     <!-- TOOD: remove study prefix from these attributes? -->
-    <attribute name="studyStartDay" type="java.lang.Integer"/>
-    <attribute name="studyStartMonth" type="java.lang.Integer"/>
-    <attribute name="studyStartYear" type="java.lang.Integer"/>
-    <attribute name="studyEndDay" type="java.lang.Integer"/>
-    <attribute name="studyEndMonth" type="java.lang.Integer"/>
-    <attribute name="studyEndYear" type="java.lang.Integer"/>
     <attribute name="studyType" type="java.lang.String"/>
     <attribute name="studyStatus" type="java.lang.String"/>
-    <attribute name="studyEnrolment" type="java.lang.Integer"/>
     <attribute name="studyGenderElig" type="java.lang.String"/>
+    <!-- TODO: how to deal with global conflicting values?: pick one with latest starting date or maximum -->
+    <attribute name="plannedEnrolment" type="java.lang.Integer"/>
+    <attribute name="actualEnrolment" type="java.lang.Integer"/>
     <attribute name="minAge" type="java.lang.String"/>
     <attribute name="minAgeUnit" type="java.lang.String"/>
     <attribute name="maxAge" type="java.lang.String"/>
@@ -63,7 +60,6 @@
     <collection name="studyICDs" referenced-type="StudyICD" reverse-reference="study"/>
     <collection name="studyIdentifiers" referenced-type="StudyIdentifier" reverse-reference="study"/>
     <collection name="studyLocations" referenced-type="StudyLocation" reverse-reference="study"/>
-    <!-- <collection name="studyObjectLinks" referenced-type="StudyObjectLink" reverse-reference="study"/> -->
     <collection name="studyOrganisations" referenced-type="StudyOrganisation" reverse-reference="study"/>
     <collection name="studyPeople" referenced-type="StudyPeople" reverse-reference="study"/>
     <collection name="studyRelationships" referenced-type="StudyRelationship" reverse-reference="study"/>
@@ -123,10 +119,13 @@
   </class>
 
   <class name="StudyCountry" is-interface="true">
-    <reference name="study" referenced-type="Study" reverse-reference="studyCountries"/>
     <!-- TODO: add countries table and reference to it here -->
+    <reference name="study" referenced-type="Study" reverse-reference="studyCountries"/>
     <attribute name="countryName" type="java.lang.String"/>
     <attribute name="status" type="java.lang.String"/>
+    <attribute name="plannedEnrolment" type="java.lang.Integer"/>
+    <attribute name="compAuthorityDecisionDate" type="java.util.Date"/>
+    <attribute name="ethicsCommitteeDecisionDate" type="java.util.Date"/>
   </class>
 
   <class name="StudyFeature" is-interface="true">
@@ -147,7 +146,7 @@
     <attribute name="identifierType" type="java.lang.String"/>
     <attribute name="source" type="java.lang.String"/>
     <attribute name="sourceRor" type="java.lang.String"/>
-    <attribute name="identifierDate" type="java.lang.String"/>
+    <attribute name="identifierDate" type="java.util.Date"/>
     <attribute name="identifierLink" type="java.lang.String"/>
   </class>
 
@@ -163,11 +162,6 @@
     <attribute name="status" type="java.lang.String"/>
   </class>
 
-  <!-- <class name="StudyObjectLink" is-interface="true">
-    <reference name="study" referenced-type="Study" reverse-reference="studyObjectLinks"/>
-    <attribute name="dataObject" referenced-type="DataObject" reverse-reference="objectStudyLinks"/>
-  </class> -->
-
   <class name="StudyPeople" is-interface="true">
     <reference name="study" referenced-type="Study" reverse-reference="studyPeople"/>
     <attribute name="contribType" type="java.lang.String"/>
@@ -181,6 +175,7 @@
   <class name="StudyOrganisation" is-interface="true">
     <reference name="study" referenced-type="Study" reverse-reference="studyOrganisations"/>
     <attribute name="contribType" type="java.lang.String"/>
+    <!-- TODO: add organisation table and reference to it here -->
     <attribute name="organisation" type="java.lang.String"/>
     <attribute name="organisationType" type="java.lang.String"/>
     <attribute name="organisationName" type="java.lang.String"/>
@@ -237,13 +232,8 @@
     <reference name="dataObject" referenced-type="DataObject" reverse-reference="objectDates"/>
     <attribute name="dateType" type="java.lang.String"/>
     <attribute name="dateIsRange" type="java.lang.Boolean"/>
-    <attribute name="dateAsString" type="java.lang.String"/>
-    <attribute name="startYear" type="java.lang.Integer"/>
-    <attribute name="startMonth" type="java.lang.Integer"/>
-    <attribute name="startDay" type="java.lang.Integer"/>
-    <attribute name="endYear" type="java.lang.Integer"/>
-    <attribute name="endMonth" type="java.lang.Integer"/>
-    <attribute name="endDay" type="java.lang.Integer"/>
+    <attribute name="startDate" type="java.util.Date"/>
+    <attribute name="endDate" type="java.util.Date"/>
     <attribute name="details" type="java.lang.String"/>
   </class>
 
@@ -262,7 +252,7 @@
     <attribute name="source" type="java.lang.String"/>
     <attribute name="source" type="java.lang.String"/>
     <attribute name="sourceRor" type="java.lang.String"/>
-    <attribute name="identifierDate" type="java.lang.String"/>
+    <attribute name="identifierDate" type="java.util.Date"/>
   </class>
 
   <class name="ObjectInstance" is-interface="true">
