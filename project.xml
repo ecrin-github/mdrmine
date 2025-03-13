@@ -12,8 +12,20 @@
       <property name="delimited.dataSetTitle" value="Controlled Vocabulary terms"/>
       <property name="delimited.hasHeader" value="true"/>
       <property name="delimited.columns" value="CVTerm.type, CVTerm.value, CVTerm.source"/>
+      <property name="delimited.separator" value="comma"/>
       <property name="src.data.dir" location="/home/ubuntu/data/cvt"/>
       <property name="delimited.includes" value="cvt.csv"/>
+    </source>
+    <source name="countries" type="delimited">
+      <property name="delimited.dataSourceName" value="GeoNames"/>
+      <property name="delimited.dataSetTitle" value="GeoNames country info"/>
+      <property name="delimited.licence" value="https://creativecommons.org/licenses/by/4.0/"/>
+      <property name="delimited.hasHeader" value="true"/>
+      <property name="delimited.columns" 
+      value="Country.isoAlpha2, Country.isoAlpha3, null, null, Country.name, Country.capital, null, null, Country.continent, Country.tld, null, null, null, null, null, null, Country.geonameId, null, null"/>
+      <property name="delimited.separator" value="tab"/>
+      <property name="src.data.dir" location="/home/ubuntu/data/countries"/>
+      <property name="delimited.includes" value="countryInfoCleaned.tsv"/>
     </source>
     <source name="euctr" type="euctr" version="1.0.0">
       <property name="src.data.dir" location="/home/ubuntu/data/euctr/allfiles"/>
