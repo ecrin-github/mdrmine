@@ -3,6 +3,9 @@
 FROM ubuntu:latest AS main
 WORKDIR /mdrmine
 
+ARG SOURCES=""
+ENV SOURCES ${SOURCES}
+
 ENV LANG=C.UTF-8
 ENV JARS_PATH="./sources_jars"
 
@@ -35,5 +38,5 @@ ENV JAVA_HOME="/usr/lib/jvm/java-11-openjdk-amd64/"
 # TODO: memcached somwhere? https://hub.docker.com/_/memcached
 # docker rmi $(docker images --filter "dangling=true" -q --no-trunc)
 
-
-CMD ["./build_and_run.sh", "--skip-install", "--first-build", "--docker", "--update-publications"]
+CMD exec ./build_and_run.sh --skip-install --first-build --docker --update-publications --sources=${SOURCES}
+# CMD ["./build_and_run.sh", "--skip-install", "--first-build", "--docker", "--update-publications", "--sources=${SOURCES}"]

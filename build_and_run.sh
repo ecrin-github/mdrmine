@@ -2,7 +2,7 @@
 
 # Default variable values
 sources_path="/home/ubuntu/code/mdrmine-bio-sources"
-sources="auto"
+sources=""
 skip_install=false
 first_build=false
 docker=false
@@ -40,32 +40,23 @@ build() {
     if [[ -f ./gradlew ]]; then
         ./gradlew clean --stacktrace
         ./gradlew buildDB --stacktrace
-        if [[ "$skip_install" = true ]]; then
-            for fp in $(perl -ne 'while(/<source +name="([^"]+)" +type=(?!"delimited")/g){print "$1\n";}' project.xml); do
+        
+        if [ "$sources" = "" ]; then   # All sources
+            # Getting the sources in order from the project file
+            for fp in $(perl -ne 'while(/<source +name="([^"]+)"/g){print "$1\n";}' project.xml); do
                 echo "------------- Source: $(basename $fp) -------------"
                 ./gradlew integrate -Psource=$(basename $fp) --stacktrace
             done
-        else
-            if [ "$sources" = "auto" ]; then
-                # Getting the sources in order from the project file, excluding the "delimited" (CSV) ones
-                for fp in $(perl -ne 'while(/<source +name="([^"]+)" +type=(?!"delimited")/g){print "$1\n";}' project.xml); do
-                    if [[ -d $fp && -f $fp/$fp.properties ]]; then
-                        ./gradlew integrate -Psource=$(basename $fp) --stacktrace
-                    fi
-                done
-            else
-                # List of sources passed as cmd-line arg
-                j=1
-                while fn=$(echo "$sources"|cut -d "," -f $j) ; [ -n "$fn" ] ;do
-                    if [[ -d $sources_path/$fn/src/main/java/org/intermine/bio/dataconversion ]]; then
-                        ./gradlew integrate -Psource=$(basename $fn) --stacktrace
-                    else
-                        echo "Warning: ignoring source $fn, couldn't find path $sources_path/$fn/src/main/java/org/intermine/bio/dataconversion"
-                    fi
-                    j=$((j+1))
-                done
-            fi
+        else    # List of sources passed as cmd-line arg
+            j=1
+            while fn=$(echo "$sources"|cut -d "," -f $j) ; [ -n "$fn" ] ;do
+                echo "------------- Source: $(basename $fn) -------------"
+                ./gradlew integrate -Psource=$(basename $fn) --stacktrace
+                j=$((j+1))
+            done
         fi
+
+        # PubMed data
         if [[ "$update_publications" = true ]]; then
             ./gradlew integrate -Psource=update-publications --stacktrace
         fi
