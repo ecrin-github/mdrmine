@@ -53,6 +53,8 @@ services:
       - "8983:8983"
   mdrmine:
     build:
+      args:
+        SOURCES: $SOURCES
       context: .
       dockerfile: ./Dockerfiles/main/Dockerfile
     # restart: unless-stopped
