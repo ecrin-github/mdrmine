@@ -39,7 +39,6 @@
     <attribute name="studyType" type="java.lang.String"/>
     <attribute name="studyStatus" type="java.lang.String"/>
     <attribute name="studyGenderElig" type="java.lang.String"/>
-    <!-- TODO: how to deal with global conflicting values?: pick one with latest starting date or maximum -->
     <attribute name="plannedEnrolment" type="java.lang.Integer"/>
     <attribute name="actualEnrolment" type="java.lang.Integer"/>
     <attribute name="minAge" type="java.lang.String"/>
