@@ -30,6 +30,7 @@ Currently, 4 different data sources (trial registries) are partially integrated 
             If you want to change the ports used, you need to modify them here and in `mdrmine/compose.yaml` as well.
 ### Usage
 - `docker compose build --no-cache && docker compose up` to build and run docker images
+    - possible to pass a `SOURCES` environment variable to choose sources to build
 -  `docker compose down --volumes --rmi "local"` to stop and delete running docker images (+ volumes)
 ### Caveats
 - Currently the sources jars fetched from the [MDRMine-bio-sources](https://github.com/ecrin-github/mdrmine-bio-sources) repository artifacts must match the configuration of `<sources>` in the `project.xml` file, other Intermine will throw errors.
