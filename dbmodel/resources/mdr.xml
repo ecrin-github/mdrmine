@@ -12,19 +12,20 @@ terms already fine marked with dcat
 
 -->
 
-<!-- Version 1.9 -->
+<!-- Version 2.0 -->
 <classes>
-  <!-- Controlled vocabulary -->
   <class name="Concept" is-interface="true" extends="Annotatable">
     <attribute name="secondaryIdentifier" type="java.lang.String"/>
     <collection name="relationships" referenced-type="Relationship"/>
   </class>
 
-    <class name="CVTerm" is-interface="true" extends="Annotatable">
-        <attribute name="type" type="java.lang.String"/>
-        <attribute name="value" type="java.lang.String"/>
-        <attribute name="source" type="java.lang.String"/>
-    </class>
+  <!-- Controlled vocabulary -->
+  <class name="CVTerm" is-interface="true" extends="Annotatable">
+      <attribute name="type" type="java.lang.String"/>
+      <attribute name="value" type="java.lang.String"/>
+      <attribute name="source" type="java.lang.String"/>
+  </class>
+
   <class name="Country" is-interface="true" extends="Annotatable">
     <attribute name="isoAlpha2" type="java.lang.String"/>
     <attribute name="isoAlpha3" type="java.lang.String"/>
@@ -81,7 +82,7 @@ terms already fine marked with dcat
     <collection name="titles" referenced-type="Title" reverse-reference="study"/>
     <collection name="topics" referenced-type="Topic" reverse-reference="study"/>
     <collection name="objects" referenced-type="DataObject" reverse-reference="linkedStudy"/>
-<!-- many to many -->
+    <!-- many to many -->
     <collection name="organisations" referenced-type="Organisation" reverse-reference="studies"/>
     <collection name="people" referenced-type="Person" reverse-reference="studies"/>
   </class>
@@ -188,17 +189,17 @@ terms already fine marked with dcat
     <attribute name="fullName" type="java.lang.String"/>
     <attribute name="affiliation" type="java.lang.String"/>
     <attribute name="orcid" type="java.lang.String"/>
-    <collection name="affiliations" referenced-type="Organisation" reverse-reference="people"/>
     <collection name="studies" referenced-type="Study" reverse-reference="people"/>
     <collection name="objects" referenced-type="DataObject" reverse-reference="people"/>
+    <collection name="affiliations" referenced-type="Organisation" reverse-reference="people"/>
   </class>
 
   <class name="Organisation" is-interface="true">
     <attribute name="contribType" type="java.lang.String"/> <!-- ?? -->
     <!-- TODO: add organisation table and reference to it here -->
     <attribute name="organisation" type="java.lang.String"/>
-    <attribute name="organisationType" type="java.lang.String"/>
-    <attribute name="organisationName" type="java.lang.String"/>
+    <attribute name="type" type="java.lang.String"/>
+    <attribute name="name" type="java.lang.String"/>
     <attribute name="ror" type="java.lang.String"/>
     <collection name="studies" referenced-type="Study" reverse-reference="organisations"/>
     <collection name="objects" referenced-type="DataObject" reverse-reference="organisations"/>
