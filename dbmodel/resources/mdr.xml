@@ -37,6 +37,7 @@ terms already fine marked with dcat
   </class>
 
   <class name="Study" is-interface="true" extends="Concept">
+    <attribute name="euctrID" type="java.lang.String"/>
     <attribute name="testField1" type="java.lang.String"/>
     <attribute name="testField2" type="java.lang.String"/>
     <attribute name="testField3" type="java.lang.String"/>
