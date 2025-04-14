@@ -42,18 +42,21 @@
     <source name="euctr" type="euctr" version="1.0.0">
       <property name="src.data.dir" location="/home/ubuntu/data/euctr/allfiles"/>
       <!-- <property name="src.data.dir.includes" value="testdata.xml"/> -->
-      <property name="src.data.dir.includes" value="20210822.xml"/>
+      <property name="src.data.dir.includes" value="test_euctr1.xml"/>
+      <!-- <property name="src.data.dir.includes" value="20210822.xml"/> -->
       <!-- <property name="src.data.dir.includes" value="20*.xml"/> -->
       <property name="logDir" value="./sources_logs"/>
     </source>
     <source name="ctis" type="ctis" version="1.0.0">
       <property name="src.data.dir" location="/home/ubuntu/data/ctis"/>
-      <property name="src.data.dir.includes" value="ctis_dev.csv"/>
+      <property name="src.data.dir.includes" value="test_euctr_1.csv"/>
+      <!-- <property name="src.data.dir.includes" value="ctis_dev.csv"/> -->
       <property name="logDir" value="./sources_logs"/>
     </source>
     <source name="ctg" type="ctg" version="1.0.0">
       <property name="src.data.dir" location="/home/ubuntu/data/ctg"/>
-      <property name="src.data.dir.includes" value="ctg_dev.csv"/>
+      <property name="src.data.dir.includes" value="test_euctr1.csv"/>
+      <!-- <property name="src.data.dir.includes" value="ctg100k.csv"/> -->
       <!-- <property name="src.data.dir.includes" value="ctg-studies.csv"/> -->
       <property name="logDir" value="./sources_logs"/>
     </source>
