@@ -239,6 +239,7 @@ terms already fine marked with dcat
     <reference name="object" referenced-type="DataObject" reverse-reference="topics"/>
   </class>
 
+  <!-- TODO: why is obj shortened here? -->
   <class name="ObjDataset" is-interface="true">
     <reference name="dataObject" referenced-type="DataObject" reverse-reference="datasets"/>
     <attribute name="recordKeysType" type="java.lang.String"/>
