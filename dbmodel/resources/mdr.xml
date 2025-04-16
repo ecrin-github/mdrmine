@@ -12,7 +12,7 @@ terms already fine marked with dcat
 
 -->
 
-<!-- Version 2.0 -->
+<!-- Version 2.1 -->
 <classes>
   <class name="Concept" is-interface="true" extends="Annotatable">
     <attribute name="secondaryIdentifier" type="java.lang.String"/>
@@ -37,6 +37,8 @@ terms already fine marked with dcat
   </class>
 
   <class name="Study" is-interface="true" extends="Concept">
+    <attribute name="euctrID" type="java.lang.String"/>
+    <attribute name="nctID" type="java.lang.String"/>
     <attribute name="testField1" type="java.lang.String"/>
     <attribute name="testField2" type="java.lang.String"/>
     <attribute name="testField3" type="java.lang.String"/>
@@ -88,16 +90,15 @@ terms already fine marked with dcat
   </class>
 
   <class name="DataObject" is-interface="true" extends="Concept">
-    <attribute name="title" type="java.lang.String"/>
     <attribute name="version" type="java.lang.String"/>
-    <attribute name="displayTitle" type="java.lang.String"/>
+    <attribute name="title" type="java.lang.String"/>
     <attribute name="doi" type="java.lang.String"/>
     <attribute name="doiStatus" type="java.lang.String"/>
     <attribute name="publicationYear" type="java.lang.Integer"/>
+    <!-- TODO: check if reserved keyword-->
     <attribute name="objectClass" type="java.lang.String"/>
-    <attribute name="objectType" type="java.lang.String"/>
-    <attribute name="managingOrgRor" type="java.lang.String"/>
-    <attribute name="managingOrg" type="java.lang.String"/>
+    <attribute name="type" type="java.lang.String"/>
+    <reference name="managingOrg" referenced-type="Organisation" reverse-reference="objects"/>
     <attribute name="langCode" type="java.lang.String"/>
     <attribute name="accessType" type="java.lang.String"/>
     <attribute name="accessDetails" type="java.lang.String"/>
@@ -114,7 +115,6 @@ terms already fine marked with dcat
     <collection name="objectDescriptions" referenced-type="ObjectDescription" reverse-reference="dataObject"/>
     <collection name="objectIdentifiers" referenced-type="ObjectIdentifier" reverse-reference="dataObject"/>
     <collection name="objectInstances" referenced-type="ObjectInstance" reverse-reference="dataObject"/>
-    <collection name="organisations" referenced-type="Organisation" reverse-reference="objects"/>
     <collection name="people" referenced-type="Person" reverse-reference="objects"/>
   <!--
     <collection name="relationships" referenced-type="Relationship" reverse-reference="concepts"/>
@@ -202,7 +202,7 @@ terms already fine marked with dcat
     <attribute name="name" type="java.lang.String"/>
     <attribute name="ror" type="java.lang.String"/>
     <collection name="studies" referenced-type="Study" reverse-reference="organisations"/>
-    <collection name="objects" referenced-type="DataObject" reverse-reference="organisations"/>
+    <collection name="objects" referenced-type="DataObject" reverse-reference="managingOrg"/>
     <collection name="people" referenced-type="Person" reverse-reference="affiliations"/>
   </class>
 
@@ -238,6 +238,7 @@ terms already fine marked with dcat
     <reference name="object" referenced-type="DataObject" reverse-reference="topics"/>
   </class>
 
+  <!-- TODO: why is obj shortened here? -->
   <class name="ObjDataset" is-interface="true">
     <reference name="dataObject" referenced-type="DataObject" reverse-reference="datasets"/>
     <attribute name="recordKeysType" type="java.lang.String"/>
