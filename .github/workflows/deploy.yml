@@ -26,6 +26,17 @@ jobs:
           github_token: ${{ secrets.ARTIFACTS_TOKEN }}
           repo: ecrin-github/mdrmine-bio-sources
           check_artifacts: true
+      
+      - name: Download intermine JARs GH artifacts
+        uses: dawidd6/action-download-artifact@v6
+        with:
+          workflow: build_jars.yml
+          # 1) This must match 2)
+          name: sources_jars
+          path: ./sources_jars
+          github_token: ${{ secrets.ARTIFACTS_TOKEN }}
+          repo: ecrin-github/intermine
+          check_artifacts: true
 
       - name: Send artifacts over SSH
         uses: appleboy/scp-action@v0.1.7
