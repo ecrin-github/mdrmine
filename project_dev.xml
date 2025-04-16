@@ -34,14 +34,15 @@
       <!-- <property name="src.data.dir.includes" value="weekh1000.csv"/> -->
       <!-- <property name="src.data.dir.includes" value="1rec.csv"/> -->
       <!-- <property name="src.data.dir.includes" value="ICTRPWeek22July2024.csv"/> -->
-      <property name="src.data.dir.includes" value="test.csv"/>
+      <property name="src.data.dir.includes" value="test_euctr1.csv"/>
+      <!-- <property name="src.data.dir.includes" value="test.csv"/> -->
       <!-- <property name="src.data.dir.includes" value="ICTRPFullExport-1003291-20-06-2024.csv"/> -->
       <property name="headersFilePath" value="/home/ubuntu/data/who/ICTRP_headers.csv"/>
       <property name="logDir" value="./sources_logs"/>
     </source>
     <source name="euctr" type="euctr" version="1.0.0">
-      <property name="src.data.dir" location="/home/ubuntu/data/euctr/allfiles"/>
-      <!-- <property name="src.data.dir.includes" value="testdata.xml"/> -->
+      <property name="src.data.dir" location="/home/ubuntu/data/euctr"/>
+      <!-- <property name="src.data.dir.includes" value="test.xml"/> -->
       <property name="src.data.dir.includes" value="test_euctr1.xml"/>
       <!-- <property name="src.data.dir.includes" value="20210822.xml"/> -->
       <!-- <property name="src.data.dir.includes" value="20*.xml"/> -->
@@ -49,7 +50,7 @@
     </source>
     <source name="ctis" type="ctis" version="1.0.0">
       <property name="src.data.dir" location="/home/ubuntu/data/ctis"/>
-      <property name="src.data.dir.includes" value="test_euctr_1.csv"/>
+      <property name="src.data.dir.includes" value="test_euctr1.csv"/>
       <!-- <property name="src.data.dir.includes" value="ctis_dev.csv"/> -->
       <property name="logDir" value="./sources_logs"/>
     </source>
