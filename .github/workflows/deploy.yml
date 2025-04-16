@@ -6,9 +6,9 @@ name: MdrMine deployment on production
 concurrency: production
 
 on:
-  push:  # This also triggers on PR merge
-    branches:
-      - main
+  # push:  # This also triggers on PR merge
+  #   branches:
+  #     - main
   workflow_dispatch:
 
 jobs:
