@@ -20,9 +20,8 @@ RUN sed -i 's/localhost/solr/' /mdrmine/dbmodel/resources/keyword_search.propert
 # TODO: add check of sources in project.xml?
 RUN if [ -n "$( ls -A "$JARS_PATH" )" ]; then mkdir -p ~/.m2/repository/org/intermine/ && mv "$JARS_PATH"/* ~/.m2/repository/org/intermine/ ; fi
 
-# TODO: change OPTS to set more memory?
-# GRADLE_OPTS="-server -Xmx8g -XX:+UseParallelGC -Xms2g -XX:SoftRefLRUPolicyMSPerMB=1 -XX:MaxHeapFreeRatio=99 -Dorg.gradle.daemon=false"
-ENV GRADLE_OPTS="-Dorg.gradle.daemon=false"
+# Setting more memory to avoid OutOfMemoryError on WHO
+ENV GRADLE_OPTS="-server -Xmx16g -XX:+UseParallelGC -Xms2g -XX:SoftRefLRUPolicyMSPerMB=1 -XX:MaxHeapFreeRatio=99 -Dorg.gradle.daemon=false"
 RUN export GRADLE_OPTS
 
 # Installing Java

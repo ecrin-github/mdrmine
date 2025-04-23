@@ -48,11 +48,10 @@ build() {
                 ./gradlew integrate -Psource=$(basename $fp) --stacktrace
             done
         else    # List of sources passed as cmd-line arg
-            j=1
-            while fn=$(echo "$sources"|cut -d "," -f $j) ; [ -n "$fn" ] ;do
-                echo "------------- Source: $(basename $fn) -------------"
-                ./gradlew integrate -Psource=$(basename $fn) --stacktrace
-                j=$((j+1))
+            for j in ${sources//,/ }
+            do
+                echo "------------- Source: $j -------------"
+                ./gradlew integrate -Psource=$j --stacktrace
             done
         fi
 
