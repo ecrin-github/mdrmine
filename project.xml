@@ -63,6 +63,7 @@
                 into an InterMine format XML file, loads that file into a target
                 items DB, then into the final objectstore dump="true"-->
       <property name="src.data.file" location="publications.xml"/>
+      <property name="loadFullRecord" value="true"/>
     </source>
   </sources>
   
