@@ -7,11 +7,14 @@ services:
     # restart: unless-stopped
     volumes:
       - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+      - ./pg_upd.conf:/etc/postgresql.conf
     environment:
       # TODO: define secrets using GH secrets: use ssh-action to modify properties and docker secrets files?
       POSTGRES_MULTIPLE_DATABASES: mdrmine,items-mdrmine,userprofile-mdrmine
       POSTGRES_USER_FILE: /run/secrets/postgres_user
       POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+      POSTGRES_INITDB_ARGS: '--encoding=SQL_ASCII --lc-collate=C --lc-ctype=C'
+    command: -c config_file=/etc/postgresql.conf
     ports:
       - "5433:5432"
     secrets:
