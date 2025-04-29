@@ -7,7 +7,6 @@ skip_install=false
 first_build=false
 docker=false
 verbose=false
-update_publications=false
 
 usage() {
     echo "Build and deploy MDRMine."
@@ -17,7 +16,6 @@ usage() {
     echo " -f, --first-build                                            Replaces ./gradlew cargoRedeployRemote by ./gradlew cargoDeployRemote"
     echo " -p=[sources_path], --path=[sources_path]                     Set sources repo path, default: $sources_path"
     echo " -s=[list of comma separated sources], --sources=[sources]    Set list of sources to integrate, default behaviour includes all in sources folder"
-    echo " -u, --update-publications                                    After integrating the sources, fetch PubMed articles from DB-inserted PMIDs"
     echo " -v, --verbose                                                Enable verbose mode (outputs commands)"
     echo " -x, --skip-install                                           Skip ./gradlew install in bio-sources repository"
 }
@@ -55,10 +53,7 @@ build() {
             done
         fi
 
-        # PubMed data
-        if [[ "$update_publications" = true ]]; then
-            ./gradlew integrate -Psource=update-publications --stacktrace
-        fi
+        # Postprocess
         ./gradlew postProcess --stacktrace
         ./gradlew buildUserDB --stacktrace
 
@@ -106,10 +101,6 @@ for i in "$@"; do
         ;;
     -s=*|--sources=*)
         sources="${i#*=}"
-        shift
-        ;;
-    -u | --update-publications)
-        update_publications=true
         shift
         ;;
     -*|--*)
