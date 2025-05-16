@@ -26,9 +26,15 @@ build() {
         set -x
     fi
 
+
     if [[ "$skip_install" = false ]]; then
         if [[ -f $sources_path/gradlew ]]; then
-            $sources_path/gradlew install --stacktrace
+            mine_dir=$(pwd)
+            echo "--- Cleaning sources ---"
+            cd $sources_path
+            ./gradlew clean
+            ./gradlew install --stacktrace
+            cd $mine_dir
         else
             echo "Error: couldn't find sources folder gradlew file, path tried: $sources_path/gradlew install" >&2
             exit 1
@@ -36,7 +42,9 @@ build() {
     fi
 
     if [[ -f ./gradlew ]]; then
+        echo "--- Cleaning mine ---"
         ./gradlew clean --stacktrace
+        echo "--- Building DB ---"
         ./gradlew buildDB --stacktrace
         
         if [ "$sources" = "" ]; then   # All sources
@@ -55,6 +63,7 @@ build() {
 
         # Postprocess
         ./gradlew postProcess --stacktrace
+        # TODO: userprofile DB should not be rebuilt
         ./gradlew buildUserDB --stacktrace
 
         if [[ "$docker" = true ]]; then
