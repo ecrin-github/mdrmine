@@ -29,15 +29,15 @@ RUN export GRADLE_OPTS
 
 # Installing Java
 RUN apt-get update && apt-get install -y \
-    openjdk-11-jdk && \
+    openjdk-11-jdk postgresql-client && \
     apt-get clean;
 ENV JAVA_HOME="/usr/lib/jvm/java-11-openjdk-amd64/"
 
 # TODO: run docker compose up in FG in deploy.yml but tomcat in background?
 # TODO: remove down --volumes on every run? deploy.yml
-# TODO: add params for sources selection
 # TODO: try to change Docker secret files permissions
 # TODO: memcached somwhere? https://hub.docker.com/_/memcached
 # docker rmi $(docker images --filter "dangling=true" -q --no-trunc)
 
-CMD exec ./build_and_run.sh --skip-install --first-build --docker --sources=${SOURCES}
+CMD exec ./build_and_run.sh --skip-install --first-build --docker --deploy-remote --sources=${SOURCES}
+# CMD ["./build_and_run.sh", "--skip-install", "--first-build", "--docker", "--sources=${SOURCES}"]
