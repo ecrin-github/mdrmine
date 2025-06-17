@@ -124,13 +124,22 @@ build() {
         fi
 
         if [[ "$deploy_remote" = true ]]; then
-            # Dumping local build
+            
             echo "Dumping local DB"
             pg_dump -h "$local_prod_host" -p "$local_prod_port" -U "$local_prod_user" -d "$local_prod_db" -F c > ./mdrmine_build.sql
             # Transfer local build to remote machine
             echo "Transfer local build to remote machine"
             # TODO: add something to backup old DB
             pg_restore --clean -h "$remote_prod_host" -p "$remote_prod_port" -U "$remote_prod_user" -d "$remote_prod_db" ./mdrmine_build.sql
+
+            # TODO: ssh, then start container? and run gradlew and possibly restart other containers?
+            # starting container basically re-runs it
+            # TODO: should check that Docker is running on remote
+            if [[ "$docker" = true ]]; then
+                
+            else
+                echo "Docker flag is false, not doing anything with the remote containers (no postprocess for solr)"
+            fi
         else
             ./gradlew buildUserDB --stacktrace
             if [[ "$docker" = true ]]; then

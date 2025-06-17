@@ -59,7 +59,7 @@ services:
       args:
         SOURCES: $SOURCES
       context: .
-      dockerfile: ./Dockerfiles/main/Dockerfile
+      dockerfile: ./Dockerfiles/main/Dockerfile.build
     # restart: unless-stopped
     volumes:
       - webapps:/webapps
