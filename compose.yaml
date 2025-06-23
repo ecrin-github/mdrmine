@@ -58,14 +58,17 @@ services:
     build:
       args:
         SOURCES: $SOURCES
+        HOSTNAME: db  # this needs to match Postgres service name
       context: .
-      dockerfile: ./Dockerfiles/main/Dockerfile.build
+      dockerfile: ./Dockerfiles/main/Dockerfile
+      target: mdrmine_build
     # restart: unless-stopped
     volumes:
       - webapps:/webapps
       - type: bind
         source: ~/.intermine
-        target: /root/.intermine
+        target: /root/.intermine_base
+        read_only: true
       - type: bind
         source: /home/ubuntu/data/
         target: /home/ubuntu/data/
