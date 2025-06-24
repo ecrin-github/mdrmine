@@ -26,17 +26,19 @@ postprocess() {
     cp -r /root/.intermine_base /root/.intermine
 
     if [[ -f ./compose.yaml ]]; then
+        # TODO: this is for non-docker
         # Setting correct port in properties file (external), this is assuming that the internal port will be 5432
         # TODO: should check that db.production.datasource.port is not already set
         external_port=$(grep -Eo "[[:digit:]]+:5432\"" compose.yaml | cut -d ':' -f1)
         echo "db.production.datasource.port=$external_port" >> /root/.intermine/mdrmine.properties
         
         # Setting correct hostname 
-        hostname_regex="HOSTNAME:[[:space:]]*(.*)([[:space:]].*)?" compose.yaml
-        if [[ ./compose.yaml =~ $hostname_regex ]]; then
+        hostname_regex="HOSTNAME:[[:space:]]*([^\n[:space:]]*)([[:space:]][^\n]*)?"
+        if [[ $(cat ./compose.yaml) =~ $hostname_regex ]]; then
             hostname="${BASH_REMATCH[1]}"
-        if [ "$hostname" != "localhost" ]; then 
-            sed -i "s/serverName=localhost/serverName=$hostname/" /root/.intermine/mdrmine.properties
+            if [ "$hostname" != "localhost" ]; then 
+                sed -i "s/serverName=localhost/serverName=$hostname/" /root/.intermine/mdrmine.properties
+            fi
         fi
     else
         echo "Couldn't find compose.yaml file in the current directory"
