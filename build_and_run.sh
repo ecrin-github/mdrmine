@@ -11,11 +11,13 @@ skip_sources=false
 sources_path="/home/ubuntu/code/mdrmine-bio-sources"
 sources=""
 verbose=false
+default_port="5432"
+
 local_prod_db=""
 local_prod_user=""
 local_prod_pass=""
 local_prod_host=""
-local_prod_port="5432"
+local_prod_port=""
 remote_prod_db=""
 remote_prod_user=""
 remote_prod_pass=""
@@ -46,32 +48,32 @@ get_prop() {
     grep "^${1}" $properties_path|cut -d'=' -f2
 }
 
-load_db_properties() {
-    host_port_regex="^(.+):([[:digit:]]+)$"
-
+load_properties() {
     # Local DB
     local_prod_host=$(get_prop "db.production.datasource.serverName")
     local_prod_db=$(get_prop "db.production.datasource.databaseName")
     local_prod_user=$(get_prop "db.production.datasource.user")
     local_prod_pass=$(get_prop "db.production.datasource.password")
+    local_prod_port=$(get_prop "db.production.datasource.port")
 
-    if [[ $local_prod_host =~ $host_port_regex ]]
-    then
-        local_prod_host=${BASH_REMATCH[1]};
-        local_prod_port=${BASH_REMATCH[2]};
+    if [[ $local_prod_port = "" ]]; then
+        local_prod_port=$default_port;
     fi
     
+    # TODO: test if not having these properties stops the script and check deploy_remote accordingly
     # Remote DB
     remote_prod_host=$(get_prop "remote.production.datasource.serverName")
     remote_prod_db=$(get_prop "remote.production.datasource.databaseName")
     remote_prod_user=$(get_prop "remote.production.datasource.user")
     remote_prod_pass=$(get_prop "remote.production.datasource.password")
+    remote_prod_port=$(get_prop "remote.production.datasource.port")
 
-    if [[ $remote_prod_host =~ $host_port_regex ]]
-    then
-        remote_prod_host=${BASH_REMATCH[1]};
-        remote_prod_port=${BASH_REMATCH[2]};
+    if [[ $remote_prod_host = "" ]]; then
+        remote_prod_port=$default_port;
     fi
+
+    # Remote machine user for SSH
+    remote_user=$(get_prop "remote.user")
 }
 
 build() {
@@ -88,7 +90,7 @@ build() {
         sed -i "s/serverName=localhost/serverName=$hostname/" /root/.intermine/mdrmine.properties
     fi
 
-    load_db_properties
+    load_properties
 
     if [[ "$docker" = true ]]; then
         echo "$local_prod_host:$local_prod_port:*:$local_prod_user:$local_prod_pass" > ~/.pgpass
@@ -140,27 +142,22 @@ build() {
             
             echo "Dumping local DB"
             pg_dump -h "$local_prod_host" -p "$local_prod_port" -U "$local_prod_user" -d "$local_prod_db" -F c > ./mdrmine_build.sql
-            # Transfer local build to remote machine
-            echo "Transfer local build to remote machine"
-            # TODO: add something to backup old DB
-            # TODO: compose network name
-            pg_restore --clean -h "$remote_prod_host" -p "$remote_prod_port" -U "$remote_prod_user" -d "$remote_prod_db" ./mdrmine_build.sql
 
-            ./gradlew buildUserDB --stacktrace
+            echo "Transfer local build to remote machine"
+            pg_restore --clean -h "$remote_prod_host" -p "$remote_prod_port" -U "$remote_prod_user" -d "$remote_prod_db" ./mdrmine_build.sql
+            # TODO: add something to backup old DB
+
             ./gradlew war
             cp ./webapp/build/libs/webapp.war /webapps/mdrmine.war
 
-            # docker build -f Dockerfiles/main/Dockerfile --target mdrmine_postprocess -t mdrmine_postprocess .
-            # docker run --mount type=bind,src=/home/ubuntu/.intermine,dst=/root/.intermine_base --network=mdrmine_default mdrmine_postprocess
-
-            # TODO: ssh, then start container? and run gradlew and possibly restart other containers?
-            # starting container basically re-runs it
-            # TODO: should check that Docker is running on remote
-            # if [[ "$docker" = true ]]; then
-                
-            # else
-            #     echo "Docker flag is false, not doing anything with the remote containers (no postprocess for solr)"
-            # fi
+            # TODO: should check that Docker is running on remote?
+            # TODO: option to run only this part if failed?
+            # Run solr postprocesses on remote
+            ssh $remote_user@$remote_prod_host -o StrictHostKeyChecking=no <<EOF
+                cd ${remote_mdrmine_path};
+                docker build -f Dockerfiles/main/Dockerfile --target mdrmine_postprocess -t mdrmine_postprocess .;
+                docker run --mount type=bind,src=/home/ubuntu/.intermine,dst=/root/.intermine_base --network=mdrmine_default mdrmine_postprocess;
+EOF
         else
             ./gradlew buildUserDB --stacktrace
             if [[ "$docker" = true ]]; then

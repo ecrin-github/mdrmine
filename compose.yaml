@@ -62,7 +62,8 @@ services:
       context: .
       dockerfile: ./Dockerfiles/main/Dockerfile
       target: mdrmine_build
-    # restart: unless-stopped
+    environment:
+      SSH_AUTH_SOCK: /ssh-agent
     volumes:
       - webapps:/webapps
       - type: bind
@@ -75,6 +76,9 @@ services:
       - type: bind
         source: ./sources_logs
         target: /mdrmine/sources_logs
+      - type: bind
+        source: $SSH_AUTH_SOCK
+        target: /ssh-agent
 
 # Note: change this a shared bind mount to keep the Tomcat default apps (Manager, etc.) https://stackoverflow.com/a/46111405/23455986
 volumes:
