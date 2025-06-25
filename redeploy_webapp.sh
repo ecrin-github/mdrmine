@@ -1,18 +1,7 @@
 #!/bin/bash
 
-# TODO: refactor this with other scripts
-
-# Copy bind-mounted properties to be able to edit them without changing the original files
-cp -r /root/.intermine_base /root/.intermine
-
-# Setting correct hostname 
-hostname_regex="HOSTNAME:[[:space:]]*([^\n[:space:]]*)([[:space:]][^\n]*)?"
-if [[ $(cat ./compose.yaml) =~ $hostname_regex ]]; then
-    hostname="${BASH_REMATCH[1]}"
-    if [ "$hostname" != "localhost" ]; then 
-        sed -i "s/serverName=localhost/serverName=$hostname/" /root/.intermine/mdrmine.properties
-    fi
-fi
+# docker build -f Dockerfiles/main/Dockerfile --target mdrmine_webapp -t mdrmine_webapp .
+# docker run --mount type=bind,src=/home/ubuntu/.intermine,dst=/root/.intermine --volume mdrmine_webapps:/webapps --network=mdrmine_default mdrmine_webapp
 
 ./gradlew war
 rm /webapps/mdrmine.war

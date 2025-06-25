@@ -32,6 +32,7 @@ See the [sources wiki](https://github.com/ecrin-github/mdrmine-bio-sources/wiki)
 ### Usage
 - `docker compose build --no-cache && docker compose up` to build and run docker images
     - possible to pass a `SOURCES` environment variable to choose sources to build
+    - possible to pass a `LOCAL` environment variable with any value to not pass the --deploy-remote flag to the build script (which is the default behaviour)
 -  `docker compose down --volumes --rmi "local"` to stop and delete running docker images (+ volumes)
 ### Caveats
 - Currently the sources jars fetched from the [MDRMine-bio-sources](https://github.com/ecrin-github/mdrmine-bio-sources) repository artifacts must match the configuration of `<sources>` in the `project.xml` file, other Intermine will throw errors.

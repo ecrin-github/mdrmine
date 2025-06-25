@@ -1,9 +1,11 @@
 # syntax=docker/dockerfile:1
+ARG LOCAL=false
 ARG HOSTNAME=localhost
 
 FROM ubuntu:latest AS mdrmine_env
 WORKDIR /mdrmine
 
+ARG LOCAL
 ARG HOSTNAME
 ARG SOURCES=""
 ENV SOURCES=${SOURCES}
@@ -45,19 +47,21 @@ ENV JAVA_HOME="/usr/lib/jvm/java-11-openjdk-amd64/"
 
 
 FROM mdrmine_env AS mdrmine_build
+ARG LOCAL
 ARG HOSTNAME
-ENV HOSTNAME ${HOSTNAME}
+ENV LOCAL=${LOCAL}
+ENV HOSTNAME=${HOSTNAME}
+ENV DEPLOY_REMOTE=${LOCAL:---deploy-remote}
 
-CMD exec ./build_and_run.sh --skip-install --first-build --docker --deploy-remote --sources=${SOURCES} --hostname=${HOSTNAME}
-# CMD ["./build_and_run.sh", "--skip-install", "--first-build", "--docker", "--sources=${SOURCES}"]
+ENTRYPOINT ./build_and_run.sh --skip-install --first-build --docker ${DEPLOY_REMOTE} --sources=${SOURCES} --hostname=${HOSTNAME}
 
 
 FROM mdrmine_env AS mdrmine_postprocess
 ENV HOSTNAME="db"
 
-CMD exec ./postprocess.sh
+ENTRYPOINT ./postprocess.sh
 
 
 FROM mdrmine_env AS mdrmine_webapp
 
-CMD exec ./redeploy_webapp.sh
+ENTRYPOINT ./redeploy_webapp.sh
