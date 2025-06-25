@@ -56,3 +56,8 @@ FROM mdrmine_env AS mdrmine_postprocess
 ENV HOSTNAME="db"
 
 CMD exec ./postprocess.sh
+
+
+FROM mdrmine_env AS mdrmine_webapp
+
+CMD exec ./redeploy_webapp.sh
