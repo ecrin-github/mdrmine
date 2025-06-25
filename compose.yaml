@@ -69,7 +69,7 @@ services:
       - webapps:/webapps
       - type: bind
         source: ~/.intermine
-        target: /root/.intermine_base
+        target: /root/.intermine
         read_only: true
       - type: bind
         source: /home/ubuntu/data/
