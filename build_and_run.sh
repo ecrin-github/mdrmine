@@ -82,14 +82,6 @@ build() {
         set -x
     fi
 
-    # Copy bind-mounted properties to be able to edit them without changing the original files
-    cp -r /root/.intermine_base /root/.intermine
-
-    # Modifying serverName properties in properties file if different than localhost
-    if [ "$hostname" != "localhost" ]; then 
-        sed -i "s/serverName=localhost/serverName=$hostname/" /root/.intermine/mdrmine.properties
-    fi
-
     load_properties
 
     if [[ "$docker" = true ]]; then
@@ -133,13 +125,13 @@ build() {
                 done
             fi
 
+            # ./gradlew postprocess --stacktrace
             ./gradlew postprocess -Pprocess=do-sources --stacktrace
             ./gradlew postprocess -Pprocess=create-attribute-indexes --stacktrace
             ./gradlew postprocess -Pprocess=summarise-objectstore --stacktrace
         fi
 
         if [[ "$deploy_remote" = true ]]; then
-            
             echo "Dumping local DB"
             pg_dump -h "$local_prod_host" -p "$local_prod_port" -U "$local_prod_user" -d "$local_prod_db" -F c > ./mdrmine_build.sql
 
@@ -147,28 +139,26 @@ build() {
             pg_restore --clean -h "$remote_prod_host" -p "$remote_prod_port" -U "$remote_prod_user" -d "$remote_prod_db" ./mdrmine_build.sql
             # TODO: add something to backup old DB
 
-            ./gradlew war
-            cp ./webapp/build/libs/webapp.war /webapps/mdrmine.war
-
             # TODO: should check that Docker is running on remote?
             # TODO: option to run only this part if failed?
+            # TODO: remote mdrmine path should be an arg
             # Run solr postprocesses on remote
             ssh $remote_user@$remote_prod_host -o StrictHostKeyChecking=no <<EOF
-                cd ${remote_mdrmine_path};
+                cd ./code/mdrmine;
                 docker build -f Dockerfiles/main/Dockerfile --target mdrmine_postprocess -t mdrmine_postprocess .;
-                docker run --mount type=bind,src=/home/ubuntu/.intermine,dst=/root/.intermine_base --network=mdrmine_default mdrmine_postprocess;
+                docker run --mount type=bind,src=/home/ubuntu/.intermine,dst=/root/.intermine --network=mdrmine_default mdrmine_postprocess;
 EOF
+        fi
+            
+        ./gradlew buildUserDB --stacktrace
+        if [[ "$docker" = true ]]; then
+            # Generate war file
+            ./gradlew war
+            cp ./webapp/build/libs/webapp.war /webapps/mdrmine.war
+        elif [[ "$first_build" = false ]]; then
+            ./gradlew cargoRedeployRemote --stacktrace
         else
-            ./gradlew buildUserDB --stacktrace
-            if [[ "$docker" = true ]]; then
-                # Generate war file
-                ./gradlew war
-                cp ./webapp/build/libs/webapp.war /webapps/mdrmine.war
-            elif [[ "$first_build" = false ]]; then
-                ./gradlew cargoRedeployRemote --stacktrace
-            else
-                ./gradlew cargoDeployRemote --stacktrace
-            fi
+            ./gradlew cargoDeployRemote --stacktrace
         fi
     else
         echo "Error: couldn't find gradlew file, make sure you run the script for the root MDRMine folder." >&2
