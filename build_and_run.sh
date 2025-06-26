@@ -148,6 +148,9 @@ build() {
                 docker build -f Dockerfiles/main/Dockerfile --target mdrmine_postprocess -t mdrmine_postprocess .;
                 docker run --mount type=bind,src=/home/ubuntu/.intermine,dst=/root/.intermine --network=mdrmine_default mdrmine_postprocess;
 EOF
+        else
+            ./gradlew postprocess -Pprocess=create-autocomplete-index --stacktrace
+            ./gradlew postprocess -Pprocess=create-search-index --stacktrace
         fi
             
         ./gradlew buildUserDB --stacktrace
