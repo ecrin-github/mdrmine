@@ -32,7 +32,10 @@ services:
     volumes:
       - webapps:/usr/local/tomcat/webapps
   bluegenes:
-    image: intermine/bluegenes:latest
+    build:
+      context: ../bluegenes
+      dockerfile: ../bluegenes/Dockerfile
+    # image: intermine/bluegenes:1.4.5-dx
     restart: unless-stopped
     volumes:
       - type: bind
@@ -42,7 +45,7 @@ services:
           create_host_path: true
     env_file: ~/.intermine/bluegenes.env
     ports:
-      - "8090:8090"
+      - "8090:8090" # this is 8090:8090 because of the config in bluegenes.env
   solr:
     image: solr:latest
     restart: unless-stopped
