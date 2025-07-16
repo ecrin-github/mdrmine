@@ -8,7 +8,7 @@ The data sources and their corresponding data files are defined in the `project.
 See the [sources wiki](https://github.com/ecrin-github/mdrmine-bio-sources/wiki) for more details.
 
 ## Configuration
-- Needs `-A ufw-user-input -p tcp -m tcp --dport 8080 -j ACCEPT` and `-A ufw-user-input -p udp -m udp --dport 8080 -j ACCEPT` on the webapp machine for Tomcat to allow BlueGenes queries (e.g. user login)
+- Requires `iptables -A ufw-user-input -p tcp -m tcp --dport 8080 -j ACCEPT` and `iptables -A ufw-user-input -p udp -m udp --dport 8080 -j ACCEPT` firewall rules on the webapp machine for Tomcat (running on 8080) to allow BlueGenes queries (e.g. user login)
 
 ## Docker deployment
 ### Required configuration
