@@ -7,6 +7,9 @@ The data sources and their corresponding data files are defined in the `project.
 
 See the [sources wiki](https://github.com/ecrin-github/mdrmine-bio-sources/wiki) for more details.
 
+## Configuration
+- Needs `-A ufw-user-input -p tcp -m tcp --dport 8080 -j ACCEPT` and `-A ufw-user-input -p udp -m udp --dport 8080 -j ACCEPT` on the webapp machine for Tomcat to allow BlueGenes queries (e.g. user login)
+
 ## Docker deployment
 ### Required configuration
 - Java for compiling sources: `openjdk 11.0.23`
