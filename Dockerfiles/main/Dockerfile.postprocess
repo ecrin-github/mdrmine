@@ -1,6 +1,0 @@
-# syntax=docker/dockerfile:1
-
-FROM ubuntu:latest
-WORKDIR /mdrmine
-
-CMD exec ./postprocess.sh

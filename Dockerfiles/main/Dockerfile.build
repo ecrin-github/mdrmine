@@ -1,5 +1,0 @@
-# syntax=docker/dockerfile:1
-
-FROM ubuntu:latest
-
-CMD exec ./build_and_run.sh --skip-install --first-build --docker --deploy-remote --sources=${SOURCES}

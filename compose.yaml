@@ -32,7 +32,10 @@ services:
     volumes:
       - webapps:/usr/local/tomcat/webapps
   bluegenes:
-    image: intermine/bluegenes:latest
+    build:
+      context: ../bluegenes
+      dockerfile: ../bluegenes/Dockerfile
+    # image: intermine/bluegenes:1.4.5-dx
     restart: unless-stopped
     volumes:
       - type: bind
@@ -42,7 +45,7 @@ services:
           create_host_path: true
     env_file: ~/.intermine/bluegenes.env
     ports:
-      - "8090:8090"
+      - "8090:8090" # this is 8090:8090 because of the config in bluegenes.env
   solr:
     image: solr:latest
     restart: unless-stopped
@@ -58,20 +61,28 @@ services:
     build:
       args:
         SOURCES: $SOURCES
+        LOCAL: $LOCAL
+        HOSTNAME: db  # this needs to match Postgres service name
       context: .
-      dockerfile: ./Dockerfiles/main/Dockerfile.build
-    # restart: unless-stopped
+      dockerfile: ./Dockerfiles/main/Dockerfile
+      target: mdrmine_build
+    environment:
+      SSH_AUTH_SOCK: /ssh-agent
     volumes:
       - webapps:/webapps
       - type: bind
         source: ~/.intermine
         target: /root/.intermine
+        read_only: true
       - type: bind
         source: /home/ubuntu/data/
         target: /home/ubuntu/data/
       - type: bind
         source: ./sources_logs
         target: /mdrmine/sources_logs
+      - type: bind
+        source: $SSH_AUTH_SOCK
+        target: /ssh-agent
 
 # Note: change this a shared bind mount to keep the Tomcat default apps (Manager, etc.) https://stackoverflow.com/a/46111405/23455986
 volumes:
