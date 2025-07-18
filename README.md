@@ -7,7 +7,13 @@ The data sources and their corresponding data files are defined in the `project.
 
 See the [sources wiki](https://github.com/ecrin-github/mdrmine-bio-sources/wiki) for more details.
 
+## Requirements
+- `iptables -A ufw-user-input -p tcp -m tcp --dport 8080 -j ACCEPT` and `iptables -A ufw-user-input -p udp -m udp --dport 8080 -j ACCEPT` firewall rules on the webapp machine for Tomcat (running on 8080) to allow BlueGenes queries (e.g. user login)
+- [Forked version of InterMine](https://github.com/cudillal/intermine) to fix an issue during the merging of sources
+    - compiling of JARs required (see [Usage](#usage))
+
 ## Docker deployment
+Note: the current GH action to build and deploy on a remote machine is outdated (missing InterMine fork JARs) and should not be used. 
 ### Required configuration
 - Java for compiling sources: `openjdk 11.0.23`
 - Docker secrets files
@@ -30,10 +36,13 @@ See the [sources wiki](https://github.com/ecrin-github/mdrmine-bio-sources/wiki)
     - Finally, you will need a ssh-agent running that allows to connect to the remote machine with just `ssh user@hostname`, see [guide here](https://www.ssh.com/academy/ssh/agent)
 
 ### Usage
+- `gradlew install` or `update_jars_local.sh` **in the InterMine fork folder** required to compile the forked InterMine code
+- `update_jars_local.sh` from the [sources repository](https://github.com/ecrin-github/mdrmine-bio-sources) to generate the sources JARs and move them to the MDRMine folder
 - `docker compose build --no-cache && docker compose up` to build and run docker images
     - possible to pass a `SOURCES` environment variable to choose sources to build
     - possible to pass a `LOCAL` environment variable with any value to not pass the --deploy-remote flag to the build script (which is the default behaviour)
 -  `docker compose down --volumes --rmi "local"` to stop and delete running docker images (+ volumes)
+
 ### Caveats
 - Currently the sources jars fetched from the [MDRMine-bio-sources](https://github.com/ecrin-github/mdrmine-bio-sources) repository artifacts must match the configuration of `<sources>` in the `project.xml` file, other Intermine will throw errors.
 - TODO: Probably other caveats regarding properties, build script, and compose file
