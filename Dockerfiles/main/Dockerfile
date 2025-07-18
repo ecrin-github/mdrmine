@@ -2,6 +2,7 @@
 ARG LOCAL=false
 ARG HOSTNAME=localhost
 
+# TODO: change to java 11 image?
 FROM ubuntu:latest AS mdrmine_env
 WORKDIR /mdrmine
 
