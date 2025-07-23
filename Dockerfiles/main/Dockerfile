@@ -2,6 +2,7 @@
 ARG EMPTY=false
 ARG LOCAL=false
 ARG HOSTNAME=localhost
+ARG SOURCES=""
 
 # TODO: change to java 11 image?
 FROM ubuntu:latest AS mdrmine_env
@@ -10,8 +11,11 @@ WORKDIR /mdrmine
 ARG EMPTY
 ARG LOCAL
 ARG HOSTNAME
-ARG SOURCES=""
+ARG SOURCES
 ENV SOURCES=${SOURCES}
+ENV HOSTNAME=${HOSTNAME}
+ENV EMPTY=${EMPTY:+--build-empty}
+ENV DEPLOY_REMOTE=${LOCAL:---deploy-remote}
 
 ENV LANG=C.UTF-8
 ENV JARS_PATH="./sources_jars"
@@ -34,7 +38,7 @@ RUN if [ -n "$( ls -A "$JARS_PATH" )" ]; then mkdir -p ~/.m2/repository/org/inte
 # Note: enabling daemon causes an error (additions files not found)
 # ENV GRADLE_OPTS="-server -Xms2g -Xmx16g -XX:+UseParallelGC -XX:SoftRefLRUPolicyMSPerMB=1 -XX:MaxHeapFreeRatio=99 -Dorg.gradle.daemon=false"
 # -Xms2g: initial heap size available to the JVM; -Xmx16g: maximum heap size available to the JVM
-ENV GRADLE_OPTS="-server -Xms2g -Xmx12g -XX:+UseParallelGC -XX:SoftRefLRUPolicyMSPerMB=1 -XX:MaxHeapFreeRatio=99 -Dorg.gradle.daemon=false"
+ENV GRADLE_OPTS="-server -Xms2g -Xmx58g -XX:+UseParallelGC -XX:SoftRefLRUPolicyMSPerMB=1 -XX:MaxHeapFreeRatio=99 -Dorg.gradle.daemon=false"
 RUN export GRADLE_OPTS
 
 # Installing Java
@@ -50,12 +54,6 @@ ENV JAVA_HOME="/usr/lib/jvm/java-11-openjdk-amd64/"
 
 
 FROM mdrmine_env AS mdrmine_build
-ARG EMPTY
-ARG LOCAL
-ARG HOSTNAME
-ENV HOSTNAME=${HOSTNAME}
-ENV DEPLOY_REMOTE=${LOCAL:---deploy-remote}
-ENV EMPTY=${EMPTY:+--build-empty}
 
 ENTRYPOINT ./build_and_run.sh --skip-install --first-build --docker ${DEPLOY_REMOTE} ${EMPTY} --sources=${SOURCES} --hostname=${HOSTNAME}
 
