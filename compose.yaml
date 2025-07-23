@@ -62,6 +62,7 @@ services:
       args:
         SOURCES: $SOURCES
         LOCAL: $LOCAL
+        EMPTY: $EMPTY
         HOSTNAME: db  # this needs to match Postgres service name
       context: .
       dockerfile: ./Dockerfiles/main/Dockerfile

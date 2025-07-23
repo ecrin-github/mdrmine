@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Default variable values
+# Default property values
 deploy_remote=false
 docker=false
 first_build=false
@@ -11,7 +11,7 @@ skip_sources=false
 sources_path="/home/ubuntu/code/mdrmine-bio-sources"
 sources=""
 verbose=false
-build_empty=true
+build_empty=false
 default_port="5432"
 
 local_prod_db=""
@@ -31,6 +31,7 @@ usage() {
     echo "Options:"
     echo " -c=[properties_path], --properties-path=[properties_path]    Set properties file path, default: $properties_path"
     echo " -d, --docker                                                 Instead of ./gradlew cargoDeployRemote, uses a shared Docker volume to deploy webapp .war file"
+    echo " -e, --build-empty                                            Build an empty database without adding any source"
     echo " -f, --first-build                                            Replaces ./gradlew cargoRedeployRemote by ./gradlew cargoDeployRemote"
     echo " -h, --help                                                   Show this text"
     echo " -n=[hostname], --hostname=[hostname]                         Servername properties to modify mdrmine.properties file if not localhost, default: $sources_path"
@@ -185,6 +186,10 @@ for i in "$@"; do
         ;;
     -d | --docker)
         docker=true
+        shift
+        ;;
+    -e | --build-empty)
+        build_empty=true
         shift
         ;;
     -f | --first-build)
