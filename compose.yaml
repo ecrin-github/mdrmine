@@ -3,7 +3,7 @@
 services:
   # TODO: db backup (volumes)
   db:
-    image: postgres:15
+    image: postgres:14
     # restart: unless-stopped
     volumes:
       - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
