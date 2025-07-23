@@ -3,7 +3,7 @@
 services:
   # TODO: db backup (volumes)
   db:
-    image: postgres:14
+    image: postgres:15
     # restart: unless-stopped
     volumes:
       - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
@@ -32,10 +32,10 @@ services:
     volumes:
       - webapps:/usr/local/tomcat/webapps
   bluegenes:
-    build:
-      context: ../bluegenes
-      dockerfile: ../bluegenes/Dockerfile
-    # image: intermine/bluegenes:1.4.5-dx
+    # build:
+      # context: ../bluegenes
+      # dockerfile: ../bluegenes/Dockerfile
+    image: intermine/bluegenes:1.4.5-dx
     restart: unless-stopped
     volumes:
       - type: bind
