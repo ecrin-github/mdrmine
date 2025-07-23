@@ -145,11 +145,13 @@ build() {
                 # TODO: should check that Docker is running on remote?
                 # TODO: option to run only this part if failed?
                 # TODO: remote mdrmine path should be an arg
-                # Run solr postprocesses on remote
+                # Run solr postprocesses on remote + redeploy webapp
                 ssh $remote_user@$remote_prod_host -o StrictHostKeyChecking=no <<EOF
                     cd ./code/mdrmine;
                     docker build -f Dockerfiles/main/Dockerfile --target mdrmine_postprocess -t mdrmine_postprocess .;
                     docker run --mount type=bind,src=/home/ubuntu/.intermine,dst=/root/.intermine --network=mdrmine_default mdrmine_postprocess;
+                    docker build -f Dockerfiles/main/Dockerfile --target mdrmine_webapp -t mdrmine_webapp .;
+                    docker run --mount type=bind,src=/home/ubuntu/.intermine,dst=/root/.intermine --volume mdrmine_webapps:/webapps --network=mdrmine_default mdrmine_webapp;
 EOF
             else
                 ./gradlew postprocess -Pprocess=create-autocomplete-index --stacktrace
