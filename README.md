@@ -20,7 +20,7 @@ Note: the current GH action to build and deploy on a remote machine is outdated 
     - Create `mdrmine/secrets` folder
         - Create `postgres_user` `postgres_password` `tomcat_user` `tomcat_password` files in this folder with your Postgres and Tomcat credentials inside the various files
     - Create `.intermine` folder in `home` user directory (`~`)
-        - Create `mdrmine.properties` file following the model here: [BioTestMine properties file](https://raw.githubusercontent.com/intermine/biotestmine/master/data/biotestmine.properties).
+        - Create a `mdrmine.properties` or `mdrmine_docker.properties` (`mdrmine_docker.properties` will be used if both exist) file following the model here: [BioTestMine properties file](https://raw.githubusercontent.com/intermine/biotestmine/master/data/biotestmine.properties).
         The `serverName` properties should be set to `db`, as that is the psql image name in the Docker compose file. The other various credentials should match the ones used in the `secrets/` files. Replace all occurrences of "`biotestmine`" with "`mdrmine`".
         - Create `bluegenes.env` file in this folder, with a config like this:
             ``` 
