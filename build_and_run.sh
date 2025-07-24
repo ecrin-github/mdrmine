@@ -84,6 +84,13 @@ build() {
         set -x
     fi
 
+    # Copy bind-mounted properties to load docker properties file without modifying anything on disk
+    cp -r /root/.intermine_base /root/.intermine
+    if [[ -f /root/.intermine/mdrmine_docker.properties ]]; then
+        rm /root/.intermine/mdrmine.properties
+        mv /root/.intermine/mdrmine_docker.properties /root/.intermine/mdrmine.properties
+    fi
+
     load_properties
 
     if [[ "$docker" = true ]]; then
