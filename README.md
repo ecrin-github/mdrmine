@@ -9,7 +9,7 @@ See the [sources wiki](https://github.com/ecrin-github/mdrmine-bio-sources/wiki)
 
 ## Requirements
 - `iptables -A ufw-user-input -p tcp -m tcp --dport 8080 -j ACCEPT` and `iptables -A ufw-user-input -p udp -m udp --dport 8080 -j ACCEPT` firewall rules on the webapp machine for Tomcat (running on 8080) to allow BlueGenes queries (e.g. user login)
-- [Forked version of InterMine](https://github.com/cudillal/intermine) to fix an issue during the merging of sources
+- [Forked version of InterMine](https://github.com/ecrin-github/intermine) to fix an issue during the merging of sources
     - compiling of JARs required (see [Usage](#usage))
 
 ## Docker deployment
