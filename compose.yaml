@@ -8,6 +8,7 @@ services:
     volumes:
       - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
       - ./pg_upd.conf:/etc/postgresql.conf
+      # - /etc/postgresql.conf:/etc/postgresql.conf
     environment:
       # TODO: define secrets using GH secrets: use ssh-action to modify properties and docker secrets files?
       POSTGRES_MULTIPLE_DATABASES: mdrmine,items-mdrmine,userprofile-mdrmine
@@ -73,7 +74,7 @@ services:
       - webapps:/webapps
       - type: bind
         source: ~/.intermine
-        target: /root/.intermine
+        target: /root/.intermine_base
         read_only: true
       - type: bind
         source: /home/ubuntu/data/
@@ -85,7 +86,7 @@ services:
         source: $SSH_AUTH_SOCK
         target: /ssh-agent
 
-# Note: change this a shared bind mount to keep the Tomcat default apps (Manager, etc.) https://stackoverflow.com/a/46111405/23455986
+# Note: change this to a shared bind mount to keep the Tomcat default apps (Manager, etc.) https://stackoverflow.com/a/46111405/23455986
 volumes:
   webapps:
   solr_data:
