@@ -22,7 +22,9 @@ preprocess() {
         timestamp=$(date +%Y%m%d_%H%M%S)
         who_dir="$(dirname "$who_fp")"
         dest_file=$who_dir/$timestamp\_preprocessed\_who.csv
-        sed -e 's/\\\"/"/g' $who_fp > $dest_file
+
+        # Replace any backslash or multiple backslashes followed by a double quote by just a double quote
+        sed -E 's/\\+\"/"/g' $who_fp > $dest_file
         echo "Created preprocessed file $dest_file"
         if [[ -L $who_fp ]]; then   # Symbolic link
             rm $who_fp
