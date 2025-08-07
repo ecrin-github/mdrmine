@@ -5,7 +5,7 @@ TODO
 ## Data sources
 The data sources and their corresponding data files are defined in the `project.xml` file.
 
-See the [sources wiki](https://github.com/ecrin-github/mdrmine-bio-sources/wiki) for more details.
+See the [sources wiki](https://github.com/ecrin-github/mdrmine-bio-sources/wiki) for more details regarding the parsing and merging of the various sources.
 
 ## Requirements
 - `iptables -A ufw-user-input -p tcp -m tcp --dport 8080 -j ACCEPT` and `iptables -A ufw-user-input -p udp -m udp --dport 8080 -j ACCEPT` firewall rules on the webapp machine for Tomcat (running on 8080) to allow BlueGenes queries (e.g. user login)
@@ -41,7 +41,9 @@ Note: the current GH action to build and deploy on a remote machine is outdated 
 - `docker compose build --no-cache && docker compose up` to build and run docker images
     - possible to pass a `SOURCES` environment variable to choose sources to build
     - possible to pass a `LOCAL` environment variable with any value to not pass the --deploy-remote flag to the build script (which is the default behaviour)
--  `docker compose down --volumes --rmi "local"` to stop and delete running docker images (+ volumes)
+- `docker compose down --volumes --rmi "local"` to stop and delete running docker images (+ volumes)
+
+Note: the only requirement regarding the order in which the sources should be parsed, is that **WHO needs to be parsed after CTG and CTIS**, because WHO needs stored studies from previous sources which may have multiple IDs between the CTIS ID, NCT ID, and EUCTR ID, to extract these and match with WHO records in order to "pre-merge", to avoid duplicate errors. For example, if 2 studies in WHO are the same but are not linked by any ID (one has an EUCTR ID, the other has a NCT ID), an entry in CTG could have both IDs. Therefore, if it is parsed before CTG, the entry in CTG won't know with which record to merge, and will throw an error. In WHO, we fetch all studies stored from previous sources, so if it is parsed after CTG, we will know to "pre-merge" (i.e. while parsing) the 2 studies in WHO together to match the single study in CTG.
 
 ### Caveats
 - Currently the sources jars fetched from the [MDRMine-bio-sources](https://github.com/ecrin-github/mdrmine-bio-sources) repository artifacts must match the configuration of `<sources>` in the `project.xml` file, other Intermine will throw errors.
