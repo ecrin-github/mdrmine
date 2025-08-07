@@ -5,6 +5,7 @@ services:
   db:
     image: postgres:14
     # restart: unless-stopped
+    shm_size: 8gb
     volumes:
       - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
       - ./pg_upd.conf:/etc/postgresql.conf
