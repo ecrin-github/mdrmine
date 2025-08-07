@@ -132,10 +132,14 @@ build() {
                     do
                         echo "------------- Source: $j -------------"
                         ./gradlew integrate -Psource=$j --stacktrace
+                        # Running update-publications after getting PubMed IDs if it's not already in the list of sources
+                        if [[ "$j" = "pubmed" && "$sources" != *"update-publications"* ]]; then
+                            echo "------------- Source: update-publications -------------"
+                            ./gradlew integrate -Psource=update-publications --stacktrace
+                        fi
                     done
                 fi
 
-                # ./gradlew postprocess --stacktrace
                 ./gradlew postprocess -Pprocess=do-sources --stacktrace
                 ./gradlew postprocess -Pprocess=create-attribute-indexes --stacktrace
                 ./gradlew postprocess -Pprocess=summarise-objectstore --stacktrace
