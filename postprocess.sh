@@ -20,6 +20,13 @@ postprocess() {
         set -x
     fi
 
+    # Set MDRMine Docker properties
+    ./set_docker_properties.sh
+    if [ $? = 1 ];  # Exiting if script returned an error code
+    then
+        exit 1
+    fi
+
     if [[ -f ./gradlew ]]; then
         ./gradlew clean
         # ./gradlew dbmodel:initConfig --stacktrace

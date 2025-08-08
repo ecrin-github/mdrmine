@@ -1,4 +1,5 @@
 # syntax=docker/dockerfile:1
+ARG BUILD_USER_DB=false
 ARG EMPTY=false
 ARG LOCAL=false
 ARG HOSTNAME=localhost
@@ -8,10 +9,12 @@ ARG SOURCES=""
 FROM ubuntu:latest AS mdrmine_env
 WORKDIR /mdrmine
 
+ARG BUILD_USER_DB
 ARG EMPTY
 ARG LOCAL
 ARG HOSTNAME
 ARG SOURCES
+ENV BUILD_USER_DB=${BUILD_USER_DB:+--build-user-db}
 ENV SOURCES=${SOURCES}
 ENV HOSTNAME=${HOSTNAME}
 ENV EMPTY=${EMPTY:+--build-empty}
@@ -55,15 +58,24 @@ ENV JAVA_HOME="/usr/lib/jvm/java-11-openjdk-amd64/"
 
 FROM mdrmine_env AS mdrmine_build
 
-ENTRYPOINT ./build_and_run.sh --skip-install --first-build --docker ${DEPLOY_REMOTE} ${EMPTY} --sources=${SOURCES} --hostname=${HOSTNAME}
+ENTRYPOINT ./build_and_run.sh --skip-install --first-build --docker ${DEPLOY_REMOTE} ${BUILD_USER_DB} ${EMPTY} --sources=${SOURCES} --hostname=${HOSTNAME}
 
 
 FROM mdrmine_env AS mdrmine_postprocess
-ENV HOSTNAME="db"
 
 ENTRYPOINT ./postprocess.sh
+
+
+FROM mdrmine_env AS mdrmine_deploy
+
+ENTRYPOINT ./deploy_docker.sh
 
 
 FROM mdrmine_env AS mdrmine_webapp
 
 ENTRYPOINT ./redeploy_webapp.sh
+
+
+FROM mdrmine_env as mdrmine_summary
+
+ENTRYPOINT ./run_summary.sh

@@ -12,6 +12,7 @@ sources_path="/home/ubuntu/code/mdrmine-bio-sources"
 sources=""
 verbose=false
 build_empty=false
+build_user_db=false
 default_port="5432"
 
 local_prod_db=""
@@ -31,13 +32,14 @@ usage() {
     echo "Options:"
     echo " -c=[properties_path], --properties-path=[properties_path]    Set properties file path, default: $properties_path"
     echo " -d, --docker                                                 Instead of ./gradlew cargoDeployRemote, uses a shared Docker volume to deploy webapp .war file"
-    echo " -e, --build-empty                                            Build an empty database without adding any source"
+    echo " -e, --build-empty                                            Build an empty database without adding any source, default: $build_empty"
     echo " -f, --first-build                                            Replaces ./gradlew cargoRedeployRemote by ./gradlew cargoDeployRemote"
     echo " -h, --help                                                   Show this text"
     echo " -n=[hostname], --hostname=[hostname]                         Servername properties to modify mdrmine.properties file if not localhost, default: $sources_path"
     echo " -p=[sources_path], --path=[sources_path]                     Set sources repo path, default: $sources_path"
     echo " -r, --deploy-remote                                          Build on this machine and deploy to a remote MDRMine and PSQL instance"
     echo " -s=[list of comma separated sources], --sources=[sources]    Set list of sources to integrate, default behaviour includes all in sources folder"
+    echo " -u, --build-user-db                                          Build user DB, default: $build_user_db"
     echo " -v, --verbose                                                Enable verbose mode (outputs commands)"
     echo " -x, --skip-install                                           Skip ./gradlew install in bio-sources repository"
     echo " -z, --skip-sources                                           Skip integrating any source"
@@ -159,17 +161,17 @@ build() {
                 # Run solr postprocesses on remote + redeploy webapp
                 ssh $remote_user@$remote_prod_host -o StrictHostKeyChecking=no <<EOF
                     cd ./code/mdrmine;
-                    docker build -f Dockerfiles/main/Dockerfile --target mdrmine_postprocess -t mdrmine_postprocess .;
-                    docker run --mount type=bind,src=/home/ubuntu/.intermine,dst=/root/.intermine --network=mdrmine_default mdrmine_postprocess;
-                    docker build -f Dockerfiles/main/Dockerfile --target mdrmine_webapp -t mdrmine_webapp .;
-                    docker run --mount type=bind,src=/home/ubuntu/.intermine,dst=/root/.intermine --volume mdrmine_webapps:/webapps --network=mdrmine_default mdrmine_webapp;
+                    docker build -f Dockerfiles/main/Dockerfile --target mdrmine_deploy -t mdrmine_deploy .;
+                    docker run --mount type=bind,src=/home/ubuntu/.intermine,dst=/root/.intermine_base --network=mdrmine_default mdrmine_deploy;
 EOF
             else
                 ./gradlew postprocess -Pprocess=create-autocomplete-index --stacktrace
                 ./gradlew postprocess -Pprocess=create-search-index --stacktrace
             fi
-                
-            ./gradlew buildUserDB --stacktrace
+            
+            if [[ "$build_user_db" = true ]]; then 
+                ./gradlew buildUserDB --stacktrace
+            fi
             if [[ "$docker" = true ]]; then
                 # Generate war file
                 ./gradlew war
@@ -223,6 +225,10 @@ for i in "$@"; do
         ;;
     -s=*|--sources=*)
         sources="${i#*=}"
+        shift
+        ;;
+    -u | --build-user-db)
+        build_user_db=true
         shift
         ;;
     -v | --verbose)
