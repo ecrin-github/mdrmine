@@ -8,6 +8,7 @@ The data sources and their corresponding data files are defined in the `project.
 See the [sources wiki](https://github.com/ecrin-github/mdrmine-bio-sources/wiki) for more details regarding the parsing and merging of the various sources.
 
 ## Requirements
+- If not to be used with Docker, required software is listed on the [InterMine Docs](http://intermine.org/im-docs/docs/get-started/tutorial/index/?highlight=update~publications#software)
 - `iptables -A ufw-user-input -p tcp -m tcp --dport 8080 -j ACCEPT` and `iptables -A ufw-user-input -p udp -m udp --dport 8080 -j ACCEPT` firewall rules on the webapp machine for Tomcat (running on 8080) to allow BlueGenes queries (e.g. user login)
 - [Forked version of InterMine](https://github.com/ecrin-github/intermine) to fix an issue during the merging of sources
     - compiling of JARs required (see [Usage](#usage))
