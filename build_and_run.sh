@@ -162,7 +162,7 @@ build() {
                 ssh $remote_user@$remote_prod_host -o StrictHostKeyChecking=no <<EOF
                     cd ./code/mdrmine;
                     docker build -f Dockerfiles/main/Dockerfile --target mdrmine_deploy -t mdrmine_deploy .;
-                    docker run --mount type=bind,src=/home/ubuntu/.intermine,dst=/root/.intermine_base --network=mdrmine_default mdrmine_deploy;
+                    docker run --mount type=bind,src=/home/ubuntu/.intermine,dst=/root/.intermine_base --volume mdrmine_webapps:/webapps --network=mdrmine_default mdrmine_deploy;
 EOF
             else
                 ./gradlew postprocess -Pprocess=create-autocomplete-index --stacktrace
