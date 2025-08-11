@@ -46,6 +46,9 @@ Note: the current GH action to build and deploy on a remote machine is outdated 
 
 Note: the only requirement regarding the order in which the sources should be parsed, is that **WHO needs to be parsed after CTG and CTIS**, because WHO needs stored studies from previous sources which may have multiple IDs between the CTIS ID, NCT ID, and EUCTR ID, to extract these and match with WHO records in order to "pre-merge", to avoid duplicate errors. For example, if 2 studies in WHO are the same but are not linked by any ID (one has an EUCTR ID, the other has a NCT ID), an entry in CTG could have both IDs. Therefore, if it is parsed before CTG, the entry in CTG won't know with which record to merge, and will throw an error. In WHO, we fetch all studies stored from previous sources, so if it is parsed after CTG, we will know to "pre-merge" (i.e. while parsing) the 2 studies in WHO together to match the single study in CTG.
 
-### Caveats
+## Caveats
 - Currently the sources jars fetched from the [MDRMine-bio-sources](https://github.com/ecrin-github/mdrmine-bio-sources) repository artifacts must match the configuration of `<sources>` in the `project.xml` file, other Intermine will throw errors.
 - TODO: Probably other caveats regarding properties, build script, and compose file
+
+## Versioning
+- [New data source].[[Model](dbmodel/resources/mdr.xml) changes].[[Sources](https://github.com/ecrin-github/mdrmine-bio-sources) code update]
