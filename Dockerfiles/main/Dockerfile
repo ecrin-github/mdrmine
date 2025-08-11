@@ -5,8 +5,8 @@ ARG LOCAL=false
 ARG HOSTNAME=localhost
 ARG SOURCES=""
 
-# TODO: change to java 11 image?
-FROM ubuntu:latest AS mdrmine_env
+# docker rmi $(docker images --filter "dangling=true" -q --no-trunc)
+FROM eclipse-temurin:11 AS mdrmine_env
 WORKDIR /mdrmine
 
 ARG BUILD_USER_DB
@@ -44,38 +44,29 @@ RUN if [ -n "$( ls -A "$JARS_PATH" )" ]; then mkdir -p ~/.m2/repository/org/inte
 ENV GRADLE_OPTS="-server -Xms2g -Xmx58g -XX:+UseParallelGC -XX:SoftRefLRUPolicyMSPerMB=1 -XX:MaxHeapFreeRatio=99 -Dorg.gradle.daemon=false"
 RUN export GRADLE_OPTS
 
-# Installing Java
-RUN apt-get update && apt-get install -y \
-    openjdk-11-jdk postgresql-client ssh && \
-    apt-get clean;
-ENV JAVA_HOME="/usr/lib/jvm/java-11-openjdk-amd64/"
-
-# TODO: run docker compose up in FG in deploy.yml but tomcat in background?
-# TODO: try to change Docker secret files permissions
-# TODO: memcached somwhere? https://hub.docker.com/_/memcached
-# docker rmi $(docker images --filter "dangling=true" -q --no-trunc)
+# Install Postgres for pg_restore and pg_dump, and ssh for remote postprocessing/redeployment of webapp
+RUN apt-get update && apt-get install -y postgresql-client ssh && apt-get clean;
 
 
+# MDRMine full build process
 FROM mdrmine_env AS mdrmine_build
 
 ENTRYPOINT ./build_and_run.sh --skip-install --first-build --docker ${DEPLOY_REMOTE} ${BUILD_USER_DB} ${EMPTY} --sources=${SOURCES} --hostname=${HOSTNAME}
 
 
+# Solr postprocesses
 FROM mdrmine_env AS mdrmine_postprocess
 
 ENTRYPOINT ./postprocess.sh
 
 
-FROM mdrmine_env AS mdrmine_deploy
-
-ENTRYPOINT ./deploy_docker.sh
-
-
+# Tomcat webapp redeployment
 FROM mdrmine_env AS mdrmine_webapp
 
 ENTRYPOINT ./redeploy_webapp.sh
 
 
-FROM mdrmine_env as mdrmine_summary
+# Solr postprocess and tomcat redeployment combined
+FROM mdrmine_env AS mdrmine_deploy
 
-ENTRYPOINT ./run_summary.sh
+ENTRYPOINT ./deploy_docker.sh
