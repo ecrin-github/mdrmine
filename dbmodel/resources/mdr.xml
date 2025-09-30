@@ -118,7 +118,7 @@ terms already fine marked with dcat
 
   <class name="StudySource" is-interface="true">
     <reference name="study" referenced-type="Study" reverse-reference="studySources"/>
-    <attribute name="sourceName" type="java.lang.String"/>
+    <attribute name="name" type="java.lang.String"/>
   </class>
 
   <class name="StudyCondition" is-interface="true">
