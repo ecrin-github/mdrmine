@@ -5,7 +5,9 @@
 # docker run --mount type=bind,src=/home/ubuntu/.intermine,dst=/root/.intermine --volume mdrmine_webapps:/webapps --network=mdrmine_default mdrmine_webapp
 
 # Set MDRMine Docker properties
-./set_docker_properties.sh
+SCRIPT_PATH=$(readlink -f "$0")
+SCRIPT_DIR=$(dirname "$SCRIPT_PATH")
+$SCRIPT_DIR/set_docker_properties.sh
 if [ $? = 1 ];  # Exiting if script returned an error code
 then
     exit 1

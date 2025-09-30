@@ -51,22 +51,22 @@ RUN apt-get update && apt-get install -y postgresql-client ssh && apt-get clean;
 # MDRMine full build process
 FROM mdrmine_env AS mdrmine_build
 
-ENTRYPOINT ./build_and_run.sh --skip-install --first-build --docker ${DEPLOY_REMOTE} ${BUILD_USER_DB} ${EMPTY} --sources=${SOURCES} --hostname=${HOSTNAME}
+ENTRYPOINT ./scripts/build_and_run.sh --skip-install --first-build --docker ${DEPLOY_REMOTE} ${BUILD_USER_DB} ${EMPTY} --sources=${SOURCES} --hostname=${HOSTNAME}
 
 
 # Solr postprocesses
 FROM mdrmine_env AS mdrmine_postprocess
 
-ENTRYPOINT ./postprocess.sh
+ENTRYPOINT ./scripts/postprocess.sh
 
 
 # Tomcat webapp redeployment
 FROM mdrmine_env AS mdrmine_webapp
 
-ENTRYPOINT ./redeploy_webapp.sh
+ENTRYPOINT ./scripts/redeploy_webapp.sh
 
 
 # Solr postprocess and tomcat redeployment combined
 FROM mdrmine_env AS mdrmine_deploy
 
-ENTRYPOINT ./deploy_docker.sh
+ENTRYPOINT ./scripts/deploy_docker.sh

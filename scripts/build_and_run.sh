@@ -1,5 +1,9 @@
 #!/bin/bash
 
+SCRIPT_PATH=$(readlink -f "$0")
+SCRIPT_DIR=$(dirname "$SCRIPT_PATH")
+WD=$(dirname "$SCRIPT_DIR")
+
 # Default property values
 deploy_remote=false
 docker=false
@@ -106,8 +110,8 @@ build() {
             mine_dir=$(pwd)
             echo "--- Cleaning sources ---"
             cd $sources_path
-            ./gradlew clean
-            ./gradlew install --stacktrace
+            $WD/gradlew clean
+            $WD/gradlew install --stacktrace
             cd $mine_dir
         else
             echo "Error: couldn't find sources folder gradlew file, path tried: $sources_path/gradlew install" >&2
@@ -115,11 +119,11 @@ build() {
         fi
     fi
 
-    if [[ -f ./gradlew ]]; then
+    if [[ -f $WD/gradlew ]]; then
         echo "--- Cleaning mine ---"
-        ./gradlew clean --stacktrace
+        $WD/gradlew clean --stacktrace
         echo "--- Building DB ---"
-        ./gradlew buildDB --stacktrace
+        $WD/gradlew buildDB --stacktrace
         
         if [[ "$build_empty" = false ]]; then
             if [[ "$skip_sources" = false ]]; then
@@ -127,32 +131,32 @@ build() {
                     # Getting the sources in order from the project file
                     for fp in $(perl -ne 'while(/<source +name="([^"]+)"/g){print "$1\n";}' project.xml); do
                         echo "------------- Source: $(basename $fp) -------------"
-                        ./gradlew integrate -Psource=$(basename $fp) --stacktrace
+                        $WD/gradlew integrate -Psource=$(basename $fp) --stacktrace
                     done
                 else    # List of sources passed as cmd-line arg
                     for j in ${sources//,/ }
                     do
                         echo "------------- Source: $j -------------"
-                        ./gradlew integrate -Psource=$j --stacktrace
+                        $WD/gradlew integrate -Psource=$j --stacktrace
                         # Running update-publications after getting PubMed IDs if it's not already in the list of sources
                         if [[ "$j" = "pubmed" && "$sources" != *"update-publications"* ]]; then
                             echo "------------- Source: update-publications -------------"
-                            ./gradlew integrate -Psource=update-publications --stacktrace
+                            $WD/gradlew integrate -Psource=update-publications --stacktrace
                         fi
                     done
                 fi
 
-                ./gradlew postprocess -Pprocess=do-sources --stacktrace
-                ./gradlew postprocess -Pprocess=create-attribute-indexes --stacktrace
-                ./gradlew postprocess -Pprocess=summarise-objectstore --stacktrace
+                $WD/gradlew postprocess -Pprocess=do-sources --stacktrace
+                $WD/gradlew postprocess -Pprocess=create-attribute-indexes --stacktrace
+                $WD/gradlew postprocess -Pprocess=summarise-objectstore --stacktrace
             fi
 
             if [[ "$deploy_remote" = true ]]; then
                 echo "Dumping local DB"
-                pg_dump -h "$local_prod_host" -p "$local_prod_port" -U "$local_prod_user" -d "$local_prod_db" -F c > ./mdrmine_build.sql
+                pg_dump -h "$local_prod_host" -p "$local_prod_port" -U "$local_prod_user" -d "$local_prod_db" -F c > $WD/mdrmine_build.sql
 
                 echo "Transfer local build to remote machine"
-                pg_restore --clean -h "$remote_prod_host" -p "$remote_prod_port" -U "$remote_prod_user" -d "$remote_prod_db" ./mdrmine_build.sql
+                pg_restore --clean -h "$remote_prod_host" -p "$remote_prod_port" -U "$remote_prod_user" -d "$remote_prod_db" $WD/mdrmine_build.sql
                 # TODO: add something to backup old DB
 
                 # TODO: should check that Docker is running on remote?
@@ -165,21 +169,21 @@ build() {
                     docker run --mount type=bind,src=/home/ubuntu/.intermine,dst=/root/.intermine_base --volume mdrmine_webapps:/webapps --network=mdrmine_default mdrmine_deploy;
 EOF
             else
-                ./gradlew postprocess -Pprocess=create-autocomplete-index --stacktrace
-                ./gradlew postprocess -Pprocess=create-search-index --stacktrace
+                $WD/gradlew postprocess -Pprocess=create-autocomplete-index --stacktrace
+                $WD/gradlew postprocess -Pprocess=create-search-index --stacktrace
             fi
             
             if [[ "$build_user_db" = true ]]; then 
-                ./gradlew buildUserDB --stacktrace
+                $WD/gradlew buildUserDB --stacktrace
             fi
             if [[ "$docker" = true ]]; then
                 # Generate war file
-                ./gradlew war
-                cp ./webapp/build/libs/webapp.war /webapps/mdrmine.war
+                $WD/gradlew war
+                cp $WD/webapp/build/libs/webapp.war /webapps/mdrmine.war
             elif [[ "$first_build" = false ]]; then
-                ./gradlew cargoRedeployRemote --stacktrace
+                $WD/gradlew cargoRedeployRemote --stacktrace
             else
-                ./gradlew cargoDeployRemote --stacktrace
+                $WD/gradlew cargoDeployRemote --stacktrace
             fi
         fi
     else
