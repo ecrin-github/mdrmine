@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 ARG BUILD_USER_DB=false
 ARG EMPTY=false
-ARG LOCAL=false
+ARG DEPLOY_REMOTE=false
 ARG HOSTNAME=localhost
 ARG SOURCES=""
 
@@ -11,14 +11,14 @@ WORKDIR /mdrmine
 
 ARG BUILD_USER_DB
 ARG EMPTY
-ARG LOCAL
+ARG DEPLOY_REMOTE
 ARG HOSTNAME
 ARG SOURCES
 ENV BUILD_USER_DB=${BUILD_USER_DB:+--build-user-db}
 ENV SOURCES=${SOURCES}
 ENV HOSTNAME=${HOSTNAME}
 ENV EMPTY=${EMPTY:+--build-empty}
-ENV DEPLOY_REMOTE=${LOCAL:---deploy-remote}
+ENV DEPLOY_REMOTE=${DEPLOY_REMOTE:+--deploy-remote}
 
 ENV LANG=C.UTF-8
 ENV JARS_PATH="./sources_jars"
@@ -52,6 +52,12 @@ RUN apt-get update && apt-get install -y postgresql-client ssh && apt-get clean;
 FROM mdrmine_env AS mdrmine_build
 
 ENTRYPOINT ./scripts/build_and_run.sh --skip-install --first-build --docker ${DEPLOY_REMOTE} ${BUILD_USER_DB} ${EMPTY} --sources=${SOURCES} --hostname=${HOSTNAME}
+
+
+# Rebuild MDRMine DB, useful before transfering a remote build
+FROM mdrmine_env AS mdrmine_builddb
+
+ENTRYPOINT ./scripts/build_db.sh
 
 
 # Solr postprocesses

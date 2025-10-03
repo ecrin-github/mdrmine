@@ -90,12 +90,8 @@ build() {
         set -x
     fi
 
-    # Copy bind-mounted properties to load docker properties file without modifying anything on disk
-    cp -r /root/.intermine_base /root/.intermine
-    if [[ -f /root/.intermine/mdrmine_docker.properties ]]; then
-        rm /root/.intermine/mdrmine.properties
-        mv /root/.intermine/mdrmine_docker.properties /root/.intermine/mdrmine.properties
-    fi
+    # Set MDRMine Docker properties
+    $SCRIPT_DIR/set_docker_properties.sh
 
     load_properties
 
@@ -152,17 +148,13 @@ build() {
             fi
 
             if [[ "$deploy_remote" = true ]]; then
+                # TODO: replace by deploy_remote script, with appropriate args?
                 echo "Dumping local DB"
                 pg_dump -h "$local_prod_host" -p "$local_prod_port" -U "$local_prod_user" -d "$local_prod_db" -F c > $WD/mdrmine_build.sql
 
                 echo "Transfer local build to remote machine"
                 pg_restore --clean -h "$remote_prod_host" -p "$remote_prod_port" -U "$remote_prod_user" -d "$remote_prod_db" $WD/mdrmine_build.sql
-                # TODO: add something to backup old DB
 
-                # TODO: should check that Docker is running on remote?
-                # TODO: option to run only this part if failed?
-                # TODO: remote mdrmine path should be an arg
-                # Run solr postprocesses on remote + redeploy webapp
                 ssh $remote_user@$remote_prod_host -o StrictHostKeyChecking=no <<EOF
                     cd ./code/mdrmine;
                     docker build -f Dockerfiles/main/Dockerfile --target mdrmine_deploy -t mdrmine_deploy .;
