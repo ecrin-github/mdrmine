@@ -148,34 +148,23 @@ build() {
             fi
 
             if [[ "$deploy_remote" = true ]]; then
-                # TODO: replace by deploy_remote script, with appropriate args?
-                echo "Dumping local DB"
-                pg_dump -h "$local_prod_host" -p "$local_prod_port" -U "$local_prod_user" -d "$local_prod_db" -F c > $WD/mdrmine_build.sql
-
-                echo "Transfer local build to remote machine"
-                pg_restore --clean -h "$remote_prod_host" -p "$remote_prod_port" -U "$remote_prod_user" -d "$remote_prod_db" $WD/mdrmine_build.sql
-
-                ssh $remote_user@$remote_prod_host -o StrictHostKeyChecking=no <<EOF
-                    cd ./code/mdrmine;
-                    docker build -f Dockerfiles/main/Dockerfile --target mdrmine_deploy -t mdrmine_deploy .;
-                    docker run --mount type=bind,src=/home/ubuntu/.intermine,dst=/root/.intermine_base --volume mdrmine_webapps:/webapps --network=mdrmine_default mdrmine_deploy;
-EOF
+                $SCRIPT_DIR/deploy_remote.sh
             else
                 $WD/gradlew postprocess -Pprocess=create-autocomplete-index --stacktrace
                 $WD/gradlew postprocess -Pprocess=create-search-index --stacktrace
-            fi
-            
-            if [[ "$build_user_db" = true ]]; then 
-                $WD/gradlew buildUserDB --stacktrace
-            fi
-            if [[ "$docker" = true ]]; then
-                # Generate war file
-                $WD/gradlew war
-                cp $WD/webapp/build/libs/webapp.war /webapps/mdrmine.war
-            elif [[ "$first_build" = false ]]; then
-                $WD/gradlew cargoRedeployRemote --stacktrace
-            else
-                $WD/gradlew cargoDeployRemote --stacktrace
+
+                if [[ "$build_user_db" = true ]]; then 
+                    $WD/gradlew buildUserDB --stacktrace
+                fi
+                if [[ "$docker" = true ]]; then
+                    # Generate war file
+                    $WD/gradlew war
+                    cp $WD/webapp/build/libs/webapp.war /webapps/mdrmine.war
+                elif [[ "$first_build" = false ]]; then
+                    $WD/gradlew cargoRedeployRemote --stacktrace
+                else
+                    $WD/gradlew cargoDeployRemote --stacktrace
+                fi
             fi
         fi
     else
