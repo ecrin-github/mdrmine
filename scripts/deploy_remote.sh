@@ -139,13 +139,33 @@ EOF
         fi
     fi
     
-    echo "Running solr postprocess on remote server and redeploying remote webapp"
+    search_dump="$(date +"%Y%m%d_%H%M%S")_search_dump"
+    autocomplete_dump="$(date +"%Y%m%d_%H%M%S")_autocomplete_dump"
+
+    # TODO: port to settings?
+    # TODO: query frequency to settings
+    # Dumping mdrmine-search core and waiting for the dump to be completed before continuing
+    curl "http://$local_prod_host:8983/solr/mdrmine-search/replication?command=backup&location=/solr_backups&name=$search_dump"
+    until curl "http://$local_prod_host:8983/solr/mdrmine-search/replication?command=details" | grep "\"status\":\"OK\""; do
+        sleep 1;
+    done
+
+    # Dumping mdrmine-autocomplete core and waiting for the dump to be completed before continuing
+    curl "http://$local_prod_host:8983/solr/mdrmine-autocomplete/replication?command=backup&location=/solr_backups&name=$autocomplete_dump"
+    until curl "http://$local_prod_host:8983/solr/mdrmine-autocomplete/replication?command=details" | grep "\"status\":\"OK\""; do
+        sleep 1;
+    done
+    # TODO: test rsync
+    # https://stackoverflow.com/a/22908437
+    rsync -a $dump_folder/solr/$search_dump $remote_user@$remote_prod_host:./dumps/solr/
+    rsync -a $dump_folder/solr/$autocomplete_dump $remote_user@$remote_prod_host:./dumps/solr/
+    # curl "http://$remote_prod_host:8983/solr/mdrmine-search/replication?command=restore&location=/solr_backups&name=$search_dump"
+    # curl "http://$remote_prod_host:8983/solr/mdrmine-autocomplete/replication?command=restore&location=/solr_backups&name=$autocomplete_dump"
     # TODO: Many things should be args here
-    ssh $remote_user@$remote_prod_host -o StrictHostKeyChecking=no <<EOF
-        cd ./code/mdrmine;
-        docker build -f Dockerfiles/main/Dockerfile --target mdrmine_deploy -t mdrmine_deploy .;
-        docker run --mount type=bind,src=/home/ubuntu/.intermine,dst=/root/.intermine_base --volume mdrmine_webapps:/webapps --network=mdrmine_default mdrmine_deploy;
-EOF
+#     ssh $remote_user@$remote_prod_host -o StrictHostKeyChecking=no <<EOF
+#         cd ./code/mdrmine;
+#         docker run --mount type=bind,src=/home/ubuntu/.intermine,dst=/root/.intermine_base --volume mdrmine_webapps:/webapps --network=mdrmine_default mdrmine_deploy;
+# EOF
 }
 
 
