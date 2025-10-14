@@ -8,10 +8,12 @@ WD=$(dirname "$SCRIPT_DIR")
 # Default variable values
 backup=true
 default_port="5432"
-skip_db_steps=false
+default_solr_port="8983"
 dump_to_use=""
 dump_folder="/home/ubuntu/dumps"
 properties_path="/home/ubuntu/.intermine/mdrmine.properties"
+remote_mdrmine_path="/home/ubuntu/code/mdrmine" # TODO: add cmd-line arg to modify the value
+skip_db_steps=false
 verbose=false
 
 local_prod_db=""
@@ -50,6 +52,7 @@ load_db_properties() {
     local_prod_user=$(get_prop "db.production.datasource.user")
     local_prod_pass=$(get_prop "db.production.datasource.password")
     local_prod_port=$(get_prop "db.production.datasource.port")
+    local_solr_port=$(get_prop "local.solr.port")
 
     if [[ $local_prod_host = "" ]]; then
         echo "Local hostname is empty, please add 'db.production.datasource.serverName' property to properties file"
@@ -69,6 +72,10 @@ load_db_properties() {
     if [[ $local_prod_port = "" ]]; then
         local_prod_port=$default_port;
     fi
+
+    if [[ $local_solr_port = "" ]]; then
+        local_solr_port=$default_solr_port;
+    fi
     
     # Remote DB
     remote_prod_host=$(get_prop "remote.production.datasource.serverName")
@@ -76,6 +83,7 @@ load_db_properties() {
     remote_prod_user=$(get_prop "remote.production.datasource.user")
     remote_prod_pass=$(get_prop "remote.production.datasource.password")
     remote_prod_port=$(get_prop "remote.production.datasource.port")
+    remote_solr_port=$(get_prop "remote.solr.port")
     
     if [[ $remote_prod_host = "" ]]; then
         echo "Remote hostname is empty, please add 'remote.production.datasource.serverName' property to properties file"
@@ -94,6 +102,10 @@ load_db_properties() {
 
     if [[ $remote_prod_host = "" ]]; then
         remote_prod_port=$default_port;
+    fi
+
+    if [[ $remote_solr_port = "" ]]; then
+        remote_solr_port=$default_solr_port;
     fi
 
     # Remote machine user for SSH
@@ -126,7 +138,7 @@ deploy_remote() {
         echo "Rebuilding DB on remote to align with potential model changes"
         # TODO: Many things should be args here
         ssh $remote_user@$remote_prod_host -o StrictHostKeyChecking=no <<EOF
-            cd ./code/mdrmine;
+            cd $remote_mdrmine_path;
             docker build -f Dockerfiles/main/Dockerfile --target mdrmine_builddb -t mdrmine_builddb .;
             docker run --mount type=bind,src=/home/ubuntu/.intermine,dst=/root/.intermine_base --network=mdrmine_default mdrmine_builddb;
 EOF
@@ -139,33 +151,65 @@ EOF
         fi
     fi
     
-    search_dump="$(date +"%Y%m%d_%H%M%S")_search_dump"
-    autocomplete_dump="$(date +"%Y%m%d_%H%M%S")_autocomplete_dump"
+    autocomplete_dump_local="$(date +"%Y%m%d_%H%M%S")_autocomplete_dump"
+    search_dump_local="$(date +"%Y%m%d_%H%M%S")_search_dump"
 
-    # TODO: port to settings?
-    # TODO: query frequency to settings
-    # Dumping mdrmine-search core and waiting for the dump to be completed before continuing
-    curl "http://$local_prod_host:8983/solr/mdrmine-search/replication?command=backup&location=/solr_backups&name=$search_dump"
-    until curl "http://$local_prod_host:8983/solr/mdrmine-search/replication?command=details" | grep "\"status\":\"OK\""; do
+    echo "Dumping mdrmine-autocomplete core"
+
+    curl "http://$local_prod_host:$local_solr_port/solr/mdrmine-autocomplete/replication?command=backup&location=/solr_backups&name=$autocomplete_dump_local"
+    until curl "http://$local_prod_host:$local_solr_port/solr/mdrmine-autocomplete/replication?command=details" | grep -q "\"status\":\"success\""; do  # Waiting for the dump
         sleep 1;
     done
 
-    # Dumping mdrmine-autocomplete core and waiting for the dump to be completed before continuing
-    curl "http://$local_prod_host:8983/solr/mdrmine-autocomplete/replication?command=backup&location=/solr_backups&name=$autocomplete_dump"
-    until curl "http://$local_prod_host:8983/solr/mdrmine-autocomplete/replication?command=details" | grep "\"status\":\"OK\""; do
+    echo "Dumping mdrmine-search core"
+    curl "http://$local_prod_host:$local_solr_port/solr/mdrmine-search/replication?command=backup&location=/solr_backups&name=$search_dump_local"
+    until curl "http://$local_prod_host:$local_solr_port/solr/mdrmine-search/replication?command=details" | grep -q "\"status\":\"success\""; do  # Waiting for the dump
         sleep 1;
     done
-    # TODO: test rsync
-    # https://stackoverflow.com/a/22908437
-    rsync -a $dump_folder/solr/$search_dump $remote_user@$remote_prod_host:./dumps/solr/
-    rsync -a $dump_folder/solr/$autocomplete_dump $remote_user@$remote_prod_host:./dumps/solr/
-    # curl "http://$remote_prod_host:8983/solr/mdrmine-search/replication?command=restore&location=/solr_backups&name=$search_dump"
-    # curl "http://$remote_prod_host:8983/solr/mdrmine-autocomplete/replication?command=restore&location=/solr_backups&name=$autocomplete_dump"
+
+    echo "Waiting a few more seconds for solr to finish"
+    # For some reason the details queries return success for backups even before all the files are actually written to disk
+    # so we wait a few seconds for it to finish (might be Docker bind mount delay?)
+    sleep 4
+    echo "Transfering the dumps to remote host"
+    # Hacky
+    sudo rsync --rsync-path="sudo rsync" -a $dump_folder/solr/snapshot.$search_dump_local $remote_user@$remote_prod_host:./dumps/solr/
+    sudo rsync --rsync-path="sudo rsync" -a $dump_folder/solr/snapshot.$autocomplete_dump_local $remote_user@$remote_prod_host:./dumps/solr/
+
+    autocomplete_dump_remote="$(date +"%Y%m%d_%H%M%S")_autocomplete_dump_backup"
+    search_dump_remote="$(date +"%Y%m%d_%H%M%S")_search_dump_backup"
+
+    # TODO: should require authentication in the future
+    echo "Dumping (backup) remote mdrmine-autocomplete core"
+    curl "http://$remote_prod_host:$remote_solr_port/solr/mdrmine-autocomplete/replication?command=backup&location=/solr_backups&name=$autocomplete_dump_remote"
+    until curl "http://$remote_prod_host:$remote_solr_port/solr/mdrmine-autocomplete/replication?command=details" | grep "\"status\":\"success\""; do  # Waiting for the dump
+        sleep 1;
+    done
+
+    echo "Dumping (backup) remote mdrmine-search core"
+    curl "http://$remote_prod_host:$remote_solr_port/solr/mdrmine-search/replication?command=backup&location=/solr_backups&name=$search_dump_remote"
+    until curl "http://$remote_prod_host:$remote_solr_port/solr/mdrmine-search/replication?command=details" | grep "\"status\":\"success\""; do  # Waiting for the dump
+        sleep 1;
+    done
+
+    echo "Restoring mdrmine-autocomplete core on remote instance"
+    curl "http://$remote_prod_host:$remote_solr_port/solr/mdrmine-autocomplete/replication?command=restore&location=/solr_backups&name=$autocomplete_dump_local"
+    until curl "http://$remote_prod_host:$remote_solr_port/solr/mdrmine-search/replication?command=details" | grep "\"status\":\"success\""; do
+        sleep 1;
+    done
+
+    echo "Restoring mdrmine-search core on remote instance"
+    curl "http://$remote_prod_host:$remote_solr_port/solr/mdrmine-search/replication?command=restore&location=/solr_backups&name=$search_dump_local"
+    until curl "http://$remote_prod_host:$remote_solr_port/solr/mdrmine-search/replication?command=details" | grep "\"status\":\"success\""; do
+        sleep 1;
+    done
+
     # TODO: Many things should be args here
-#     ssh $remote_user@$remote_prod_host -o StrictHostKeyChecking=no <<EOF
-#         cd ./code/mdrmine;
-#         docker run --mount type=bind,src=/home/ubuntu/.intermine,dst=/root/.intermine_base --volume mdrmine_webapps:/webapps --network=mdrmine_default mdrmine_deploy;
-# EOF
+    ssh $remote_user@$remote_prod_host -o StrictHostKeyChecking=no <<EOF
+        cd $remote_mdrmine_path;
+        docker build -f Dockerfiles/main/Dockerfile --target mdrmine_webapp -t mdrmine_webapp .;
+        docker run --mount type=bind,src=/home/ubuntu/.intermine,dst=/root/.intermine_base --volume mdrmine_webapps:/webapps --network=mdrmine_default mdrmine_webapp;
+EOF
 }
 
 
