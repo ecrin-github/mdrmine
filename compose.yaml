@@ -49,6 +49,8 @@ services:
   solr:
     build:
       dockerfile: ./Dockerfiles/solr/Dockerfile
+    environment:
+      SOLR_IP_ALLOWLIST_FILE: /run/secrets/solr_ip_allowlist  # First IP range defined in secret needs to match docker network IP range defined below
     restart: unless-stopped
     user: root
     volumes:
@@ -59,6 +61,8 @@ services:
           create_host_path: true
     ports:
       - "8983:8983"
+    secrets:
+      - solr_ip_allowlist
   mdrmine:
     build:
       args:
@@ -94,6 +98,12 @@ volumes:
   webapps:
   solr_data:
 
+networks:
+  default:
+    ipam:
+      config:
+        - subnet: 172.177.0.0/16
+
 secrets:
   postgres_user:
     file: ./secrets/postgres_user
@@ -103,3 +113,5 @@ secrets:
     file: ./secrets/tomcat_user
   tomcat_password:
     file: ./secrets/tomcat_password
+  solr_ip_allowlist:
+    file: ./secrets/solr_ip_allowlist

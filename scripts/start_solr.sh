@@ -1,5 +1,7 @@
 #!/bin/bash
 
+export SOLR_IP_ALLOWLIST=$(cat "$SOLR_IP_ALLOWLIST_FILE")
+
 mkdir -p /solr_backups/data
 chown -R 8983:8983 /solr_backups
 

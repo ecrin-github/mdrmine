@@ -148,6 +148,7 @@ build() {
             fi
 
             if [[ "$deploy_remote" = true ]]; then
+                # TODO: wrong default paths in script
                 $SCRIPT_DIR/deploy_remote.sh
             else
                 $WD/gradlew postprocess -Pprocess=create-autocomplete-index --stacktrace
