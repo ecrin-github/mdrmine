@@ -28,7 +28,7 @@ remote_prod_host=""
 remote_prod_port=""
 
 usage() {
-    echo "Deploy"
+    echo "Deploy a local MDRMine build to a remote instance (DB, Solr, Webapp redeployment)"
     echo "Usage: $0 [OPTIONS]"
     echo "Options:"
     echo " -d=[dump_path], --dump-to-use=[dump_path]                    Path of dump to use, dumps local MDRMine DB instead if empty"
@@ -131,7 +131,7 @@ deploy_remote() {
         fi
 
         if [[ "$backup" = true ]]; then
-            echo "Backing up remote DB to $dump_folder"
+            echo "Dumping remote DB to $dump_folder"
             pg_dump -h "$remote_prod_host" -p "$remote_prod_port" -U "$remote_prod_user" -d "$remote_prod_db" -F c >  $dump_folder/$(date +"%Y%m%d_%H%M%S")_remote_dump.sql
         fi
         
@@ -179,7 +179,6 @@ EOF
     autocomplete_dump_remote="$(date +"%Y%m%d_%H%M%S")_autocomplete_dump_backup"
     search_dump_remote="$(date +"%Y%m%d_%H%M%S")_search_dump_backup"
 
-    # TODO: should require authentication in the future
     echo "Dumping (backup) remote mdrmine-autocomplete core"
     curl "http://$remote_prod_host:$remote_solr_port/solr/mdrmine-autocomplete/replication?command=backup&location=/solr_backups&name=$autocomplete_dump_remote"
     until curl "http://$remote_prod_host:$remote_solr_port/solr/mdrmine-autocomplete/replication?command=details" | grep "\"status\":\"success\""; do  # Waiting for the dump
@@ -192,13 +191,13 @@ EOF
         sleep 1;
     done
 
-    echo "Restoring mdrmine-autocomplete core on remote instance"
+    echo "Restoring local mdrmine-autocomplete core on remote instance"
     curl "http://$remote_prod_host:$remote_solr_port/solr/mdrmine-autocomplete/replication?command=restore&location=/solr_backups&name=$autocomplete_dump_local"
     until curl "http://$remote_prod_host:$remote_solr_port/solr/mdrmine-search/replication?command=details" | grep "\"status\":\"success\""; do
         sleep 1;
     done
 
-    echo "Restoring mdrmine-search core on remote instance"
+    echo "Restoring local mdrmine-search core on remote instance"
     curl "http://$remote_prod_host:$remote_solr_port/solr/mdrmine-search/replication?command=restore&location=/solr_backups&name=$search_dump_local"
     until curl "http://$remote_prod_host:$remote_solr_port/solr/mdrmine-search/replication?command=details" | grep "\"status\":\"success\""; do
         sleep 1;
