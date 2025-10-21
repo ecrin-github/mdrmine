@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# Reading list of allowed IPs from Docker secret file
 export SOLR_IP_ALLOWLIST=$(cat "$SOLR_IP_ALLOWLIST_FILE")
 
 mkdir -p /solr_backups/data
