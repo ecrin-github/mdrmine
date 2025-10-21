@@ -34,6 +34,7 @@ terms already fine marked with dcat
     <attribute name="continent" type="java.lang.String"/>
     <attribute name="tld" type="java.lang.String"/>
     <attribute name="geonameId" type="java.lang.String"/>
+    <collection name="studyCountries" referenced-type="StudyCountry" reverse-reference="country"/>
   </class>
 
   <class name="Study" is-interface="true" extends="Concept">
@@ -132,7 +133,7 @@ terms already fine marked with dcat
 
   <class name="StudyCountry" is-interface="true">
     <reference name="study" referenced-type="Study" reverse-reference="studyCountries"/>
-    <reference name="country" referenced-type="Country"/>
+    <reference name="country" referenced-type="Country" reverse-reference="studyCountries"/>
     <attribute name="countryName" type="java.lang.String"/>
     <attribute name="status" type="java.lang.String"/>
     <attribute name="plannedEnrolment" type="java.lang.Integer"/>

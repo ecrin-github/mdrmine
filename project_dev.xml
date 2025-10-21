@@ -16,20 +16,10 @@
       <property name="src.data.dir" location="/home/ubuntu/data/cvt"/>
       <property name="delimited.includes" value="cvt.csv"/>
     </source>
-    <source name="countries" type="delimited">
-      <property name="delimited.dataSourceName" value="GeoNames"/>
-      <property name="delimited.dataSetTitle" value="GeoNames country info"/>
-      <property name="delimited.licence" value="https://creativecommons.org/licenses/by/4.0/"/>
-      <property name="delimited.hasHeader" value="true"/>
-      <property name="delimited.columns" 
-      value="Country.isoAlpha2, Country.isoAlpha3, null, null, Country.name, Country.capital, null, null, Country.continent, Country.tld, null, null, null, null, null, null, Country.geonameId, null, null"/>
-      <property name="delimited.separator" value="tab"/>
-      <property name="src.data.dir" location="/home/ubuntu/data/countries"/>
-      <property name="delimited.includes" value="countryInfoCleaned.tsv"/>
-    </source>
     <source name="who" type="who" version="1.0.0">
       <property name="src.data.dir" location="/home/ubuntu/data/who"/>
-      <property name="src.data.dir.includes" value="who.csv"/>
+      <!-- <property name="src.data.dir.includes" value="who.csv"/> -->
+      <!-- <property name="src.data.dir.includes" value="testcases.csv"/> -->
       <!-- <property name="src.data.dir.includes" value="failinglines.csv"/> -->
       <!-- <property name="src.data.dir.includes" value="who_dev.csv"/> -->
       <!-- <property name="src.data.dir.includes" value="weekh1000.csv"/> -->
@@ -37,10 +27,13 @@
       <!-- <property name="src.data.dir.includes" value="testmerge.csv"/> -->
       <!-- <property name="src.data.dir.includes" value="testmerge2.1.csv"/> -->
       <!-- <property name="src.data.dir.includes" value="testmerge2.csv"/> -->
-      <!-- <property name="src.data.dir.includes" value="ICTRPWeek22July2024.csv"/> -->
+      <property name="src.data.dir.includes" value="ICTRPWeek22July2024.csv"/>
+      <!-- <property name="src.data.dir.includes" value="teststudycountries.csv"/> -->
       <!-- <property name="src.data.dir.includes" value="test_euctr1.csv"/> -->
       <!-- <property name="src.data.dir.includes" value="test.csv"/> -->
       <!-- <property name="src.data.dir.includes" value="ICTRPFullExport-1003291-20-06-2024.csv"/> -->
+      <property name="countriesFP" value="/home/ubuntu/data/countries/countryInfoCleaned.tsv"/>
+      <property name="countriesAltNamesFP" value="/home/ubuntu/data/countries/20251020_countries_alt_names.csv"/>
       <property name="headersFilePath" value="/home/ubuntu/data/who/ICTRP_headers.csv"/>
       <property name="logDir" value="./sources_logs"/>
     </source>
@@ -48,10 +41,13 @@
       <property name="src.data.dir" location="/home/ubuntu/data/euctr"/>
       <!-- <property name="src.data.dir.includes" value="test.xml"/> -->
       <!-- <property name="src.data.dir.includes" value="test_euctr1.xml"/> -->
+      <!-- <property name="src.data.dir.includes" value="teststudycountries.xml"/> -->
       <property name="src.data.dir.includes" value="euctr_digest.xml"/>
       <!-- <property name="src.data.dir.includes" value="testmerge2.xml"/> -->
       <!-- <property name="src.data.dir.includes" value="testmerge.xml"/> -->
       <!-- <property name="src.data.dir.includes" value="20210822.xml"/> -->
+      <property name="countriesFP" value="/home/ubuntu/data/countries/countryInfoCleaned.tsv"/>
+      <property name="countriesAltNamesFP" value="/home/ubuntu/data/countries/20251020_countries_alt_names.csv"/>
       <property name="logDir" value="./sources_logs"/>
     </source>
     <source name="ctis" type="ctis" version="1.0.0">
@@ -60,26 +56,32 @@
       <!-- <property name="src.data.dir.includes" value="testmerge2.csv"/> -->
       <!-- <property name="src.data.dir.includes" value="testconflict.csv"/> -->
       <property name="src.data.dir.includes" value="ctis_dev.csv"/>
+      <property name="countriesFP" value="/home/ubuntu/data/countries/countryInfoCleaned.tsv"/>
+      <property name="countriesAltNamesFP" value="/home/ubuntu/data/countries/20251020_countries_alt_names.csv"/>
       <property name="logDir" value="./sources_logs"/>
     </source>
     <source name="ctg" type="ctg" version="1.0.0">
       <property name="src.data.dir" location="/home/ubuntu/data/ctg"/>
       <!-- <property name="src.data.dir.includes" value="testmerge2.csv"/> -->
       <!-- <property name="src.data.dir.includes" value="test_euctr1.csv"/> -->
-      <!-- <property name="src.data.dir.includes" value="ctg100k.csv"/> -->
+      <property name="src.data.dir.includes" value="ctg100k.csv"/>
       <!-- <property name="src.data.dir.includes" value="testconflict.csv"/> -->
-      <property name="src.data.dir.includes" value="ctg-studies.csv"/>
+      <!-- <property name="src.data.dir.includes" value="ctg-studies.csv"/> -->
+      <property name="countriesFP" value="/home/ubuntu/data/countries/countryInfoCleaned.tsv"/>
+      <property name="countriesAltNamesFP" value="/home/ubuntu/data/countries/20251020_countries_alt_names.csv"/>
       <property name="logDir" value="./sources_logs"/>
     </source>
     <source name="biolincc" type="biolincc" version="1.0.0">
       <property name="src.data.dir" location="/home/ubuntu/data/biolincc"/>
       <property name="src.data.dir.includes" value="biolincc.csv"/>
+      <property name="countriesFP" value="/home/ubuntu/data/countries/countryInfoCleaned.tsv"/>
+      <property name="countriesAltNamesFP" value="/home/ubuntu/data/countries/20251020_countries_alt_names.csv"/>
       <property name="logDir" value="./sources_logs"/>
     </source>
     <source name="pubmed" type="pubmed" version="1.0.0">
       <property name="src.data.dir" location="/home/ubuntu/data/pubmed"/>
-      <property name="src.data.dir.includes" value="pubmed_dev.xml"/>
-      <!-- <property name="src.data.dir.includes" value="20241107_152110_pubmed_*.xml"/> -->
+      <!-- <property name="src.data.dir.includes" value="pubmed_dev.xml"/> -->
+      <property name="src.data.dir.includes" value="20241107_152110_pubmed_*.xml"/>
     </source>
     <source name="update-publications" type="update-publications" dump="true">
       <!-- this source finds the publication ids (pubmed ids) in the

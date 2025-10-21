@@ -16,26 +16,19 @@
       <property name="src.data.dir" location="/home/ubuntu/data/cvt"/>
       <property name="delimited.includes" value="cvt.csv"/>
     </source>
-    <source name="countries" type="delimited">
-      <property name="delimited.dataSourceName" value="GeoNames"/>
-      <property name="delimited.dataSetTitle" value="GeoNames country info"/>
-      <property name="delimited.licence" value="https://creativecommons.org/licenses/by/4.0/"/>
-      <property name="delimited.hasHeader" value="true"/>
-      <property name="delimited.columns" 
-      value="Country.isoAlpha2, Country.isoAlpha3, null, null, Country.name, Country.capital, null, null, Country.continent, Country.tld, null, null, null, null, null, null, Country.geonameId, null, null"/>
-      <property name="delimited.separator" value="tab"/>
-      <property name="src.data.dir" location="/home/ubuntu/data/countries"/>
-      <property name="delimited.includes" value="countryInfoCleaned.tsv"/>
-    </source>
     <source name="euctr" type="euctr" version="1.0.0">
       <property name="src.data.dir" location="/home/ubuntu/data/euctr"/>
       <property name="src.data.dir.includes" value="euctr_digest.xml"/>
       <!-- <property name="src.data.dir.includes" value="failinglines7.xml"/> -->
+      <property name="countriesFP" value="/home/ubuntu/data/countries/countryInfoCleaned.tsv"/>
+      <property name="countriesAltNamesFP" value="/home/ubuntu/data/countries/20251020_countries_alt_names.csv"/>
       <property name="logDir" value="./sources_logs"/>
     </source>
     <source name="ctis" type="ctis" version="1.0.0">
       <property name="src.data.dir" location="/home/ubuntu/data/ctis"/>
       <property name="src.data.dir.includes" value="ctis.csv"/>
+      <property name="countriesFP" value="/home/ubuntu/data/countries/countryInfoCleaned.tsv"/>
+      <property name="countriesAltNamesFP" value="/home/ubuntu/data/countries/20251020_countries_alt_names.csv"/>
       <property name="logDir" value="./sources_logs"/>
     </source>
     <source name="who" type="who" version="1.0.0" dump="true">
@@ -43,17 +36,23 @@
       <property name="src.data.dir.includes" value="who.csv"/>
       <!-- <property name="src.data.dir.includes" value="testcases.csv"/> -->
       <property name="headersFilePath" value="/home/ubuntu/data/who/ICTRP_headers.csv"/>
+      <property name="countriesFP" value="/home/ubuntu/data/countries/countryInfoCleaned.tsv"/>
+      <property name="countriesAltNamesFP" value="/home/ubuntu/data/countries/20251020_countries_alt_names.csv"/>
       <property name="logDir" value="./sources_logs"/>
     </source>
     <source name="ctg" type="ctg" version="1.0.0" dump="true">
       <property name="src.data.dir" location="/home/ubuntu/data/ctg"/>
       <property name="src.data.dir.includes" value="ctg.csv"/>
       <!-- <property name="src.data.dir.includes" value="testcases.csv"/> -->
+      <property name="countriesFP" value="/home/ubuntu/data/countries/countryInfoCleaned.tsv"/>
+      <property name="countriesAltNamesFP" value="/home/ubuntu/data/countries/20251020_countries_alt_names.csv"/>
       <property name="logDir" value="./sources_logs"/>
     </source>
     <source name="biolincc" type="biolincc" version="1.0.0">
       <property name="src.data.dir" location="/home/ubuntu/data/biolincc"/>
       <property name="src.data.dir.includes" value="biolincc.csv"/>
+      <property name="countriesFP" value="/home/ubuntu/data/countries/countryInfoCleaned.tsv"/>
+      <property name="countriesAltNamesFP" value="/home/ubuntu/data/countries/20251020_countries_alt_names.csv"/>
       <property name="logDir" value="./sources_logs"/>
     </source>
     <source name="pubmed" type="pubmed" version="1.0.0">
