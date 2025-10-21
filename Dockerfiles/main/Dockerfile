@@ -60,19 +60,13 @@ FROM mdrmine_env AS mdrmine_builddb
 ENTRYPOINT ./scripts/build_db.sh
 
 
-# Solr postprocesses
-FROM mdrmine_env AS mdrmine_postprocess
-
-ENTRYPOINT ./scripts/postprocess.sh
-
-
 # Tomcat webapp redeployment
 FROM mdrmine_env AS mdrmine_webapp
 
 ENTRYPOINT ./scripts/redeploy_webapp.sh
 
 
-# Solr postprocess and tomcat redeployment combined
-FROM mdrmine_env AS mdrmine_deploy
+# Solr postprocesses
+FROM mdrmine_env AS mdrmine_postprocess
 
-ENTRYPOINT ./scripts/deploy_docker.sh
+ENTRYPOINT ./scripts/postprocess.sh
