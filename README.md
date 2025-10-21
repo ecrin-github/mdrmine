@@ -13,6 +13,7 @@ See the [sources wiki](https://github.com/ecrin-github/mdrmine-bio-sources/wiki)
     - compiling of JARs required (see [Usage](#usage))
 - Run Solr with a list of IPs allowed to query it, for example through the `SOLR_IP_ALLOWLIST` environment variable, for security reasons
 - The build process, especially for sources with big data files such as WHO, can use a lot of RAM, (40+ GB), so a machine with a lot of RAM is required to perform a full build
+- If WHO data is to be used as a source (especially the full data), it must be cleaned using `scripts/preprocess_who.sh`, the parsing will fail with errors otherwise
 
 ## Docker deployment
 Note: the current GH action to build and deploy on a remote machine is outdated and should not be used. 
