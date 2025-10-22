@@ -69,4 +69,10 @@ ENTRYPOINT ./scripts/redeploy_webapp.sh
 # Solr postprocesses
 FROM mdrmine_env AS mdrmine_postprocess
 
-ENTRYPOINT ./scripts/postprocess.sh
+ENTRYPOINT ./scripts/deploy_docker.sh
+
+
+# Rerun update publications
+FROM mdrmine_env AS mdrmine_publications
+
+ENTRYPOINT ./scripts/rerun_update_publications.sh
