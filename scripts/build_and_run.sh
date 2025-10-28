@@ -7,6 +7,7 @@ WD=$(dirname "$SCRIPT_DIR")
 # Default property values
 deploy_remote=false
 docker=false
+dump_folder="/home/ubuntu/dumps"
 first_build=false
 hostname="localhost"
 properties_path="/root/.intermine/mdrmine.properties"
@@ -43,6 +44,7 @@ usage() {
     echo " -p=[sources_path], --path=[sources_path]                     Set sources repo path, default: $sources_path"
     echo " -r, --deploy-remote                                          Build on this machine and deploy to a remote MDRMine and PSQL instance"
     echo " -s=[list of comma separated sources], --sources=[sources]    Set list of sources to integrate, default behaviour includes all in sources folder"
+    echo " -t=[dump_folder], --dump-folder=[dump_folder]                Folder with dumps/where to dump, default: $dump_folder"
     echo " -u, --build-user-db                                          Build user DB, default: $build_user_db"
     echo " -v, --verbose                                                Enable verbose mode (outputs commands)"
     echo " -x, --skip-install                                           Skip ./gradlew install in bio-sources repository"
@@ -95,6 +97,8 @@ build() {
 
     load_properties
 
+    mkdir -p $dump_folder
+
     if [[ "$docker" = true ]]; then
         echo "$local_prod_host:$local_prod_port:*:$local_prod_user:$local_prod_pass" > ~/.pgpass
         echo "$remote_prod_host:$remote_prod_port:*:$remote_prod_user:$remote_prod_pass" >> ~/.pgpass
@@ -126,16 +130,36 @@ build() {
                 if [ "$sources" = "" ]; then   # All sources
                     # Getting the sources in order from the project file
                     for fp in $(perl -ne 'while(/<source +name="([^"]+)"/g){print "$1\n";}' project.xml); do
-                        echo "------------- Source: $(basename $fp) -------------"
-                        $WD/gradlew integrate -Psource=$(basename $fp) --stacktrace
+                        source=$(basename $fp)
+                        echo "------------- Source: $source -------------"
+                        $WD/gradlew integrate -Psource=$source --stacktrace
+                        
+                        # Dump build if dump=true in project.xml
+                        dump_regex="<source +name=\"$source\"[^>]*dump=\"true\""
+                        if [[ $(cat ./project.xml) =~ $dump_regex ]]
+                        then
+                            echo "Dumping build to $dump_folder"
+                            dump_to_use="$dump_folder/$(date +"%Y%m%d_%H%M%S")_${source}_local_dump.sql"
+                            pg_dump -h "$local_prod_host" -p "$local_prod_port" -U "$local_prod_user" -d "$local_prod_db" -F c > $dump_to_use
+                        fi
                     done
                 else    # List of sources passed as cmd-line arg
-                    for j in ${sources//,/ }
+                    for source in ${sources//,/ }
                     do
-                        echo "------------- Source: $j -------------"
-                        $WD/gradlew integrate -Psource=$j --stacktrace
+                        echo "------------- Source: $source -------------"
+                        $WD/gradlew integrate -Psource=$source --stacktrace
+
+                        # Dump build if dump=true in project.xml
+                        dump_regex="<source +name=\"$source\"[^>]*dump=\"true\""
+                        if [[ $(cat ./project.xml) =~ $dump_regex ]]
+                        then
+                            echo "Dumping build to $dump_folder"
+                            dump_to_use="$dump_folder/$(date +"%Y%m%d_%H%M%S")_${source}_local_dump.sql"
+                            pg_dump -h "$local_prod_host" -p "$local_prod_port" -U "$local_prod_user" -d "$local_prod_db" -F c > $dump_to_use
+                        fi
+
                         # Running update-publications after getting PubMed IDs if it's not already in the list of sources
-                        if [[ "$j" = "pubmed" && "$sources" != *"update-publications"* ]]; then
+                        if [[ "$source" = "pubmed" && "$sources" != *"update-publications"* ]]; then
                             echo "------------- Source: update-publications -------------"
                             $WD/gradlew integrate -Psource=update-publications --stacktrace
                         fi
@@ -148,8 +172,8 @@ build() {
             fi
 
             if [[ "$deploy_remote" = true ]]; then
-                # TODO: wrong default paths in script
-                $SCRIPT_DIR/deploy_remote.sh
+                # TODO: test if works (correct params)
+                $SCRIPT_DIR/deploy_remote.sh -p=~/.intermine/mdrmine.properties
             else
                 $WD/gradlew postprocess -Pprocess=create-autocomplete-index --stacktrace
                 $WD/gradlew postprocess -Pprocess=create-search-index --stacktrace
@@ -211,6 +235,10 @@ for i in "$@"; do
         ;;
     -s=*|--sources=*)
         sources="${i#*=}"
+        shift
+        ;;
+    -t=*|--dump-folder=*)
+        dump_folder="${i#*=}"
         shift
         ;;
     -u | --build-user-db)

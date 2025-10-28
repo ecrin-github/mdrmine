@@ -84,6 +84,9 @@ services:
         source: /home/ubuntu/data/
         target: /home/ubuntu/data/
       - type: bind
+        source: ~/dumps/
+        target: /home/ubuntu/dumps/ # To match default dump folder parameter in build script
+      - type: bind
         source: ./sources_logs
         target: /mdrmine/sources_logs
         bind:
