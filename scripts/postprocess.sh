@@ -21,7 +21,10 @@ postprocess() {
     fi
 
     # Set MDRMine Docker properties
-    ./set_docker_properties.sh
+    SCRIPT_PATH=$(readlink -f "$0")
+    SCRIPT_DIR=$(dirname "$SCRIPT_PATH")
+    $SCRIPT_DIR/set_docker_properties.sh
+
     if [ $? = 1 ];  # Exiting if script returned an error code
     then
         exit 1

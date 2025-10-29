@@ -1,7 +1,6 @@
 # TODO: integrate other intermine images? -> https://hub.docker.com/u/intermine
 
 services:
-  # TODO: db backup (volumes)
   db:
     image: postgres:14
     # restart: unless-stopped
@@ -9,9 +8,7 @@ services:
     volumes:
       - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
       - ./pg_upd.conf:/etc/postgresql.conf
-      # - /etc/postgresql.conf:/etc/postgresql.conf
     environment:
-      # TODO: define secrets using GH secrets: use ssh-action to modify properties and docker secrets files?
       POSTGRES_MULTIPLE_DATABASES: mdrmine,items-mdrmine,userprofile-mdrmine
       POSTGRES_USER_FILE: /run/secrets/postgres_user
       POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
@@ -49,21 +46,27 @@ services:
     ports:
       - "8090:8090" # this is 8090:8090 because of the config in bluegenes.env
   solr:
-    image: solr:latest
+    build:
+      dockerfile: ./Dockerfiles/solr/Dockerfile
+    environment:
+      SOLR_IP_ALLOWLIST_FILE: /run/secrets/solr_ip_allowlist  # First IP range defined in secret needs to match docker network IP range defined below
     restart: unless-stopped
+    user: root
     volumes:
-      - solr_data:/var/solr
-    entrypoint:
-      - bash
-      - "-c"
-      - "mkdir -p /var/solr/data; precreate-core mdrmine-search; precreate-core mdrmine-autocomplete; exec solr -f -Dvelocity.solr.resource.loader.enabled=true"
+      - type: bind
+        source: ~/dumps/solr
+        target: /solr_backups # Note: changing the path here requires changing config files in MDRMine's solr folder
+        bind:
+          create_host_path: true
     ports:
       - "8983:8983"
+    secrets:
+      - solr_ip_allowlist
   mdrmine:
     build:
       args:
         SOURCES: $SOURCES
-        LOCAL: $LOCAL
+        DEPLOY_REMOTE: $DEPLOY_REMOTE
         EMPTY: $EMPTY
         HOSTNAME: db  # this needs to match Postgres service name
       context: .
@@ -81,8 +84,13 @@ services:
         source: /home/ubuntu/data/
         target: /home/ubuntu/data/
       - type: bind
+        source: ~/dumps/
+        target: /home/ubuntu/dumps/ # To match default dump folder parameter in build script
+      - type: bind
         source: ./sources_logs
         target: /mdrmine/sources_logs
+        bind:
+          create_host_path: true
       - type: bind
         source: $SSH_AUTH_SOCK
         target: /ssh-agent
@@ -91,6 +99,12 @@ services:
 volumes:
   webapps:
   solr_data:
+
+networks:
+  default:
+    ipam:
+      config:
+        - subnet: 172.177.0.0/16
 
 secrets:
   postgres_user:
@@ -101,3 +115,5 @@ secrets:
     file: ./secrets/tomcat_user
   tomcat_password:
     file: ./secrets/tomcat_password
+  solr_ip_allowlist:
+    file: ./secrets/solr_ip_allowlist

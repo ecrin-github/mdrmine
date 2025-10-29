@@ -1,8 +1,13 @@
 #!/bin/bash
 
+SCRIPT_PATH=$(readlink -f "$0")
+SCRIPT_DIR=$(dirname "$SCRIPT_PATH")
+WD=$(dirname "$SCRIPT_DIR")
+
 # Default property values
 deploy_remote=false
 docker=false
+dump_folder="/home/ubuntu/dumps"
 first_build=false
 hostname="localhost"
 properties_path="/root/.intermine/mdrmine.properties"
@@ -39,6 +44,7 @@ usage() {
     echo " -p=[sources_path], --path=[sources_path]                     Set sources repo path, default: $sources_path"
     echo " -r, --deploy-remote                                          Build on this machine and deploy to a remote MDRMine and PSQL instance"
     echo " -s=[list of comma separated sources], --sources=[sources]    Set list of sources to integrate, default behaviour includes all in sources folder"
+    echo " -t=[dump_folder], --dump-folder=[dump_folder]                Folder with dumps/where to dump, default: $dump_folder"
     echo " -u, --build-user-db                                          Build user DB, default: $build_user_db"
     echo " -v, --verbose                                                Enable verbose mode (outputs commands)"
     echo " -x, --skip-install                                           Skip ./gradlew install in bio-sources repository"
@@ -86,14 +92,12 @@ build() {
         set -x
     fi
 
-    # Copy bind-mounted properties to load docker properties file without modifying anything on disk
-    cp -r /root/.intermine_base /root/.intermine
-    if [[ -f /root/.intermine/mdrmine_docker.properties ]]; then
-        rm /root/.intermine/mdrmine.properties
-        mv /root/.intermine/mdrmine_docker.properties /root/.intermine/mdrmine.properties
-    fi
+    # Set MDRMine Docker properties
+    $SCRIPT_DIR/set_docker_properties.sh
 
     load_properties
+
+    mkdir -p $dump_folder
 
     if [[ "$docker" = true ]]; then
         echo "$local_prod_host:$local_prod_port:*:$local_prod_user:$local_prod_pass" > ~/.pgpass
@@ -106,8 +110,8 @@ build() {
             mine_dir=$(pwd)
             echo "--- Cleaning sources ---"
             cd $sources_path
-            ./gradlew clean
-            ./gradlew install --stacktrace
+            $WD/gradlew clean
+            $WD/gradlew install --stacktrace
             cd $mine_dir
         else
             echo "Error: couldn't find sources folder gradlew file, path tried: $sources_path/gradlew install" >&2
@@ -115,71 +119,77 @@ build() {
         fi
     fi
 
-    if [[ -f ./gradlew ]]; then
+    if [[ -f $WD/gradlew ]]; then
         echo "--- Cleaning mine ---"
-        ./gradlew clean --stacktrace
+        $WD/gradlew clean --stacktrace
         echo "--- Building DB ---"
-        ./gradlew buildDB --stacktrace
+        $WD/gradlew buildDB --stacktrace
         
         if [[ "$build_empty" = false ]]; then
             if [[ "$skip_sources" = false ]]; then
                 if [ "$sources" = "" ]; then   # All sources
                     # Getting the sources in order from the project file
                     for fp in $(perl -ne 'while(/<source +name="([^"]+)"/g){print "$1\n";}' project.xml); do
-                        echo "------------- Source: $(basename $fp) -------------"
-                        ./gradlew integrate -Psource=$(basename $fp) --stacktrace
+                        source=$(basename $fp)
+                        echo "------------- Source: $source -------------"
+                        $WD/gradlew integrate -Psource=$source --stacktrace
+                        
+                        # Dump build if dump=true in project.xml
+                        dump_regex="<source +name=\"$source\"[^>]*dump=\"true\""
+                        if [[ $(cat ./project.xml) =~ $dump_regex ]]
+                        then
+                            echo "Dumping build to $dump_folder"
+                            dump_to_use="$dump_folder/$(date +"%Y%m%d_%H%M%S")_${source}_local_dump.sql"
+                            pg_dump -h "$local_prod_host" -p "$local_prod_port" -U "$local_prod_user" -d "$local_prod_db" -F c > $dump_to_use
+                        fi
                     done
                 else    # List of sources passed as cmd-line arg
-                    for j in ${sources//,/ }
+                    for source in ${sources//,/ }
                     do
-                        echo "------------- Source: $j -------------"
-                        ./gradlew integrate -Psource=$j --stacktrace
+                        echo "------------- Source: $source -------------"
+                        $WD/gradlew integrate -Psource=$source --stacktrace
+
+                        # Dump build if dump=true in project.xml
+                        dump_regex="<source +name=\"$source\"[^>]*dump=\"true\""
+                        if [[ $(cat ./project.xml) =~ $dump_regex ]]
+                        then
+                            echo "Dumping build to $dump_folder"
+                            dump_to_use="$dump_folder/$(date +"%Y%m%d_%H%M%S")_${source}_local_dump.sql"
+                            pg_dump -h "$local_prod_host" -p "$local_prod_port" -U "$local_prod_user" -d "$local_prod_db" -F c > $dump_to_use
+                        fi
+
                         # Running update-publications after getting PubMed IDs if it's not already in the list of sources
-                        if [[ "$j" = "pubmed" && "$sources" != *"update-publications"* ]]; then
+                        if [[ "$source" = "pubmed" && "$sources" != *"update-publications"* ]]; then
                             echo "------------- Source: update-publications -------------"
-                            ./gradlew integrate -Psource=update-publications --stacktrace
+                            $WD/gradlew integrate -Psource=update-publications --stacktrace
                         fi
                     done
                 fi
 
-                ./gradlew postprocess -Pprocess=do-sources --stacktrace
-                ./gradlew postprocess -Pprocess=create-attribute-indexes --stacktrace
-                ./gradlew postprocess -Pprocess=summarise-objectstore --stacktrace
+                $WD/gradlew postprocess -Pprocess=do-sources --stacktrace
+                $WD/gradlew postprocess -Pprocess=create-attribute-indexes --stacktrace
+                $WD/gradlew postprocess -Pprocess=summarise-objectstore --stacktrace
             fi
 
             if [[ "$deploy_remote" = true ]]; then
-                echo "Dumping local DB"
-                pg_dump -h "$local_prod_host" -p "$local_prod_port" -U "$local_prod_user" -d "$local_prod_db" -F c > ./mdrmine_build.sql
-
-                echo "Transfer local build to remote machine"
-                pg_restore --clean -h "$remote_prod_host" -p "$remote_prod_port" -U "$remote_prod_user" -d "$remote_prod_db" ./mdrmine_build.sql
-                # TODO: add something to backup old DB
-
-                # TODO: should check that Docker is running on remote?
-                # TODO: option to run only this part if failed?
-                # TODO: remote mdrmine path should be an arg
-                # Run solr postprocesses on remote + redeploy webapp
-                ssh $remote_user@$remote_prod_host -o StrictHostKeyChecking=no <<EOF
-                    cd ./code/mdrmine;
-                    docker build -f Dockerfiles/main/Dockerfile --target mdrmine_deploy -t mdrmine_deploy .;
-                    docker run --mount type=bind,src=/home/ubuntu/.intermine,dst=/root/.intermine_base --volume mdrmine_webapps:/webapps --network=mdrmine_default mdrmine_deploy;
-EOF
+                # TODO: test if works (correct params)
+                $SCRIPT_DIR/deploy_remote.sh -p=~/.intermine/mdrmine.properties
             else
-                ./gradlew postprocess -Pprocess=create-autocomplete-index --stacktrace
-                ./gradlew postprocess -Pprocess=create-search-index --stacktrace
-            fi
-            
-            if [[ "$build_user_db" = true ]]; then 
-                ./gradlew buildUserDB --stacktrace
-            fi
-            if [[ "$docker" = true ]]; then
-                # Generate war file
-                ./gradlew war
-                cp ./webapp/build/libs/webapp.war /webapps/mdrmine.war
-            elif [[ "$first_build" = false ]]; then
-                ./gradlew cargoRedeployRemote --stacktrace
-            else
-                ./gradlew cargoDeployRemote --stacktrace
+                $WD/gradlew postprocess -Pprocess=create-autocomplete-index --stacktrace
+                $WD/gradlew postprocess -Pprocess=create-search-index --stacktrace
+
+                if [[ "$build_user_db" = true ]]; then 
+                    $WD/gradlew buildUserDB --stacktrace
+                fi
+                if [[ "$docker" = true ]]; then
+                    # Generate war file
+                    $WD/gradlew war
+                    cp $WD/webapp/build/libs/webapp.war /webapps/mdrmine.war
+                elif [[ "$first_build" = false ]]; then
+                    $WD/gradlew cargoRedeployRemote --stacktrace
+                else
+                    $WD/gradlew cargoDeployRemote --stacktrace
+                fi
             fi
         fi
     else
@@ -225,6 +235,10 @@ for i in "$@"; do
         ;;
     -s=*|--sources=*)
         sources="${i#*=}"
+        shift
+        ;;
+    -t=*|--dump-folder=*)
+        dump_folder="${i#*=}"
         shift
         ;;
     -u | --build-user-db)
