@@ -13,7 +13,7 @@ fi
 
 echo "--- Cleaning mine ---"
 $WD/gradlew clean --stacktrace
-$WD/gradlew integrate -Psource=update-publications --stacktrace --debug
+$WD/gradlew integrate -Psource=update-publications --stacktrace --info
 $WD/gradlew postprocess -Pprocess=do-sources --stacktrace
 $WD/gradlew postprocess -Pprocess=create-attribute-indexes --stacktrace
 $WD/gradlew postprocess -Pprocess=summarise-objectstore --stacktrace
