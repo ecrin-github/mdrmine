@@ -31,7 +31,8 @@ usage() {
     echo "Deploy a local MDRMine build to a remote instance (DB, Solr, Webapp redeployment)"
     echo "Usage: $0 [OPTIONS]"
     echo "Options:"
-    echo " -d=[dump_path], --dump-to-use=[dump_path]                    Path of dump to use, dumps local MDRMine DB instead if empty"
+    echo " -d=[dump_folder], --dump-folder=[dump_folder]                Folder with dumps/where to dump, default: $dump_folder"
+    echo " -f=[dump_path], --dump-file-to-use=[dump_path]               Path of dump to use, dumps local MDRMine DB instead if empty"
     echo " -n, --no-backup                                              Don't dump remote DB"
     echo " -p=[properties_path], --properties-path=[properties_path]    Set properties file path, default: $properties_path"
     echo " -s, --skip-db-steps                                          Skip all pg_dump/pg_restore steps, only perform the remote postprocess and webapp redeployment"
@@ -215,7 +216,11 @@ EOF
 # Parsing command-line arguments
 for i in "$@"; do
   case $i in
-    -d=*|--dump-to-use=*)
+    -d=*|--dump-folder=*)
+        dump_folder="${i#*=}"
+        shift
+        ;;
+    -f=*|--dump-file-to-use=*)
         dump_to_use="${i#*=}"
         shift
         ;;
