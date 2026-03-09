@@ -12,7 +12,7 @@ terms already fine marked with dcat
 
 -->
 
-<!-- Version 2.1 -->
+<!-- Version 3.0 -->
 <classes>
   <class name="Concept" is-interface="true" extends="Annotatable">
     <attribute name="secondaryIdentifier" type="java.lang.String"/>
@@ -42,7 +42,8 @@ terms already fine marked with dcat
     <attribute name="nctID" type="java.lang.String"/>
     <attribute name="displayTitle" type="java.lang.String"/>
     <attribute name="titleLangCode" type="java.lang.String"/>
-    <attribute name="briefDescription" type="java.lang.String"/>
+    <attribute name="description" type="java.lang.String"/>
+    <attribute name="planToShareIPD" type="java.lang.String"/>
     <attribute name="dataSharingStatement" type="java.lang.String"/>
     <attribute name="startDate" type="java.util.Date"/>
     <attribute name="endDate" type="java.util.Date"/>
@@ -55,64 +56,50 @@ terms already fine marked with dcat
     <attribute name="minAgeUnit" type="java.lang.String"/>
     <attribute name="maxAge" type="java.lang.String"/>
     <attribute name="maxAgeUnit" type="java.lang.String"/>
-    <!-- TODO: to possibly move to separate class -->
     <attribute name="iec" type="java.lang.String"/>
-    <attribute name="iecLevel" type="java.lang.Integer"/>
-    <attribute name="provenanceString" type="java.lang.String"/>
-    <!-- TODO: to separate class? -->
     <attribute name="interventions" type="java.lang.String"/>
-    <!-- TODO: to same class as secondaryOutcomes? -->
     <attribute name="primaryOutcome" type="java.lang.String"/>
-    <!-- TODO: to separate class? -->
     <attribute name="secondaryOutcomes" type="java.lang.String"/>
     <!-- One-to-many -->
     <collection name="studyConditions" referenced-type="StudyCondition" reverse-reference="study"/>
     <collection name="studyCountries" referenced-type="StudyCountry" reverse-reference="study"/>
     <collection name="studyFeatures" referenced-type="StudyFeature" reverse-reference="study"/>
-    <collection name="studyICDs" referenced-type="StudyICD" reverse-reference="study"/>
     <collection name="studyIdentifiers" referenced-type="StudyIdentifier" reverse-reference="study"/>
     <collection name="locations" referenced-type="Location" reverse-reference="study"/>
     <collection name="relationships" referenced-type="Relationship"/>
     <collection name="studySources" referenced-type="StudySource" reverse-reference="study"/>
     <collection name="titles" referenced-type="Title" reverse-reference="study"/>
     <collection name="topics" referenced-type="Topic" reverse-reference="study"/>
-    <collection name="objects" referenced-type="DataObject" reverse-reference="linkedStudy"/>
-    <!-- many to many -->
+    <collection name="objects" referenced-type="StudyObject" reverse-reference="linkedStudy"/>
+    <!-- Many-to-many -->
     <collection name="organisations" referenced-type="Organisation" reverse-reference="studies"/>
     <collection name="people" referenced-type="Person" reverse-reference="studies"/>
+    <!-- <collection name="publications" referenced-type="Publication" reverse-reference="studies"/> -->
   </class>
 
-  <class name="DataObject" is-interface="true" extends="Concept">
-    <attribute name="version" type="java.lang.String"/>
-    <attribute name="title" type="java.lang.String"/>
+  <class name="StudyObject" is-interface="true" extends="Concept">
+    <attribute name="objectId" type="java.lang.String"/> <!-- TODO: using this for now, because populated IDs (protocol codes) are not unique -->
+    <attribute name="primaryIdentifierType" type="java.lang.String"/>
+    <attribute name="displayTitle" type="java.lang.String"/>
     <attribute name="doi" type="java.lang.String"/>
-    <attribute name="doiStatus" type="java.lang.String"/>
-    <attribute name="publicationYear" type="java.lang.Integer"/>
-    <!-- TODO: check if reserved keyword-->
-    <attribute name="objectClass" type="java.lang.String"/>
     <attribute name="type" type="java.lang.String"/>
     <reference name="managingOrg" referenced-type="Organisation" reverse-reference="objects"/>
-    <attribute name="langCode" type="java.lang.String"/>
+    <attribute name="langCode" type="java.lang.String"/> <!-- TODO: try to figure out how to get this -->
     <attribute name="accessType" type="java.lang.String"/>
-    <attribute name="accessDetails" type="java.lang.String"/>
-    <attribute name="accessDetailsUrl" type="java.lang.String"/>
-    <attribute name="urlLastChecked" type="java.lang.String"/>
-    <attribute name="eoscCategory" type="java.lang.Integer"/>
-    <attribute name="addStudyContribs" type="java.lang.Boolean"/>
-    <attribute name="addStudyTopics" type="java.lang.Boolean"/>
-    <attribute name="provenanceString" type="java.lang.String"/>
+    <attribute name="dateCreated" type="java.util.Date"/> <!-- Replaces ObjectDate -->
+    <attribute name="datePublished" type="java.util.Date"/> <!-- Replaces ObjectDate -->
+    <attribute name="dateUpdated" type="java.util.Date"/> <!-- Replaces ObjectDate -->
+    <attribute name="publicationYear" type="java.lang.Integer"/> <!-- TODO: keep or not? -->
+    <attribute name="details" type="java.lang.String"/> <!-- Replaces ObjectDescription, instance_notes in Steve's proposal -->
+    <attribute name="accessUrl" type="java.lang.String"/> <!-- Replaces ObjectInstance -->
+    <attribute name="accessType" type="java.lang.String"/> <!-- Replaces ObjectInstance -->
+    <attribute name="urlTargetType" type="java.lang.String"/> <!-- Replaces ObjectInstance -->
     <reference name="linkedStudy" referenced-type="Study" reverse-reference="objects"/>
     <!-- One-to-many -->
-    <collection name="datasets" referenced-type="ObjDataset" reverse-reference="dataObject"/>
-    <collection name="objectDates" referenced-type="ObjectDate" reverse-reference="dataObject"/>
-    <collection name="objectDescriptions" referenced-type="ObjectDescription" reverse-reference="dataObject"/>
-    <collection name="objectIdentifiers" referenced-type="ObjectIdentifier" reverse-reference="dataObject"/>
-    <collection name="objectInstances" referenced-type="ObjectInstance" reverse-reference="dataObject"/>
+    <collection name="biosamples" referenced-type="Biosample" reverse-reference="studyObject"/>
+    <collection name="datasets" referenced-type="IPDDataset" reverse-reference="studyObject"/>
     <collection name="people" referenced-type="Person" reverse-reference="objects"/>
-  <!--
-    <collection name="relationships" referenced-type="Relationship" reverse-reference="concepts"/>
-    -->
-    <collection name="objectRights" referenced-type="ObjectRight" reverse-reference="dataObject"/>
+    <!-- <collection name="relationships" referenced-type="Relationship" reverse-reference="concepts"/> -->
     <collection name="titles" referenced-type="Title" reverse-reference="object"/>
     <collection name="topics" referenced-type="Topic" reverse-reference="object"/>
   </class>
@@ -147,12 +134,6 @@ terms already fine marked with dcat
     <attribute name="featureValue" type="java.lang.String"/>
   </class>
 
-  <class name="StudyICD" is-interface="true">
-    <reference name="study" referenced-type="Study" reverse-reference="studyICDs"/>
-    <attribute name="icdCode" type="java.lang.String"/>
-    <attribute name="icdName" type="java.lang.String"/>
-  </class>
-
   <class name="StudyIdentifier" is-interface="true">
     <reference name="study" referenced-type="Study" reverse-reference="studyIdentifiers"/>
     <attribute name="identifierValue" type="java.lang.String"/>
@@ -177,25 +158,27 @@ terms already fine marked with dcat
 
   <class name="Person" is-interface="true">
     <attribute name="contribType" type="java.lang.String"/>
+    <!-- TODO: no reason to have givenName/fullName fields in addition to full name -->
     <attribute name="givenName" type="java.lang.String"/>
     <attribute name="familyName" type="java.lang.String"/>
     <attribute name="fullName" type="java.lang.String"/>
     <attribute name="affiliation" type="java.lang.String"/>
+    <!-- TODO: add email?  -->
     <attribute name="orcid" type="java.lang.String"/>
     <collection name="studies" referenced-type="Study" reverse-reference="people"/>
-    <collection name="objects" referenced-type="DataObject" reverse-reference="people"/>
+    <collection name="objects" referenced-type="StudyObject" reverse-reference="people"/>
     <collection name="affiliations" referenced-type="Organisation" reverse-reference="people"/>
   </class>
 
   <class name="Organisation" is-interface="true">
     <attribute name="contribType" type="java.lang.String"/> <!-- ?? -->
     <!-- TODO: add organisation table and reference to it here -->
-    <attribute name="organisation" type="java.lang.String"/>
+    <!-- <attribute name="organisation" type="java.lang.String"/> -->
     <attribute name="type" type="java.lang.String"/>
     <attribute name="name" type="java.lang.String"/>
     <attribute name="ror" type="java.lang.String"/>
     <collection name="studies" referenced-type="Study" reverse-reference="organisations"/>
-    <collection name="objects" referenced-type="DataObject" reverse-reference="managingOrg"/>
+    <collection name="objects" referenced-type="StudyObject" reverse-reference="managingOrg"/>
     <collection name="people" referenced-type="Person" reverse-reference="affiliations"/>
   </class>
 
@@ -205,7 +188,7 @@ terms already fine marked with dcat
     <reference name="relation" referenced-type="Concept"/>
   <!--
     <collection name="studies" referenced-type="Study" reverse-reference="people"/>
-    <collection name="objects" referenced-type="DataObject" reverse-reference="people"/>
+    <collection name="objects" referenced-type="StudyObject" reverse-reference="people"/>
   -->
   </class>
 
@@ -217,7 +200,7 @@ terms already fine marked with dcat
     <attribute name="isDefault" type="java.lang.Boolean"/>
     <attribute name="comments" type="java.lang.String"/>
     <reference name="study" referenced-type="Study" reverse-reference="titles"/>
-    <reference name="object" referenced-type="DataObject" reverse-reference="titles"/>
+    <reference name="object" referenced-type="StudyObject" reverse-reference="titles"/>
   </class>
 
   <class name="Topic" is-interface="true">
@@ -228,74 +211,24 @@ terms already fine marked with dcat
     <attribute name="meshCode" type="java.lang.String"/>
     <attribute name="meshValue" type="java.lang.String"/>
     <reference name="study" referenced-type="Study" reverse-reference="topics"/>
-    <reference name="object" referenced-type="DataObject" reverse-reference="topics"/>
+    <reference name="object" referenced-type="StudyObject" reverse-reference="topics"/>
   </class>
 
-  <!-- TODO: why is obj shortened here? -->
-  <class name="ObjDataset" is-interface="true">
-    <reference name="dataObject" referenced-type="DataObject" reverse-reference="datasets"/>
-    <attribute name="recordKeysType" type="java.lang.String"/>
-    <attribute name="recordKeysDetails" type="java.lang.String"/>
-    <attribute name="deidentType" type="java.lang.String"/>
-    <attribute name="deidentDirect" type="java.lang.Boolean"/>
-    <attribute name="deidentHipaa" type="java.lang.Boolean"/>
-    <attribute name="deidentDates" type="java.lang.Boolean"/>
-    <attribute name="deidentNonArr" type="java.lang.Boolean"/>
-    <attribute name="deidentKanon" type="java.lang.Boolean"/>
-    <attribute name="deidentDetails" type="java.lang.String"/>
-    <attribute name="consentType" type="java.lang.String"/>
-    <attribute name="consentNonCommercial" type="java.lang.Boolean"/>
-    <attribute name="consentGeogRestrict" type="java.lang.Boolean"/>
-    <attribute name="consentResearchType" type="java.lang.Boolean"/>
-    <attribute name="consentGeneticOnly" type="java.lang.Boolean"/>
-    <attribute name="consentNoMethods" type="java.lang.Boolean"/>
+  <class name="Biosample" is-interface="true">
+    <reference name="studyObject" referenced-type="StudyObject" reverse-reference="biosamples"/>
+    <attribute name="restrictCommercial" type="java.lang.String"/>
+    <attribute name="restrictGeo" type="java.lang.String"/>
+    <attribute name="restrictResearchTypeNonGenetic" type="java.lang.String"/>
+    <attribute name="restrictResearchTypeGenetic" type="java.lang.String"/>
+    <attribute name="geneticUseAllowed" type="java.lang.String"/>
     <attribute name="consentDetails" type="java.lang.String"/>
   </class>
 
-  <class name="ObjectDate" is-interface="true">
-    <reference name="dataObject" referenced-type="DataObject" reverse-reference="objectDates"/>
-    <attribute name="dateType" type="java.lang.String"/>
-    <attribute name="dateIsRange" type="java.lang.Boolean"/>
-    <attribute name="startDate" type="java.util.Date"/>
-    <attribute name="endDate" type="java.util.Date"/>
-    <attribute name="details" type="java.lang.String"/>
+  <class name="IPDDataset" is-interface="true">
+    <reference name="studyObject" referenced-type="StudyObject" reverse-reference="datasets"/>
+    <attribute name="restrictCommercial" type="java.lang.String"/>
+    <attribute name="restrictGeo" type="java.lang.String"/>
+    <attribute name="restrictResearchType" type="java.lang.String"/>
+    <attribute name="consentDetails" type="java.lang.String"/>
   </class>
-
-  <class name="ObjectDescription" is-interface="true">
-    <reference name="dataObject" referenced-type="DataObject" reverse-reference="objectDescriptions"/>
-    <attribute name="descriptionType" type="java.lang.String"/>
-    <attribute name="label" type="java.lang.String"/>
-    <attribute name="descriptionText" type="java.lang.String"/>
-    <attribute name="langCode" type="java.lang.String"/>
-  </class>
-
-  <class name="ObjectIdentifier" is-interface="true">
-    <reference name="dataObject" referenced-type="DataObject" reverse-reference="objectIdentifiers"/>
-    <attribute name="identifierValue" type="java.lang.String"/>
-    <attribute name="identifierType" type="java.lang.String"/>
-    <attribute name="source" type="java.lang.String"/>
-    <attribute name="source" type="java.lang.String"/>
-    <attribute name="sourceRor" type="java.lang.String"/>
-    <attribute name="identifierDate" type="java.util.Date"/>
-  </class>
-
-  <class name="ObjectInstance" is-interface="true">
-    <reference name="dataObject" referenced-type="DataObject" reverse-reference="objectInstances"/>
-    <attribute name="system" type="java.lang.String"/>
-    <attribute name="url" type="java.lang.String"/>
-    <attribute name="urlAccessible" type="java.lang.Boolean"/>
-    <attribute name="urlLastChecked" type="java.lang.String"/>
-    <attribute name="resourceType" type="java.lang.String"/>
-    <attribute name="resourceSize" type="java.lang.String"/>
-    <attribute name="resourceSizeUnits" type="java.lang.String"/>
-    <attribute name="resourceComments" type="java.lang.String"/>
-  </class>
-
-  <class name="ObjectRight" is-interface="true">
-    <reference name="dataObject" referenced-type="DataObject" reverse-reference="objectRights"/>
-    <attribute name="rightsName" type="java.lang.String"/>
-    <attribute name="rightsUri" type="java.lang.String"/>
-    <attribute name="comments" type="java.lang.String"/>
-  </class>
-
 </classes>
