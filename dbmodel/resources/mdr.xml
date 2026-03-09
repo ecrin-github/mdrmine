@@ -19,6 +19,15 @@ terms already fine marked with dcat
     <collection name="relationships" referenced-type="Relationship"/>
   </class>
 
+  <class name="DataSource" is-interface="true">
+    <collection name="studies" referenced-type="Study" reverse-reference="dataSources" term="http://semanticscience.org/resource/SIO_001277"/>
+  </class>
+
+  <class name="DataSet" is-interface="true">
+    <collection name="studies" referenced-type="Study" reverse-reference="dataSets" term="http://semanticscience.org/resource/SIO_001277"/>
+    <collection name="studyObjects" referenced-type="StudyObject" reverse-reference="dataSets" term="http://semanticscience.org/resource/SIO_001277"/>
+  </class>
+
   <!-- Controlled vocabulary -->
   <class name="CVTerm" is-interface="true" extends="Annotatable">
       <attribute name="type" type="java.lang.String"/>
@@ -74,7 +83,8 @@ terms already fine marked with dcat
     <!-- Many-to-many -->
     <collection name="organisations" referenced-type="Organisation" reverse-reference="studies"/>
     <collection name="people" referenced-type="Person" reverse-reference="studies"/>
-    <!-- <collection name="publications" referenced-type="Publication" reverse-reference="studies"/> -->
+    <collection name="dataSets" referenced-type="DataSet" reverse-reference="studies"/>
+    <collection name="dataSources" referenced-type="DataSource" reverse-reference="studies"/>
   </class>
 
   <class name="StudyObject" is-interface="true" extends="Concept">
@@ -102,6 +112,7 @@ terms already fine marked with dcat
     <!-- <collection name="relationships" referenced-type="Relationship" reverse-reference="concepts"/> -->
     <collection name="titles" referenced-type="Title" reverse-reference="object"/>
     <collection name="topics" referenced-type="Topic" reverse-reference="object"/>
+    <collection name="dataSets" referenced-type="DataSet" reverse-reference="studyObjects"/>
   </class>
 
   <class name="StudySource" is-interface="true">
