@@ -19,7 +19,6 @@
     <source name="euctr" type="euctr" version="1.0.0">
       <property name="src.data.dir" location="/home/ubuntu/data/euctr"/>
       <property name="src.data.dir.includes" value="euctr_digest.xml"/>
-      <!-- <property name="src.data.dir.includes" value="failinglines7.xml"/> -->
       <property name="countriesFP" value="/home/ubuntu/data/countries/countryInfoCleaned.tsv"/>
       <property name="countriesAltNamesFP" value="/home/ubuntu/data/countries/20251020_countries_alt_names.csv"/>
       <property name="logDir" value="./sources_logs"/>
@@ -34,7 +33,6 @@
     <source name="who" type="who" version="1.0.0" dump="true">
       <property name="src.data.dir" location="/home/ubuntu/data/who"/>
       <property name="src.data.dir.includes" value="who.csv"/>
-      <!-- <property name="src.data.dir.includes" value="testcases.csv"/> -->
       <property name="headersFilePath" value="/home/ubuntu/data/who/ICTRP_headers.csv"/>
       <property name="countriesFP" value="/home/ubuntu/data/countries/countryInfoCleaned.tsv"/>
       <property name="countriesAltNamesFP" value="/home/ubuntu/data/countries/20251020_countries_alt_names.csv"/>
@@ -42,8 +40,7 @@
     </source>
     <source name="ctg" type="ctg" version="1.0.0" dump="true">
       <property name="src.data.dir" location="/home/ubuntu/data/ctg"/>
-      <property name="src.data.dir.includes" value="ctg.csv"/>
-      <!-- <property name="src.data.dir.includes" value="testcases.csv"/> -->
+      <property name="src.data.dir.includes" value="ctg-studies-all-fields.json"/>
       <property name="countriesFP" value="/home/ubuntu/data/countries/countryInfoCleaned.tsv"/>
       <property name="countriesAltNamesFP" value="/home/ubuntu/data/countries/20251020_countries_alt_names.csv"/>
       <property name="logDir" value="./sources_logs"/>
