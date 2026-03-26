@@ -12,7 +12,7 @@ terms already fine marked with dcat
 
 -->
 
-<!-- Version 3.0 -->
+<!-- Version 3.1 -->
 <classes>
   <class name="Concept" is-interface="true" extends="Annotatable">
     <attribute name="secondaryIdentifier" type="java.lang.String"/>
@@ -43,10 +43,12 @@ terms already fine marked with dcat
     <attribute name="continent" type="java.lang.String"/>
     <attribute name="tld" type="java.lang.String"/>
     <attribute name="geonameId" type="java.lang.String"/>
+    <collection name="locations" referenced-type="Location" reverse-reference="country"/>
     <collection name="studyCountries" referenced-type="StudyCountry" reverse-reference="country"/>
   </class>
 
   <class name="Study" is-interface="true" extends="Concept">
+    <!-- TODO: add results yes/no field? -->
     <attribute name="euctrID" type="java.lang.String"/>
     <attribute name="nctID" type="java.lang.String"/>
     <attribute name="displayTitle" type="java.lang.String"/>
@@ -61,12 +63,12 @@ terms already fine marked with dcat
     <attribute name="genderElig" type="java.lang.String"/>
     <attribute name="plannedEnrolment" type="java.lang.Integer"/>
     <attribute name="actualEnrolment" type="java.lang.Integer"/>
-    <attribute name="minAge" type="java.lang.String"/>
+    <attribute name="minAge" type="java.lang.String"/> <!-- TODO: this needs to be int for filtering -->
     <attribute name="minAgeUnit" type="java.lang.String"/>
-    <attribute name="maxAge" type="java.lang.String"/>
+    <attribute name="maxAge" type="java.lang.String"/> <!-- TODO: this needs to be int for filtering -->
     <attribute name="maxAgeUnit" type="java.lang.String"/>
     <attribute name="iec" type="java.lang.String"/>
-    <attribute name="interventions" type="java.lang.String"/>
+    <attribute name="interventions" type="java.lang.String"/> <!-- Note: where did this come from? it's not in the current MDR schema -->
     <attribute name="primaryOutcome" type="java.lang.String"/>
     <attribute name="secondaryOutcomes" type="java.lang.String"/>
     <!-- One-to-many -->
@@ -141,8 +143,8 @@ terms already fine marked with dcat
 
   <class name="StudyFeature" is-interface="true">
     <reference name="study" referenced-type="Study" reverse-reference="studyFeatures"/>
-    <attribute name="featureType" type="java.lang.String"/>
-    <attribute name="featureValue" type="java.lang.String"/>
+    <attribute name="featureType" type="java.lang.String"/> <!-- TODO: remove feature prefix? -->
+    <attribute name="featureValue" type="java.lang.String"/> <!-- TODO: remove feature prefix? -->
   </class>
 
   <class name="StudyIdentifier" is-interface="true">
@@ -160,11 +162,12 @@ terms already fine marked with dcat
     <attribute name="facilityOrg" type="java.lang.String"/>
     <attribute name="facility" type="java.lang.String"/>
     <attribute name="facilityRor" type="java.lang.String"/>
-    <attribute name="city" type="java.lang.String"/>
+    <attribute name="city" type="java.lang.String"/> <!-- TODO: remove? -->
     <attribute name="cityName" type="java.lang.String"/>
-    <attribute name="country" type="java.lang.String"/>
+    <reference name="country" referenced-type="Country" reverse-reference="locations"/>
     <attribute name="countryName" type="java.lang.String"/>
     <attribute name="status" type="java.lang.String"/>
+    <!-- TODO: add location contact person? -->
   </class>
 
   <class name="Person" is-interface="true">
@@ -173,6 +176,7 @@ terms already fine marked with dcat
     <attribute name="givenName" type="java.lang.String"/>
     <attribute name="familyName" type="java.lang.String"/>
     <attribute name="fullName" type="java.lang.String"/>
+    <!-- TODO: remove this field? affiliations under -->
     <attribute name="affiliation" type="java.lang.String"/>
     <!-- TODO: add email?  -->
     <attribute name="orcid" type="java.lang.String"/>
@@ -219,7 +223,7 @@ terms already fine marked with dcat
     <attribute name="value" type="java.lang.String"/>
     <attribute name="ctType" type="java.lang.String"/>
     <attribute name="ctCode" type="java.lang.String"/>
-    <attribute name="meshCode" type="java.lang.String"/>
+    <attribute name="meshCode" type="java.lang.String"/> <!-- TODO: looks duplicate with ctType and ctCode -->
     <attribute name="meshValue" type="java.lang.String"/>
     <reference name="study" referenced-type="Study" reverse-reference="topics"/>
     <reference name="object" referenced-type="StudyObject" reverse-reference="topics"/>
@@ -240,6 +244,6 @@ terms already fine marked with dcat
     <attribute name="restrictCommercial" type="java.lang.String"/>
     <attribute name="restrictGeo" type="java.lang.String"/>
     <attribute name="restrictResearchType" type="java.lang.String"/>
-    <attribute name="consentDetails" type="java.lang.String"/>
+    <attribute name="consentDetails" type="java.lang.String"/> <!-- TODO: difference with study dss? -->
   </class>
 </classes>
