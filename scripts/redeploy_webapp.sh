@@ -13,6 +13,7 @@ then
     exit 1
 fi
 
+./gradlew clean
 ./gradlew war
 rm /webapps/mdrmine.war
 cp ./webapp/build/libs/webapp.war /webapps/mdrmine.war
