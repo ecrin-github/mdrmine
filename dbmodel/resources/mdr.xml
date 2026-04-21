@@ -12,7 +12,7 @@ terms already fine marked with dcat
 
 -->
 
-<!-- Version 3.2 -->
+<!-- Version 3.3 -->
 <classes>
   <class name="Concept" is-interface="true" extends="Annotatable">
     <attribute name="secondaryIdentifier" type="java.lang.String"/>
@@ -48,11 +48,11 @@ terms already fine marked with dcat
   </class>
 
   <class name="Study" is-interface="true" extends="Concept">
-    <!-- TODO: add results yes/no field? -->
+    <!-- TODO: primaryIdentifier -->
     <attribute name="euctrID" type="java.lang.String"/> <!-- to remove -->
     <attribute name="nctID" type="java.lang.String"/> <!-- to remove -->
     <attribute name="displayTitle" type="java.lang.String"/>
-    <attribute name="titleLangCode" type="java.lang.String"/> <!-- remove code part or remove -->
+    <attribute name="titleLang" type="java.lang.String"/>
     <attribute name="description" type="java.lang.String"/>
     <attribute name="planToShareIPD" type="java.lang.String"/>
     <attribute name="dataSharingStatement" type="java.lang.String"/>
@@ -63,26 +63,28 @@ terms already fine marked with dcat
     <attribute name="genderElig" type="java.lang.String"/>
     <attribute name="plannedEnrolment" type="java.lang.Integer"/>
     <attribute name="actualEnrolment" type="java.lang.Integer"/>
-    <attribute name="minAge" type="java.lang.String"/> <!-- TODO: this needs to be int for filtering + min 0 -->
+    <attribute name="ageGroup" type="java.lang.String"/>
+    <attribute name="minAge" type="java.lang.Float"/>
     <attribute name="minAgeUnit" type="java.lang.String"/>
-    <attribute name="maxAge" type="java.lang.String"/> <!-- TODO: this needs to be int for filtering + max 130 -->
+    <attribute name="maxAge" type="java.lang.Float"/>
     <attribute name="maxAgeUnit" type="java.lang.String"/>
     <attribute name="iec" type="java.lang.String"/>
-    <attribute name="interventions" type="java.lang.String"/> <!-- TODO: see later -->
+    <attribute name="interventionsDescription" type="java.lang.String"/> <!-- TODO: see later -->
     <attribute name="primaryOutcome" type="java.lang.String"/>
     <attribute name="secondaryOutcomes" type="java.lang.String"/>
+    <attribute name="hasResults" type="java.lang.Boolean"/>
     <!-- One-to-many -->
     <collection name="studyCountries" referenced-type="StudyCountry" reverse-reference="study"/>
     <collection name="studyFeatures" referenced-type="StudyFeature" reverse-reference="study"/>
     <collection name="studyIdentifiers" referenced-type="StudyIdentifier" reverse-reference="study"/>
     <collection name="locations" referenced-type="Location" reverse-reference="study"/>
-    <collection name="relationships" referenced-type="Relationship"/>
-    <collection name="studySources" referenced-type="StudySource" reverse-reference="study"/>
+    <!-- <collection name="relationships" referenced-type="Relationship"/> -->
     <collection name="titles" referenced-type="Title" reverse-reference="study"/>
-    <collection name="topics" referenced-type="Topic" reverse-reference="study"/>
+    <!-- TODO: split object depending on their type? -->
     <collection name="objects" referenced-type="StudyObject" reverse-reference="linkedStudy"/>
     <!-- Many-to-many -->
     <collection name="studyConditions" referenced-type="StudyCondition" reverse-reference="studies"/>
+    <collection name="interventions" referenced-type="Intervention" reverse-reference="studies"/>
     <collection name="organisations" referenced-type="Organisation" reverse-reference="studies"/>
     <collection name="people" referenced-type="Person" reverse-reference="studies"/>
     <collection name="dataSets" referenced-type="DataSet" reverse-reference="studies"/>
@@ -113,26 +115,16 @@ terms already fine marked with dcat
     <collection name="people" referenced-type="Person" reverse-reference="objects"/>
     <!-- <collection name="relationships" referenced-type="Relationship" reverse-reference="concepts"/> -->
     <collection name="titles" referenced-type="Title" reverse-reference="object"/>
-    <collection name="topics" referenced-type="Topic" reverse-reference="object"/>
     <collection name="dataSets" referenced-type="DataSet" reverse-reference="studyObjects"/>
   </class>
 
-  <!-- TODO: readd StudySource, sources collection in Study -->
-  <class name="StudySource" is-interface="true">
-    <reference name="study" referenced-type="Study" reverse-reference="studySources"/>
-    <attribute name="name" type="java.lang.String"/>
-  </class>
-
+  <!-- TODO: add fields per terminology? -->
   <class name="StudyCondition" is-interface="true">
     <attribute name="term" type="java.lang.String"/>
-    <attribute name="code" type="java.lang.String"/>
-    <attribute name="terminology" type="java.lang.String"/>
+    <attribute name="meddraCode" type="java.lang.String"/>
+    <attribute name="meshCode" type="java.lang.String"/>
+    <attribute name="meshTreeNumber" type="java.lang.String"/>
     <collection name="studies" referenced-type="Study" reverse-reference="studyConditions"/>
-    <!-- <attribute name="originalValue" type="java.lang.String"/>
-    <attribute name="originalCTType" type="java.lang.String"/>
-    <attribute name="originalCTCode" type="java.lang.String"/> -->
-    <!-- <attribute name="icdCode" type="java.lang.String"/> -->
-    <!-- <attribute name="icdName" type="java.lang.String"/> -->
   </class>
 
   <class name="StudyCountry" is-interface="true">
@@ -147,8 +139,8 @@ terms already fine marked with dcat
 
   <class name="StudyFeature" is-interface="true">
     <reference name="study" referenced-type="Study" reverse-reference="studyFeatures"/>
-    <attribute name="featureType" type="java.lang.String"/> <!-- TODO: remove feature prefix -->
-    <attribute name="featureValue" type="java.lang.String"/> <!-- TODO: remove feature prefix -->
+    <attribute name="type" type="java.lang.String"/>
+    <attribute name="value" type="java.lang.String"/>
   </class>
 
   <class name="StudyIdentifier" is-interface="true">
@@ -161,7 +153,7 @@ terms already fine marked with dcat
     <attribute name="identifierLink" type="java.lang.String"/>
   </class>
 
-  <class name="Location" is-interface="true"> <!-- TODO: Geolocation (sites?) -->
+  <class name="Location" is-interface="true"> <!-- TODO: rename to Site -->
     <reference name="study" referenced-type="Study" reverse-reference="locations"/>
     <attribute name="facilityOrg" type="java.lang.String"/> <!-- TODO: change this to reference -->
     <attribute name="facility" type="java.lang.String"/> <!-- TODO: remove? -->
@@ -221,20 +213,18 @@ terms already fine marked with dcat
     <reference name="object" referenced-type="StudyObject" reverse-reference="titles"/>
   </class>
 
-  <!-- TODO: rename to interventions -->
-  <class name="Topic" is-interface="true">
+  <class name="Intervention" is-interface="true">
     <attribute name="type" type="java.lang.String"/>
-    <attribute name="value" type="java.lang.String"/>
-    <attribute name="ctType" type="java.lang.String"/>
-    <attribute name="ctCode" type="java.lang.String"/>
-    <attribute name="meshCode" type="java.lang.String"/> <!-- TODO: remove -->
-    <attribute name="meshValue" type="java.lang.String"/> <!-- TODO: remove -->
-    <reference name="study" referenced-type="Study" reverse-reference="topics"/>
-    <reference name="object" referenced-type="StudyObject" reverse-reference="topics"/>
+    <attribute name="name" type="java.lang.String"/>
+    <attribute name="meshCode" type="java.lang.String"/>
+    <attribute name="meshTreeNumber" type="java.lang.String"/>
+    <collection name="studies" referenced-type="Study" reverse-reference="interventions"/>
   </class>
 
+  <!-- TODO: inherit from StudyObject -->
   <class name="Biosample" is-interface="true">
     <reference name="studyObject" referenced-type="StudyObject" reverse-reference="biosamples"/>
+    <!-- TODO: possibly rename fields and modify to Boolean -->
     <attribute name="restrictCommercial" type="java.lang.String"/>
     <attribute name="restrictGeo" type="java.lang.String"/>
     <attribute name="restrictResearchTypeNonGenetic" type="java.lang.String"/>
