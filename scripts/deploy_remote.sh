@@ -29,6 +29,7 @@ remote_prod_port=""
 
 usage() {
     echo "Deploy a local MDRMine build to a remote instance (DB, Solr, Webapp redeployment)"
+    echo "WARNING: remote MDR instance needs to have the same model is the one used for the build"
     echo "Usage: $0 [OPTIONS]"
     echo "Options:"
     echo " -d=[dump_folder], --dump-folder=[dump_folder]                Folder with dumps/where to dump, default: $dump_folder"
@@ -136,6 +137,7 @@ deploy_remote() {
             pg_dump -h "$remote_prod_host" -p "$remote_prod_port" -U "$remote_prod_user" -d "$remote_prod_db" -F c >  $dump_folder/$(date +"%Y%m%d_%H%M%S")_remote_dump.sql
         fi
         
+        # TODO: this should somehow force to use the same mdr schema as was used for the build
         echo "Rebuilding DB on remote to align with potential model changes"
         # TODO: Many things should be args here
         ssh $remote_user@$remote_prod_host -o StrictHostKeyChecking=no <<EOF
@@ -172,7 +174,7 @@ EOF
     # For some reason the details queries return success for backups even before all the files are actually written to disk
     # so we wait a few seconds for it to finish (might be Docker bind mount delay?)
     sleep 4
-    echo "Transfering the dumps to remote host"
+    echo "Transfering the solr dumps to remote host"
     # Hacky
     sudo rsync --rsync-path="sudo rsync" -a $dump_folder/solr/snapshot.$search_dump_local $remote_user@$remote_prod_host:./dumps/solr/
     sudo rsync --rsync-path="sudo rsync" -a $dump_folder/solr/snapshot.$autocomplete_dump_local $remote_user@$remote_prod_host:./dumps/solr/
@@ -204,6 +206,7 @@ EOF
         sleep 1;
     done
 
+    echo "Redeploying webapp on remote instance"
     # TODO: Many things should be args here
     ssh $remote_user@$remote_prod_host -o StrictHostKeyChecking=no <<EOF
         cd $remote_mdrmine_path;
