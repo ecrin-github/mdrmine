@@ -151,6 +151,7 @@ EOF
             pg_restore --clean -h "$remote_prod_host" -p "$remote_prod_port" -U "$remote_prod_user" -d "$remote_prod_db" $dump_to_use
         else
             echo "Couldn't find dump file '$dump_to_use' to load into remote DB"
+            exit 1;
         fi
     fi
     
