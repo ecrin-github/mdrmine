@@ -240,4 +240,93 @@ terms already fine marked with dcat
     <attribute name="restrictResearchType" type="java.lang.String"/>
     <attribute name="consentDetails" type="java.lang.String"/> <!-- TODO: difference with study dss? -->
   </class>
+
+
+
+
+
+<!-- proposed subclassing to SO of the various types of SO -->
+<!--
+
+  <class name="StudyObject" is-interface="true" extends="Concept">
+    <attribute name="title" type="java.lang.String"/> &lt;!&ndash; TODO: rename to title + add scientific and acronym fields &ndash;&gt;
+    <attribute name="type" type="java.lang.String"/>   &lt;!&ndash; if we keep a generic SO &ndash;&gt;
+    <reference name="managingOrg" referenced-type="Organisation" reverse-reference="objects"/>
+    <attribute name="langCode" type="java.lang.String"/> &lt;!&ndash; TODO: try to figure out how to get this &ndash;&gt;
+    <attribute name="accessType" type="java.lang.String"/>
+    <attribute name="dateCreated" type="java.util.Date"/> &lt;!&ndash; Replaces ObjectDate &ndash;&gt;
+    <attribute name="accessUrl" type="java.lang.String"/> &lt;!&ndash; Replaces ObjectInstance &ndash;&gt;
+    <reference name="linkedStudy" referenced-type="Study" reverse-reference="objects"/>
+    <collection name="dataSets" referenced-type="DataSet" reverse-reference="studyObjects"/>
+  </class>
+
+  <class name="RegistryResultsSummary" is-interface="true" extends="StudyObject">
+    &lt;!&ndash; title ->? primaryidentifier &ndash;&gt;
+    <attribute name="doi" type="java.lang.String"/> &lt;!&ndash; this or access url? &ndash;&gt;
+    <attribute name="datePublished" type="java.util.Date"/> &lt;!&ndash; Replaces ObjectDate &ndash;&gt;
+    <attribute name="dateUpdated" type="java.util.Date"/> &lt;!&ndash; Replaces ObjectDate &ndash;&gt;
+    <attribute name="publicationYear" type="java.lang.Integer"/> &lt;!&ndash; TODO: keep or not? &ndash;&gt;
+  </class>
+
+  <class name="Protocol" is-interface="true" extends="StudyObject">
+    <attribute name="doi" type="java.lang.String"/> &lt;!&ndash; this or access url? &ndash;&gt;
+    <attribute name="datePublished" type="java.util.Date"/> &lt;!&ndash; Replaces ObjectDate &ndash;&gt;
+    <attribute name="dateUpdated" type="java.util.Date"/> &lt;!&ndash; Replaces ObjectDate &ndash;&gt;
+    <attribute name="publicationYear" type="java.lang.Integer"/> &lt;!&ndash; TODO: keep or not? &ndash;&gt;
+  </class>
+
+  <class name="StatisticalAnalysisPlan" is-interface="true" extends="StudyObject">
+    &lt;!&ndash; access url -> primaryidentifier &ndash;&gt;
+    <attribute name="doi" type="java.lang.String"/> &lt;!&ndash; this or access url? &ndash;&gt;
+    <attribute name="datePublished" type="java.util.Date"/> &lt;!&ndash; Replaces ObjectDate &ndash;&gt;
+    <attribute name="dateUpdated" type="java.util.Date"/> &lt;!&ndash; Replaces ObjectDate &ndash;&gt;
+    <attribute name="publicationYear" type="java.lang.Integer"/> &lt;!&ndash; TODO: keep or not? &ndash;&gt;
+  </class>
+
+  <class name="InformedConsentForm" is-interface="true" extends="StudyObject">
+    &lt;!&ndash; access url -> primaryidentifier &ndash;&gt;
+    <attribute name="doi" type="java.lang.String"/> &lt;!&ndash; this or access url? &ndash;&gt;
+    <attribute name="datePublished" type="java.util.Date"/> &lt;!&ndash; Replaces ObjectDate &ndash;&gt;
+    <attribute name="dateUpdated" type="java.util.Date"/> &lt;!&ndash; Replaces ObjectDate &ndash;&gt;
+    <attribute name="publicationYear" type="java.lang.Integer"/> &lt;!&ndash; TODO: keep or not? &ndash;&gt;
+  </class>
+
+  <class name="IndividualParticipantData" is-interface="true" extends="StudyObject">
+    <attribute name="restrictCommercial" type="java.lang.String"/>
+    <attribute name="restrictGeo" type="java.lang.String"/>
+    <attribute name="restrictResearchType" type="java.lang.String"/>
+    <attribute name="consentDetails" type="java.lang.String"/> &lt;!&ndash; TODO: difference with study dss? &ndash;&gt;
+  </class>
+
+  <class name="EthicsApprovalNotification" is-interface="true" extends="StudyObject">
+    &lt;!&ndash; title ->? primaryidentifier &ndash;&gt;
+    <attribute name="datePublished" type="java.util.Date"/> &lt;!&ndash; Replaces ObjectDate &ndash;&gt;
+    <attribute name="dateUpdated" type="java.util.Date"/> &lt;!&ndash; Replaces ObjectDate &ndash;&gt;
+    <attribute name="publicationYear" type="java.lang.Integer"/> &lt;!&ndash; TODO: keep or not? &ndash;&gt;
+  </class>
+
+  <class name="Biosample" is-interface="true">
+    <attribute name="material" type="java.lang.String"/>
+    <attribute name="restrictCommercial" type="java.lang.String"/>
+    <attribute name="restrictGeo" type="java.lang.String"/>
+    <attribute name="restrictResearchTypeNonGenetic" type="java.lang.String"/>
+    <attribute name="restrictResearchTypeGenetic" type="java.lang.String"/>
+    <attribute name="geneticUseAllowed" type="java.lang.String"/>
+    <attribute name="consentDetails" type="java.lang.String"/>
+  </class>
+
+  <class name="Study" is-interface="true" extends="Concept">
+[...]
+    &lt;!&ndash; to add if subclassing SO &ndash;&gt;
+    <collection name="resultsSummaries" referenced-type="RegistryResultsSummary" reverse-reference="study"/>
+    <collection name="protocols" referenced-type="Protocol" reverse-reference="study"/>
+    <collection name="analysisPlans" referenced-type="StatisticalAnalysisPlan" reverse-reference="study"/>
+    <collection name="consentForms" referenced-type="InformedConsentForm" reverse-reference="study"/>
+    <collection name="participantData" referenced-type="IndividualParticipantData" reverse-reference="study"/>
+    <collection name="approvalNotifications" referenced-type="EthicsApprovalNotification"
+               reverse-reference="study"/>
+  </class>
+-->
+
+
 </classes>
