@@ -158,8 +158,8 @@ build() {
                             pg_dump -h "$local_prod_host" -p "$local_prod_port" -U "$local_prod_user" -d "$local_prod_db" -F c > $dump_to_use
                         fi
 
-                        # Running update-publications after getting PubMed IDs if it's not already in the list of sources
-                        if [[ "$source" = "pubmed" && "$sources" != *"update-publications"* ]]; then
+                        # Running update-publications if it's not already in the list of sources
+                        if [[ "$sources" != *"update-publications"* ]]; then
                             echo "------------- Source: update-publications -------------"
                             $WD/gradlew integrate -Psource=update-publications --stacktrace
                         fi
