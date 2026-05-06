@@ -22,7 +22,7 @@ Note: the current GH action to build and deploy on a remote machine is outdated 
 - Docker secrets files
     - Create `mdrmine/secrets` folder
         - Create `postgres_user` `postgres_password` `tomcat_user` `tomcat_password` files in this folder with your Postgres and Tomcat credentials inside the various files
-        - Create `solr_ip_allowlist` file in this folder with a comma-separated list of IPs allowed to send queries to solr, must include Docker compose network IP range (see `mdrmine/compose.yaml`)
+        - Create a `solr_ip_allowlist` file in this folder with a comma-separated list of IPs allowed to send queries to solr, must include Docker compose network IP range (see `mdrmine/compose.yaml`)
     - Create `.intermine` folder in `home` user directory (`~`)
         - Create a `mdrmine.properties` or `mdrmine_docker.properties` (`mdrmine_docker.properties` will be used if both exist) file following the model here: [BioTestMine properties file](https://raw.githubusercontent.com/intermine/biotestmine/master/data/biotestmine.properties).
         The `serverName` properties should be set to `db`, as that is the psql image name in the Docker compose file. The other various credentials should match the ones used in the `secrets/` files. Replace all occurrences of "`biotestmine`" with "`mdrmine`".
@@ -35,11 +35,30 @@ Note: the current GH action to build and deploy on a remote machine is outdated 
             ```
             If you want to change the ports used, you need to modify them here and in `mdrmine/compose.yaml` as well.
 - **If to be used for local build and deployment on remote machine**:
+    - For solr deployment, create a `solrconfig.xml` file in `solr/leader` (use the default solrconfig file), and add a request handler to define this server as leader:
+    ```
+    <requestHandler name="/replication" class="solr.ReplicationHandler">
+        <lst name="leader">
+        <str name="replicateAfter">commit</str>
+        <str name="confFiles">managed-schema.xml,protwords.txt,stopwords.txt,synonyms.txt</str>
+        </lst>
+    </requestHandler>
+    ```
     - Add the following properties to `mdrmine.properties` to connect to the psql instance on the remote machine and pg_restore the local build to the remote db: `remote.production.datasource.serverName`, `remote.production.datasource.databaseName`, `remote.production.datasource.user`, `remote.production.datasource.password`, `remote.production.datasource.port`
     - Add a `remote.user` property to `mdrmine.properties` corresponding to the username on the remote machine, whose hostname is taken from `remote.production.datasource.serverName`, to dump and transfer both the MDRMine DB and Solr cores as well as to build and run a docker container on the remote machine (with SSH) to re-deploy the webapp
     - Finally, you will need a ssh-agent running that allows to connect to the remote machine with just `ssh user@hostname`, see [guide here](https://www.ssh.com/academy/ssh/agent)
     - **IMPORTANT**: a MDRMine instance must be running on the remote machine for the remote deployment to work, you can build an empty MDRMine for this (see [Usage](#usage))
     - Currently, some properties regarding remote deployment are still hardcoded, see `scripts/deploy_remote.sh` for more details.
+- **Instead, if MDRMine build and solr cores are to come from another server**: 
+    - In `mdrmine/secrets`, create a `solr_url_allowlist` file containing `leader-ip:solr-port/solr` to allow fetching solr cores data from there
+    - Create a `solrconfig.xml` file in `solr/follower` (use the default solrconfig file), and add a request handler to define this server as follower (replace leader-ip and solr-port):
+    ```
+    <requestHandler name="/replication" class="solr.ReplicationHandler">
+      <lst name="follower">
+          <str name="leaderUrl">http://leader-ip:solr-port/solr/${solr.core.name}</str>
+      </lst>
+    </requestHandler>
+    ```
 
 ### Usage
 - `gradlew install` or `update_jars_local.sh` **in the InterMine fork folder** required to compile the forked InterMine code
@@ -51,6 +70,7 @@ Note: the current GH action to build and deploy on a remote machine is outdated 
         EMPTY: $EMPTY
     - Use the `DEPLOY_REMOTE` environment variable with any value to deploy the build to a remote machine after the build is finished (see `scripts/deploy_remote.sh`)
     - Use the `EMPTY` environment variable with any value to build without any source (useful to start MDRMine on the remote machine and receive a build later)
+    - **If MDRMine build and solr cores are to come from another server, build with this instead**: `docker compose -f compose.yaml -f compose.prod.yaml build --no-cache && docker compose -f compose.yaml -f compose.prod.yaml up`
 - `docker compose down --volumes --rmi "local"` to stop and delete running docker images (+ volumes)
 - `docker compose up -d --no-deps --build <service_name>` to re-build and run a specific service (image) on an already running MDRMine
 
