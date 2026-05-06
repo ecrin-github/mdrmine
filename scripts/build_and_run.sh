@@ -13,12 +13,14 @@ hostname="localhost"
 properties_path="/root/.intermine/mdrmine.properties"
 skip_install=false
 skip_sources=false
+skip_postprocesses=false
 sources_path="/home/ubuntu/code/mdrmine-bio-sources"
 sources=""
 verbose=false
 build_empty=false
 build_user_db=false
 default_port="5432"
+dump_file_to_use=""
 
 local_prod_db=""
 local_prod_user=""
@@ -35,6 +37,7 @@ usage() {
     echo "Build and deploy MDRMine."
     echo "Usage: $0 [OPTIONS]"
     echo "Options:"
+    echo " -b, --build-user-db                                          Build user DB, default: $build_user_db"
     echo " -c=[properties_path], --properties-path=[properties_path]    Set properties file path, default: $properties_path"
     echo " -d, --docker                                                 Instead of ./gradlew cargoDeployRemote, uses a shared Docker volume to deploy webapp .war file"
     echo " -e, --build-empty                                            Build an empty database without adding any source, default: $build_empty"
@@ -45,9 +48,10 @@ usage() {
     echo " -r, --deploy-remote                                          Build on this machine and deploy to a remote MDRMine and PSQL instance"
     echo " -s=[list of comma separated sources], --sources=[sources]    Set list of sources to integrate, default behaviour includes all in sources folder"
     echo " -t=[dump_folder], --dump-folder=[dump_folder]                Folder with dumps/where to dump, default: $dump_folder"
-    echo " -u, --build-user-db                                          Build user DB, default: $build_user_db"
+    echo " -u=[dump_file_path], --use-dump=[dump_file_path]             Start building using an already existing dump file, path should be relative to dump-folder parameter, default: $dump_folder"
     echo " -v, --verbose                                                Enable verbose mode (outputs commands)"
     echo " -x, --skip-install                                           Skip ./gradlew install in bio-sources repository"
+    echo " -y, --skip-postprocesses                                     Skip postprocesses"
     echo " -z, --skip-sources                                           Skip integrating any source"
 }
 
@@ -126,6 +130,19 @@ build() {
         $WD/gradlew buildDB --stacktrace
         
         if [[ "$build_empty" = false ]]; then
+            
+            # Starting (or not) from a previous build
+            if [[ -n $dump_file_to_use ]]; then
+                echo "Restoring database from dump file"
+                if [[ -f $dump_folder/$dump_file_to_use ]]; then
+                    pg_restore --clean -h "$local_prod_host" -p "$local_prod_port" -U "$local_prod_user" -d "$local_prod_db" $dump_folder/$dump_file_to_use
+                else
+                    echo "Error: couldn't find dump file to use, path tried: $dump_folder/$dump_file_to_use" >&2
+                    exit 1
+                fi
+            fi
+
+            # Sources integration
             if [[ "$skip_sources" = false ]]; then
                 if [ "$sources" = "" ]; then   # All sources
                     # Getting the sources in order from the project file
@@ -165,19 +182,21 @@ build() {
                         fi
                     done
                 fi
+            fi
 
+            # Postprocesses
+            if [[ "$skip_postprocesses" = false ]]; then
                 $WD/gradlew postprocess -Pprocess=do-sources --stacktrace
                 $WD/gradlew postprocess -Pprocess=create-attribute-indexes --stacktrace
                 $WD/gradlew postprocess -Pprocess=summarise-objectstore --stacktrace
+                $WD/gradlew postprocess -Pprocess=create-autocomplete-index --stacktrace
+                $WD/gradlew postprocess -Pprocess=create-search-index --stacktrace
             fi
 
             if [[ "$deploy_remote" = true ]]; then
                 # TODO: test if works (correct params)
                 $SCRIPT_DIR/deploy_remote.sh -p=~/.intermine/mdrmine.properties
             else
-                $WD/gradlew postprocess -Pprocess=create-autocomplete-index --stacktrace
-                $WD/gradlew postprocess -Pprocess=create-search-index --stacktrace
-
                 if [[ "$build_user_db" = true ]]; then 
                     $WD/gradlew buildUserDB --stacktrace
                 fi
@@ -204,6 +223,10 @@ for i in "$@"; do
     -h | --help)
         usage
         exit 0
+        ;;
+    -b | --build-user-db)
+        build_user_db=true
+        shift
         ;;
     -c=*|--properties-path=*)
         properties_path="${i#*=}"
@@ -241,8 +264,8 @@ for i in "$@"; do
         dump_folder="${i#*=}"
         shift
         ;;
-    -u | --build-user-db)
-        build_user_db=true
+    -u=*|--use-dump=*)
+        dump_file_to_use="${i#*=}"
         shift
         ;;
     -v | --verbose)
@@ -251,6 +274,10 @@ for i in "$@"; do
         ;;
     -x | --skip-install)
         skip_install=true
+        shift
+        ;;
+    -y | --skip-postprocesses)
+        skip_postprocesses=true
         shift
         ;;
     -z | --skip-sources)
