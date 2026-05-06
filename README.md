@@ -35,6 +35,7 @@ Note: the current GH action to build and deploy on a remote machine is outdated 
             ```
             If you want to change the ports used, you need to modify them here and in `mdrmine/compose.yaml` as well.
 - **If to be used for local build and deployment on remote machine**:
+    - In `mdrmine/secrets`, create an empty `solr_url_allowlist` file (unused, but Docker compose expects it)
     - For solr deployment, create a `solrconfig.xml` file in `solr/leader` (use the default solrconfig file), and add a request handler to define this server as leader:
     ```
     <requestHandler name="/replication" class="solr.ReplicationHandler">
