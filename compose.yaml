@@ -23,11 +23,13 @@ services:
     build:
       context: .
       secrets:
+      # TODO: secrets unnecessary?
         - tomcat_user
         - tomcat_password
       dockerfile: ./Dockerfiles/tomcat/Dockerfile
     ports:
-      - "8080:8080"
+      # Note: changed because deploying on remote
+      - "8081:8080"
     volumes:
       - webapps:/usr/local/tomcat/webapps
   bluegenes:
@@ -44,12 +46,15 @@ services:
           create_host_path: true
     env_file: ~/.intermine/bluegenes.env
     ports:
-      - "8090:8090" # this is 8090:8090 because of the config in bluegenes.env
+      # Note: changed because deploying on remote
+      - "8091:8090" # this is 8090:8090 because of the config in bluegenes.env
   solr:
     build:
       dockerfile: ./Dockerfiles/solr/Dockerfile
     environment:
       SOLR_IP_ALLOWLIST_FILE: /run/secrets/solr_ip_allowlist  # First IP range defined in secret needs to match docker network IP range defined below
+      SOLR_URL_ALLOWLIST_FILE: /run/secrets/solr_url_allowlist  # Needs to match leaderUrl in solr/follower/solrconfig.xml
+      SOLR_ROLE: leader
     restart: unless-stopped
     user: root
     volumes:
@@ -62,13 +67,16 @@ services:
       - "8983:8983"
     secrets:
       - solr_ip_allowlist
+      - solr_url_allowlist
   mdrmine:
     build:
       args:
-        SOURCES: $SOURCES
         DEPLOY_REMOTE: $DEPLOY_REMOTE
+        DUMP_FILE: $DUMP_FILE
         EMPTY: $EMPTY
+        SKIP_SOURCES: $SKIP_SOURCES
         HOSTNAME: db  # this needs to match Postgres service name
+        SOURCES: $SOURCES
       context: .
       dockerfile: ./Dockerfiles/main/Dockerfile
       target: mdrmine_build
@@ -117,3 +125,5 @@ secrets:
     file: ./secrets/tomcat_password
   solr_ip_allowlist:
     file: ./secrets/solr_ip_allowlist
+  solr_url_allowlist:
+    file: ./secrets/solr_url_allowlist

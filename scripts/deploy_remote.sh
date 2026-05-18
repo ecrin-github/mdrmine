@@ -154,32 +154,8 @@ EOF
             exit 1;
         fi
     fi
-    
-    autocomplete_dump_local="$(date +"%Y%m%d_%H%M%S")_autocomplete_dump"
-    search_dump_local="$(date +"%Y%m%d_%H%M%S")_search_dump"
 
-    echo "Dumping mdrmine-autocomplete core"
-
-    curl "http://$local_prod_host:$local_solr_port/solr/mdrmine-autocomplete/replication?command=backup&location=/solr_backups&name=$autocomplete_dump_local"
-    until curl "http://$local_prod_host:$local_solr_port/solr/mdrmine-autocomplete/replication?command=details" | grep -q "\"status\":\"success\""; do  # Waiting for the dump
-        sleep 1;
-    done
-
-    echo "Dumping mdrmine-search core"
-    curl "http://$local_prod_host:$local_solr_port/solr/mdrmine-search/replication?command=backup&location=/solr_backups&name=$search_dump_local"
-    until curl "http://$local_prod_host:$local_solr_port/solr/mdrmine-search/replication?command=details" | grep -q "\"status\":\"success\""; do  # Waiting for the dump
-        sleep 1;
-    done
-
-    echo "Waiting a few more seconds for solr to finish"
-    # For some reason the details queries return success for backups even before all the files are actually written to disk
-    # so we wait a few seconds for it to finish (might be Docker bind mount delay?)
-    sleep 4
-    echo "Transfering the solr dumps to remote host"
-    # Hacky
-    sudo rsync --rsync-path="sudo rsync" -a $dump_folder/solr/snapshot.$search_dump_local $remote_user@$remote_prod_host:./dumps/solr/
-    sudo rsync --rsync-path="sudo rsync" -a $dump_folder/solr/snapshot.$autocomplete_dump_local $remote_user@$remote_prod_host:./dumps/solr/
-
+    # Solr deployment
     autocomplete_dump_remote="$(date +"%Y%m%d_%H%M%S")_autocomplete_dump_backup"
     search_dump_remote="$(date +"%Y%m%d_%H%M%S")_search_dump_backup"
 
@@ -195,17 +171,20 @@ EOF
         sleep 1;
     done
 
-    echo "Restoring local mdrmine-autocomplete core on remote instance"
-    curl "http://$remote_prod_host:$remote_solr_port/solr/mdrmine-autocomplete/replication?command=restore&location=/solr_backups&name=$autocomplete_dump_local"
+    echo "Syncing mdrmine-search of target (follower) with this solr instance (leader)"
+    curl "http://$remote_prod_host:$remote_solr_port/solr/mdrmine-search/replication?command=fetchindex"
     until curl "http://$remote_prod_host:$remote_solr_port/solr/mdrmine-search/replication?command=details" | grep "\"status\":\"success\""; do
         sleep 1;
     done
 
-    echo "Restoring local mdrmine-search core on remote instance"
-    curl "http://$remote_prod_host:$remote_solr_port/solr/mdrmine-search/replication?command=restore&location=/solr_backups&name=$search_dump_local"
-    until curl "http://$remote_prod_host:$remote_solr_port/solr/mdrmine-search/replication?command=details" | grep "\"status\":\"success\""; do
+    echo "Syncing mdrmine-autocomplete of target (follower) with this solr instance (leader)"
+    curl "http://$remote_prod_host:$remote_solr_port/solr/mdrmine-autocomplete/replication?command=fetchindex"
+    until curl "http://$remote_prod_host:$remote_solr_port/solr/mdrmine-autocomplete/replication?command=details" | grep "\"status\":\"success\""; do
         sleep 1;
     done
+
+    echo "Waiting a few more seconds for solr to finish"
+    sleep 4
 
     echo "Redeploying webapp on remote instance"
     # TODO: Many things should be args here

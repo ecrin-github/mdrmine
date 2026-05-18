@@ -37,3 +37,6 @@ dev_env
 
 # Compiled JARs for each source
 sources_jars
+
+# Solr config files with ReplicationHandler
+solrconfig*.xml
