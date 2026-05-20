@@ -66,9 +66,6 @@ Note: the current GH action to build and deploy on a remote machine is outdated 
 - `update_jars_local.sh` from the [sources repository](https://github.com/ecrin-github/mdrmine-bio-sources) to generate the sources JARs and move them to the MDRMine folder
 - `docker compose build --no-cache && docker compose up` to build and run docker images
     - Use the `SOURCES` environment variable to choose sources to build (by default all sources defined in `project.xml` are used)
-    SOURCES: $SOURCES
-        DEPLOY_REMOTE: $DEPLOY_REMOTE
-        EMPTY: $EMPTY
     - Use the `DEPLOY_REMOTE` environment variable with any value to deploy the build to a remote machine after the build is finished (see `scripts/deploy_remote.sh`)
     - Use the `EMPTY` environment variable with any value to build without any source (useful to start MDRMine on the remote machine and receive a build later)
     - **If MDRMine build and solr cores are to come from another server, build with this instead**: `docker compose -f compose.yaml -f compose.prod.yaml build --no-cache && docker compose -f compose.yaml -f compose.prod.yaml up`
