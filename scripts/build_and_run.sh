@@ -174,13 +174,13 @@ build() {
                             dump_to_use="$dump_folder/$(date +"%Y%m%d_%H%M%S")_${source}_local_dump.sql"
                             pg_dump -h "$local_prod_host" -p "$local_prod_port" -U "$local_prod_user" -d "$local_prod_db" -F c > $dump_to_use
                         fi
-
-                        # Running update-publications if it's not already in the list of sources
-                        if [[ "$sources" != *"update-publications"* ]]; then
-                            echo "------------- Source: update-publications -------------"
-                            $WD/gradlew integrate -Psource=update-publications --stacktrace
-                        fi
                     done
+                    
+                    # Running update-publications if it's not already in the list of sources
+                    if [[ "$sources" != *"update-publications"* ]]; then
+                        echo "------------- Source: update-publications -------------"
+                        $WD/gradlew integrate -Psource=update-publications --stacktrace
+                    fi
                 fi
             fi
 
