@@ -29,7 +29,7 @@ services:
       dockerfile: ./Dockerfiles/tomcat/Dockerfile
     ports:
       # Note: changed because deploying on remote
-      - "8081:8080"
+      - "8080:8080"
     volumes:
       - webapps:/usr/local/tomcat/webapps
   bluegenes:
@@ -47,7 +47,7 @@ services:
     env_file: ~/.intermine/bluegenes.env
     ports:
       # Note: changed because deploying on remote
-      - "8091:8090" # this is 8090:8090 because of the config in bluegenes.env
+      - "8090:8090" # this is 8090:8090 because of the config in bluegenes.env
   solr:
     build:
       dockerfile: ./Dockerfiles/solr/Dockerfile

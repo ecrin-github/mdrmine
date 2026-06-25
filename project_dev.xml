@@ -24,7 +24,7 @@
       <!-- <property name="src.data.dir.includes" value="test_study_conditions_2.csv"/> -->
       <!-- <property name="src.data.dir.includes" value="test_study_conditions_3.csv"/> -->
       <!-- <property name="src.data.dir.includes" value="20260331_failing_ids.csv"/> -->
-      <property name="src.data.dir.includes" value="random_10k.csv"/>
+      <!-- <property name="src.data.dir.includes" value="random_10k.csv"/> -->
       <!-- <property name="src.data.dir.includes" value="teststudyconditions.csv"/> -->
       <!-- <property name="src.data.dir.includes" value="failinglines.csv"/> -->
       <!-- <property name="src.data.dir.includes" value="who_dev.csv"/> -->
@@ -38,6 +38,7 @@
       <!-- <property name="src.data.dir.includes" value="test_euctr1.csv"/> -->
       <!-- <property name="src.data.dir.includes" value="test.csv"/> -->
       <!-- <property name="src.data.dir.includes" value="ICTRPFullExport-1003291-20-06-2024.csv"/> -->
+      <property name="src.data.dir.includes" value="testmergebehavior.csv"/>
       <property name="countriesFP" value="/home/ubuntu/data/countries/countryInfoCleaned.tsv"/>
       <property name="countriesAltNamesFP" value="/home/ubuntu/data/countries/20251020_countries_alt_names.csv"/>
       <property name="headersFilePath" value="/home/ubuntu/data/who/ICTRP_headers.csv"/>
@@ -49,12 +50,13 @@
       <!-- <property name="src.data.dir.includes" value="test_euctr1.xml"/> -->
       <!-- <property name="src.data.dir.includes" value="teststudycountries.xml"/> -->
       <!-- <property name="src.data.dir.includes" value="20260331_failing_ids.xml"/> -->
-      <property name="src.data.dir.includes" value="euctr_digest.xml"/>
+      <!-- <property name="src.data.dir.includes" value="euctr_digest.xml"/> -->
       <!-- <property name="src.data.dir.includes" value="test_studyconditions_duplicates.xml"/> -->
       <!-- <property name="src.data.dir.includes" value="20251208.xml"/> -->
       <!-- <property name="src.data.dir.includes" value="testmerge2.xml"/> -->
       <!-- <property name="src.data.dir.includes" value="testmerge.xml"/> -->
       <!-- <property name="src.data.dir.includes" value="20210822.xml"/> -->
+      <property name="src.data.dir.includes" value="testmergebehavior.xml"/>
       <property name="countriesFP" value="/home/ubuntu/data/countries/countryInfoCleaned.tsv"/>
       <property name="countriesAltNamesFP" value="/home/ubuntu/data/countries/20251020_countries_alt_names.csv"/>
       <property name="logDir" value="./sources_logs"/>
@@ -64,7 +66,9 @@
       <!-- <property name="src.data.dir.includes" value="test_euctr1.csv"/> -->
       <!-- <property name="src.data.dir.includes" value="testmerge2.csv"/> -->
       <!-- <property name="src.data.dir.includes" value="testconflict.csv"/> -->
-      <property name="src.data.dir.includes" value="ctis_dev.csv"/>
+      <!-- <property name="src.data.dir.includes" value="ctis_dev.csv"/> -->
+      <property name="src.data.dir.includes" value="testmergebehavior.csv"/>
+      <!-- <property name="src.data.dir.includes" value="testmergebehavior2.csv"/> -->
       <property name="countriesFP" value="/home/ubuntu/data/countries/countryInfoCleaned.tsv"/>
       <property name="countriesAltNamesFP" value="/home/ubuntu/data/countries/20251020_countries_alt_names.csv"/>
       <property name="logDir" value="./sources_logs"/>
@@ -111,7 +115,9 @@
   <!-- Note: need to update the post-processes in build_and_run.sh and postprocess.sh if any change is made here -->
   <post-processing>
     <post-process name="do-sources" />
-    <post-process name="create-attribute-indexes" />
+    <post-process name="create-attribute-indexes">
+      <property name="attributeIndexes" value="false"/>
+    </post-process>
     <post-process name="summarise-objectstore" />
     <post-process name="create-autocomplete-index" />
     <post-process name="create-search-index" />
