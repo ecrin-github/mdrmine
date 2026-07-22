@@ -24,7 +24,7 @@
       <!-- <property name="src.data.dir.includes" value="test_study_conditions_2.csv"/> -->
       <!-- <property name="src.data.dir.includes" value="test_study_conditions_3.csv"/> -->
       <!-- <property name="src.data.dir.includes" value="20260331_failing_ids.csv"/> -->
-      <!-- <property name="src.data.dir.includes" value="random_10k.csv"/> -->
+      <property name="src.data.dir.includes" value="random_10k.csv"/>
       <!-- <property name="src.data.dir.includes" value="teststudyconditions.csv"/> -->
       <!-- <property name="src.data.dir.includes" value="failinglines.csv"/> -->
       <!-- <property name="src.data.dir.includes" value="who_dev.csv"/> -->
@@ -38,7 +38,7 @@
       <!-- <property name="src.data.dir.includes" value="test_euctr1.csv"/> -->
       <!-- <property name="src.data.dir.includes" value="test.csv"/> -->
       <!-- <property name="src.data.dir.includes" value="ICTRPFullExport-1003291-20-06-2024.csv"/> -->
-      <property name="src.data.dir.includes" value="testmergebehavior.csv"/>
+      <!-- <property name="src.data.dir.includes" value="testmergebehavior.csv"/> -->
       <property name="countriesFP" value="/home/ubuntu/data/countries/countryInfoCleaned.tsv"/>
       <property name="countriesAltNamesFP" value="/home/ubuntu/data/countries/20251020_countries_alt_names.csv"/>
       <property name="headersFilePath" value="/home/ubuntu/data/who/ICTRP_headers.csv"/>
@@ -50,13 +50,13 @@
       <!-- <property name="src.data.dir.includes" value="test_euctr1.xml"/> -->
       <!-- <property name="src.data.dir.includes" value="teststudycountries.xml"/> -->
       <!-- <property name="src.data.dir.includes" value="20260331_failing_ids.xml"/> -->
-      <!-- <property name="src.data.dir.includes" value="euctr_digest.xml"/> -->
+      <property name="src.data.dir.includes" value="euctr_digest.xml"/>
       <!-- <property name="src.data.dir.includes" value="test_studyconditions_duplicates.xml"/> -->
       <!-- <property name="src.data.dir.includes" value="20251208.xml"/> -->
       <!-- <property name="src.data.dir.includes" value="testmerge2.xml"/> -->
       <!-- <property name="src.data.dir.includes" value="testmerge.xml"/> -->
       <!-- <property name="src.data.dir.includes" value="20210822.xml"/> -->
-      <property name="src.data.dir.includes" value="testmergebehavior.xml"/>
+      <!-- <property name="src.data.dir.includes" value="testmergebehavior.xml"/> -->
       <property name="countriesFP" value="/home/ubuntu/data/countries/countryInfoCleaned.tsv"/>
       <property name="countriesAltNamesFP" value="/home/ubuntu/data/countries/20251020_countries_alt_names.csv"/>
       <property name="logDir" value="./sources_logs"/>
@@ -66,8 +66,8 @@
       <!-- <property name="src.data.dir.includes" value="test_euctr1.csv"/> -->
       <!-- <property name="src.data.dir.includes" value="testmerge2.csv"/> -->
       <!-- <property name="src.data.dir.includes" value="testconflict.csv"/> -->
-      <!-- <property name="src.data.dir.includes" value="ctis_dev.csv"/> -->
-      <property name="src.data.dir.includes" value="testmergebehavior.csv"/>
+      <property name="src.data.dir.includes" value="ctis_dev.csv"/>
+      <!-- <property name="src.data.dir.includes" value="testmergebehavior.csv"/> -->
       <!-- <property name="src.data.dir.includes" value="testmergebehavior2.csv"/> -->
       <property name="countriesFP" value="/home/ubuntu/data/countries/countryInfoCleaned.tsv"/>
       <property name="countriesAltNamesFP" value="/home/ubuntu/data/countries/20251020_countries_alt_names.csv"/>
@@ -81,8 +81,8 @@
       <!-- <property name="src.data.dir.includes" value="ctg-studies-single.json"/> -->
       <!-- <property name="src.data.dir.includes" value="ctg-random-100.json"/> -->
       <!-- <property name="src.data.dir.includes" value="euctr_duplicates.json"/> -->
-      <property name="src.data.dir.includes" value="euctr_duplicates_2.json"/>
-      <!-- <property name="src.data.dir.includes" value="ctg-random-10k.json"/> -->
+      <!-- <property name="src.data.dir.includes" value="euctr_duplicates_2.json"/> -->
+      <property name="src.data.dir.includes" value="ctg-random-10k.json"/>
       <!-- <property name="src.data.dir.includes" value="ctg-studies-all-fields.json"/> -->
       <property name="countriesFP" value="/home/ubuntu/data/countries/countryInfoCleaned.tsv"/>
       <property name="countriesAltNamesFP" value="/home/ubuntu/data/countries/20251020_countries_alt_names.csv"/>
@@ -95,12 +95,6 @@
       <property name="countriesFP" value="/home/ubuntu/data/countries/countryInfoCleaned.tsv"/>
       <property name="countriesAltNamesFP" value="/home/ubuntu/data/countries/20251020_countries_alt_names.csv"/>
       <property name="logDir" value="./sources_logs"/>
-    </source>
-    <source name="pubmed" type="pubmed" version="1.0.0">
-      <property name="src.data.dir" location="/home/ubuntu/data/pubmed"/>
-      <!-- <property name="src.data.dir.includes" value="20260220_111143_pubmed.xml"/> -->
-      <!-- <property name="src.data.dir.includes" value="pubmed_dev.xml"/> -->
-      <property name="src.data.dir.includes" value="20241107_152110_pubmed_*.xml"/>
     </source>
     <source name="update-publications" type="update-publications">
       <!-- this source finds the publication ids (pubmed ids) in the
