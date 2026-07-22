@@ -151,14 +151,14 @@ build() {
                         echo "------------- Source: $source -------------"
                         $WD/gradlew integrate -Psource=$source --stacktrace
                         
-                        # Dump build if dump=true in project.xml
-                        dump_regex="<source +name=\"$source\"[^>]*dump=\"true\""
-                        if [[ $(cat ./project.xml) =~ $dump_regex ]]
-                        then
-                            echo "Dumping build to $dump_folder"
-                            dump_to_use="$dump_folder/$(date +"%Y%m%d_%H%M%S")_${source}_local_dump.sql"
-                            pg_dump -h "$local_prod_host" -p "$local_prod_port" -U "$local_prod_user" -d "$local_prod_db" -F c > $dump_to_use
-                        fi
+                        # # Dump build if dump=true in project.xml
+                        # dump_regex="<source +name=\"$source\"[^>]*dump=\"true\""
+                        # if [[ $(cat ./project.xml) =~ $dump_regex ]]
+                        # then
+                        #     echo "Dumping build to $dump_folder"
+                        #     dump_to_use="$dump_folder/$(date +"%Y%m%d_%H%M%S")_${source}_local_dump.sql"
+                        #     pg_dump -h "$local_prod_host" -p "$local_prod_port" -U "$local_prod_user" -d "$local_prod_db" -F c > $dump_to_use
+                        # fi
                     done
                 else    # List of sources passed as cmd-line arg
                     for source in ${sources//,/ }
@@ -166,14 +166,14 @@ build() {
                         echo "------------- Source: $source -------------"
                         $WD/gradlew integrate -Psource=$source --stacktrace
 
-                        # Dump build if dump=true in project.xml
-                        dump_regex="<source +name=\"$source\"[^>]*dump=\"true\""
-                        if [[ $(cat ./project.xml) =~ $dump_regex ]]
-                        then
-                            echo "Dumping build to $dump_folder"
-                            dump_to_use="$dump_folder/$(date +"%Y%m%d_%H%M%S")_${source}_local_dump.sql"
-                            pg_dump -h "$local_prod_host" -p "$local_prod_port" -U "$local_prod_user" -d "$local_prod_db" -F c > $dump_to_use
-                        fi
+                        # # Dump build if dump=true in project.xml
+                        # dump_regex="<source +name=\"$source\"[^>]*dump=\"true\""
+                        # if [[ $(cat ./project.xml) =~ $dump_regex ]]
+                        # then
+                        #     echo "Dumping build to $dump_folder"
+                        #     dump_to_use="$dump_folder/$(date +"%Y%m%d_%H%M%S")_${source}_local_dump.sql"
+                        #     pg_dump -h "$local_prod_host" -p "$local_prod_port" -U "$local_prod_user" -d "$local_prod_db" -F c > $dump_to_use
+                        # fi
                     done
                     
                     # Running update-publications if it's not already in the list of sources
