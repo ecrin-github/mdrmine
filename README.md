@@ -65,8 +65,8 @@ Note: the current GH action to build and deploy on a remote machine is outdated 
 #### Before building
 - `update_jars_local.sh` **in the InterMine fork folder** required to compile the forked InterMine code
 - `update_jars_local.sh` from the [sources repository](https://github.com/ecrin-github/mdrmine-bio-sources) to generate the sources JARs and move them to the MDRMine folder
-- `./gradlew buildIdFile` from the [sources repository](https://github.com/ecrin-github/mdrmine-bio-sources) to generate the trial primaryId/synonym IDs file to be used during parsing by the IdResolver
-   - After the file has been generated create a `clinicaltrial` symbolic link to the generated id file in the folder of the data (the one you specified in the properties file with `resolver.file.rootpath`)
+- `./gradlew buildIdFile -PlogDir={path/to/logDir} -PoutputDir={path/to/outputDir}` from the [sources repository](https://github.com/ecrin-github/mdrmine-bio-sources) to generate the trial primaryId/synonym IDs file to be used during parsing by the IdResolver, with the optional `-P` arguments to specify the log and output file directories 
+    - After the file has been generated create a `clinicaltrial` symbolic link to the generated id file in the folder of the data
 #### Build the mine
 - `docker compose build --no-cache && docker compose up` to build and run docker images
     - Use the `SOURCES` environment variable to choose sources to build (by default all sources defined in `project.xml` are used)
