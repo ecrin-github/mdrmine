@@ -192,23 +192,23 @@ build() {
                 $WD/gradlew postprocess -Pprocess=create-autocomplete-index --stacktrace
                 $WD/gradlew postprocess -Pprocess=create-search-index --stacktrace
             fi
-
-            if [[ "$deploy_remote" = true ]]; then
-                # TODO: test if works (correct params)
-                $SCRIPT_DIR/deploy_remote.sh -p=~/.intermine/mdrmine.properties
+        fi
+        
+        if [[ "$deploy_remote" = true ]]; then
+            # TODO: test if works (correct params)
+            $SCRIPT_DIR/deploy_remote.sh -p=~/.intermine/mdrmine.properties
+        else
+            if [[ "$build_user_db" = true ]]; then 
+                $WD/gradlew buildUserDB --stacktrace
+            fi
+            if [[ "$docker" = true ]]; then
+                # Generate war file
+                $WD/gradlew war
+                cp $WD/webapp/build/libs/webapp.war /webapps/mdrmine.war
+            elif [[ "$first_build" = false ]]; then
+                $WD/gradlew cargoRedeployRemote --stacktrace
             else
-                if [[ "$build_user_db" = true ]]; then 
-                    $WD/gradlew buildUserDB --stacktrace
-                fi
-                if [[ "$docker" = true ]]; then
-                    # Generate war file
-                    $WD/gradlew war
-                    cp $WD/webapp/build/libs/webapp.war /webapps/mdrmine.war
-                elif [[ "$first_build" = false ]]; then
-                    $WD/gradlew cargoRedeployRemote --stacktrace
-                else
-                    $WD/gradlew cargoDeployRemote --stacktrace
-                fi
+                $WD/gradlew cargoDeployRemote --stacktrace
             fi
         fi
     else
