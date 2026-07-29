@@ -127,7 +127,6 @@ terms already fine marked with dcat
     <attribute name="type" type="java.lang.String"/>
     <attribute name="source" type="java.lang.String"/>
     <attribute name="sourceRor" type="java.lang.String"/>
-    <attribute name="unique" type="java.lang.Boolean"/>
   </class>
 
   <class name="StudySite" is-interface="true">
