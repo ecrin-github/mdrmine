@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM solr:latest
+FROM solr:9.10
 
 COPY scripts/start_solr.sh ./
 

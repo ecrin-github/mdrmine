@@ -47,10 +47,7 @@ terms already fine marked with dcat
   </class>
 
   <class name="Study" is-interface="true" extends="Concept">
-    <!-- TODO: primaryIdentifier -->
     <!-- TODO: last updated date? -->
-    <attribute name="euctrID" type="java.lang.String"/> <!-- to remove -->
-    <attribute name="nctID" type="java.lang.String"/> <!-- to remove -->
     <attribute name="title" type="java.lang.String"/>
     <attribute name="scientificTitle" type="java.lang.String"/>
     <attribute name="acronym" type="java.lang.String"/>
@@ -126,12 +123,10 @@ terms already fine marked with dcat
 
   <class name="StudyIdentifier" is-interface="true">
     <reference name="study" referenced-type="Study" reverse-reference="studyIdentifiers"/>
-    <attribute name="identifierValue" type="java.lang.String"/>
-    <attribute name="identifierType" type="java.lang.String"/>
+    <attribute name="value" type="java.lang.String"/>
+    <attribute name="type" type="java.lang.String"/>
     <attribute name="source" type="java.lang.String"/>
     <attribute name="sourceRor" type="java.lang.String"/>
-    <attribute name="identifierDate" type="java.util.Date"/>
-    <attribute name="identifierLink" type="java.lang.String"/>
   </class>
 
   <class name="StudySite" is-interface="true">
@@ -167,6 +162,7 @@ terms already fine marked with dcat
 
   <class name="RegistryResultsSummary" is-interface="true" extends="StudyObject">
     <!-- title ->? primaryidentifier -->
+    <!-- TODO: add details field -->
     <attribute name="doi" type="java.lang.String"/> <!-- this or access url? -->
     <reference name="study" referenced-type="Study" reverse-reference="resultsSummaries"/>
   </class>
