@@ -1,0 +1,4 @@
+services:
+  solr:
+    environment:
+      SOLR_ROLE: follower

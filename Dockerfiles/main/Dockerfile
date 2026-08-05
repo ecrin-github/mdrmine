@@ -1,8 +1,10 @@
 # syntax=docker/dockerfile:1
 ARG BUILD_USER_DB=false
+ARG DUMP_FILE=""
 ARG EMPTY=false
 ARG DEPLOY_REMOTE=false
 ARG HOSTNAME=localhost
+ARG SKIP_SOURCES=false
 ARG SOURCES=""
 
 # docker rmi $(docker images --filter "dangling=true" -q --no-trunc)
@@ -10,15 +12,20 @@ FROM eclipse-temurin:11 AS mdrmine_env
 WORKDIR /mdrmine
 
 ARG BUILD_USER_DB
+ARG DUMP_FILE
 ARG EMPTY
 ARG DEPLOY_REMOTE
 ARG HOSTNAME
+ARG SKIP_SOURCES
 ARG SOURCES
+# TODO
 ENV BUILD_USER_DB=${BUILD_USER_DB:+--build-user-db}
-ENV SOURCES=${SOURCES}
-ENV HOSTNAME=${HOSTNAME}
-ENV EMPTY=${EMPTY:+--build-empty}
 ENV DEPLOY_REMOTE=${DEPLOY_REMOTE:+--deploy-remote}
+ENV DUMP_FILE=${DUMP_FILE}
+ENV EMPTY=${EMPTY:+--build-empty}
+ENV HOSTNAME=${HOSTNAME}
+ENV SKIP_SOURCES=${SKIP_SOURCES:+--skip-sources}
+ENV SOURCES=${SOURCES}
 
 ENV LANG=C.UTF-8
 ENV JARS_PATH="./sources_jars"
@@ -51,7 +58,7 @@ RUN apt-get update && apt-get install -y postgresql-client ssh && apt-get clean;
 # MDRMine full build process
 FROM mdrmine_env AS mdrmine_build
 
-ENTRYPOINT ./scripts/build_and_run.sh --skip-install --first-build --docker ${DEPLOY_REMOTE} ${BUILD_USER_DB} ${EMPTY} --sources=${SOURCES} --hostname=${HOSTNAME}
+ENTRYPOINT ./scripts/build_and_run.sh --skip-install --first-build --docker ${DEPLOY_REMOTE} ${BUILD_USER_DB} ${EMPTY} ${SKIP_SOURCES} --sources=${SOURCES} --hostname=${HOSTNAME} --use-dump=${DUMP_FILE}
 
 
 # Rebuild MDRMine DB, useful before transfering a remote build
