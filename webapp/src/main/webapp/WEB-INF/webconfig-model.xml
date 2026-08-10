@@ -39,14 +39,22 @@
       <fieldconfig fieldExpr="datePublished"/>
     </fields>
   </class>
-  <class className="org.intermine.model.bio.CVTerm">
+  <class className="org.intermine.model.bio.Protocol">
     <fields>
-      <fieldconfig fieldExpr="type"/>
-      <fieldconfig fieldExpr="value"/>
-      <fieldconfig fieldExpr="source"/>
+      <fieldconfig fieldExpr="title"/>
     </fields>
   </class>
-
+  
+  <class className="org.intermine.model.bio.Study">
+    <fields>
+      <fieldconfig fieldExpr="primaryIdentifier"/>
+      <fieldconfig fieldExpr="type"/>
+      <fieldconfig fieldExpr="status"/>
+      <fieldconfig fieldExpr="ageGroup"/>
+      <fieldconfig fieldExpr="genderElig"/>
+      <fieldconfig fieldExpr="primaryIdentifier"/>
+    </fields>
+  </class>
 
 <!--
   <class className="org.intermine.model.bio.BioEntity">
