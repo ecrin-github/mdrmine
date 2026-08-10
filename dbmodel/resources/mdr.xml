@@ -29,13 +29,13 @@ terms already fine marked with dcat
   </class>
 
   <!-- Controlled vocabulary -->
-  <class name="CVTerm" is-interface="true" extends="Annotatable">
+  <class name="CVTerm" is-interface="true">
       <attribute name="type" type="java.lang.String"/>
       <attribute name="value" type="java.lang.String"/>
       <attribute name="source" type="java.lang.String"/>
   </class>
 
-  <class name="Country" is-interface="true" extends="Annotatable">
+  <class name="Country" is-interface="true">
     <attribute name="isoAlpha2" type="java.lang.String"/>
     <attribute name="isoAlpha3" type="java.lang.String"/>
     <attribute name="name" type="java.lang.String"/>
