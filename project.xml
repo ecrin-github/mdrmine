@@ -52,6 +52,13 @@
       <property name="countriesAltNamesFP" value="/home/ubuntu/data/countries/20251020_countries_alt_names.csv"/>
       <property name="logDir" value="./sources_logs"/>
     </source>
+    <source name="bbmri" type="bbmri" version="1.0.0">
+      <property name="src.data.dir" location="/home/ubuntu/data/bbmri"/>
+      <property name="src.data.dir.includes" value="cleaned.csv"/>
+      <property name="countriesFP" value="/home/ubuntu/data/countries/countryInfoCleaned.tsv"/>
+      <property name="countriesAltNamesFP" value="/home/ubuntu/data/countries/20251020_countries_alt_names.csv"/>
+      <property name="logDir" value="./sources_logs"/>
+    </source>
     <source name="update-publications" type="update-publications">
       <!-- this source finds the publication ids (pubmed ids) in the
                 objectstore, retrieves the details of the publication from Entrez

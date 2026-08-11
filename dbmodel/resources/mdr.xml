@@ -201,6 +201,9 @@ terms already fine marked with dcat
   </class>
 
   <class name="Biosample" is-interface="true" extends="StudyObject">
+    <attribute name="bbmriID" type="java.lang.String"/>
+    <attribute name="title" type="java.lang.String"/>
+    <attribute name="description" type="java.lang.String"/>
     <attribute name="materialTypes" type="java.lang.String"/>
     <!-- TODO: possibly rename/remove fields and modify to Boolean -->
     <attribute name="restrictCommercial" type="java.lang.String"/>
