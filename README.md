@@ -23,19 +23,23 @@ See the [sources wiki](https://github.com/ecrin-github/mdrmine-bio-sources/wiki)
         BLUEGENES_DEFAULT_NAMESPACE=mdrmine
         SERVER_PORT=8090
         ```
-        If you want to change the ports used, you need to modify them here and in `mdrmine/compose.yaml` as well.
+        If you want to change the ports used, you need to modify them here and in `compose.yaml` as well.
 
 ## Docker deployment
 Note: the current GH action to build and deploy on a remote machine is outdated and should not be used. 
 ### Required configuration
+- PostgreSQL configuration
+    - Create a `postgresl.conf` file in the project's root with default/custom settings, or modify the `compose.yaml` file to not use this file at all.
+    - Create a `pg_hba.conf` file in the project's root with default/custom settings, or modify the `compose.yaml` file to not use this file at all.
+        - It is recommended to create it to restrict IPs allowed to connect to the database, like this: `host all all <your_ip>/32 scram-sha-256`. If you do so, you need to add a line to include the Docker subnet (see `compose.yaml`)
 - Docker secrets files
-    - Create `mdrmine/secrets` folder
+    - Create `secrets` folder in the project's root
         - Create `postgres_user` `postgres_password` `tomcat_user` `tomcat_password` files in this folder with your Postgres and Tomcat credentials inside the various files
-        - Create a `solr_ip_allowlist` file in this folder with a comma-separated list of IPs allowed to send queries to solr, must include Docker compose network IP range (see `mdrmine/compose.yaml`)
+        - Create a `solr_ip_allowlist` file in this folder with a comma-separated list of IPs allowed to send queries to solr, must include Docker compose network IP range (see `compose.yaml`)
 - InterMine properties
     - In the `.intermine` folder copy `mdrmine.properties` content to a `mdrmine_docker.properties` file if you need to keep `mdrmine.properties` or use it directly (`mdrmine_docker.properties` will be used if both exist). The `serverName` properties should be set to `db`, as that is the psql image name in the Docker compose file. The other various credentials should match the ones used in the `secrets/` files.
 - **If to be used for local build and deployment on remote machine**:
-    - In `mdrmine/secrets`, create an empty `solr_url_allowlist` file (unused, but Docker compose expects it)
+    - In `secrets`, create an empty `solr_url_allowlist` file (unused, but Docker compose expects it)
     - For solr deployment, create a `solrconfig.xml` file in `solr/leader` (use the default solrconfig file), and add a request handler to define this server as leader:
     ```
     <requestHandler name="/replication" class="solr.ReplicationHandler">
@@ -51,7 +55,7 @@ Note: the current GH action to build and deploy on a remote machine is outdated 
     - **IMPORTANT**: a MDRMine instance must be running on the remote machine for the remote deployment to work, you can build an empty MDRMine for this (see [Usage](#usage))
     - Currently, some properties regarding remote deployment are still hardcoded, see `scripts/deploy_remote.sh` for more details.
 - **Instead, if MDRMine build and solr cores are to come from another server**: 
-    - In `mdrmine/secrets`, create a `solr_url_allowlist` file containing `leader-ip:solr-port/solr` to allow fetching solr cores data from there
+    - In `secrets`, create a `solr_url_allowlist` file containing `leader-ip:solr-port/solr` to allow fetching solr cores data from there
     - Create a `solrconfig.xml` file in `solr/follower` (use the default solrconfig file), and add a request handler to define this server as follower (replace leader-ip and solr-port):
     ```
     <requestHandler name="/replication" class="solr.ReplicationHandler">
@@ -61,13 +65,13 @@ Note: the current GH action to build and deploy on a remote machine is outdated 
     </requestHandler>
     ```
 
-### Usage
-#### Before building
+## Usage
+### Before building
 - `update_jars_local.sh` **in the InterMine fork folder** required to compile the forked InterMine code
 - `update_jars_local.sh` from the [sources repository](https://github.com/ecrin-github/mdrmine-bio-sources) to generate the sources JARs and move them to the MDRMine folder
 - `./gradlew buildIdFile -PlogDir={path/to/logDir} -PoutputDir={path/to/outputDir}` from the [sources repository](https://github.com/ecrin-github/mdrmine-bio-sources) to generate the trial primaryId/synonym IDs file to be used during parsing by the IdResolver, with the optional `-P` arguments to specify the log and output file directories 
     - After the file has been generated create a `clinicaltrial` symbolic link to the generated id file in the folder of the data
-#### Build the mine
+### Build the mine
 - `docker compose build --no-cache && docker compose up` to build and run docker images
     - Use the `SOURCES` environment variable to choose sources to build (by default all sources defined in `project.xml` are used)
     - Use the `DEPLOY_REMOTE` environment variable with any value to deploy the build to a remote machine after the build is finished (see `scripts/deploy_remote.sh`)
@@ -76,7 +80,7 @@ Note: the current GH action to build and deploy on a remote machine is outdated 
 - `docker compose down --volumes --rmi "local"` to stop and delete running docker images (+ volumes)
 - `docker compose up -d --no-deps --build <service_name>` to re-build and run a specific service (image) on an already running MDRMine
 
-#### Other specific tasks
+### Other specific tasks
 
 The main MDRMine Dockerfile (`Dockerfiles/main/Dockerfile`) has multiple stages based on the same base image with the environment required to run MDRMine. These various stages can be run individually to perform certain actions:
 - `docker build -f Dockerfiles/main/Dockerfile --target <stage_name> -t <stage_name> .`
