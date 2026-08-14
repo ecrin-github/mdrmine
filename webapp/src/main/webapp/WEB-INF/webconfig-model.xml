@@ -66,6 +66,7 @@
   <class className="org.intermine.model.bio.Biosample">
     <fields>
       <fieldconfig fieldExpr="doi"/>
+      <fieldconfig fieldExpr="primaryIdentifier" label="BBMRI Id"/>
       <fieldconfig fieldExpr="accessUrl"/>
       <fieldconfig fieldExpr="materialTypes"/>
       <fieldconfig fieldExpr="publicationYear"/>
@@ -129,6 +130,14 @@
   </class>
   
   <class className="org.intermine.model.bio.Study">
+    <headerconfig>
+      <titles>
+        <title mainTitles="scientificTitle" subTitles="primaryIdentifier" />
+      </titles>
+    </headerconfig>
+    <inlinelist>
+      <table path="studyIdentifiers.value" showLinksToObjects="true" />
+    </inlinelist>
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
       <fieldconfig fieldExpr="type"/>
@@ -136,8 +145,18 @@
       <fieldconfig fieldExpr="ageGroup"/>
       <fieldconfig fieldExpr="genderElig"/>
       <fieldconfig fieldExpr="startDate"/>
+      <fieldconfig fieldExpr="scientificTitle"/>
+      <fieldconfig fieldExpr="acronym"/>
+      <fieldconfig fieldExpr="primaryOutcome"/>
+      <fieldconfig fieldExpr="secondaryOutcomes"/>
     </fields>
   </class>
+
+
+
+
+
+
   <class className="org.intermine.model.bio.StudyIdentifier">
     <fields>
       <fieldconfig fieldExpr="type"/>
