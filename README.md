@@ -24,6 +24,7 @@ See the [sources wiki](https://github.com/ecrin-github/mdrmine-bio-sources/wiki)
         SERVER_PORT=8090
         ```
         If you want to change the ports used, you need to modify them here and in `compose.yaml` as well.
+        You also need to define the SMTP_HOST, SMTP_PORT, SMTP_USER, and SMTP_PASSWORD variables if you want the feedback form to work.
 
 ## Docker deployment
 Note: the current GH action to build and deploy on a remote machine is outdated and should not be used. 
