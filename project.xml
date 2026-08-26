@@ -40,7 +40,7 @@
     </source>
     <source name="ctg" type="ctg" version="1.0.0" dump="true">
       <property name="src.data.dir" location="/home/ubuntu/data/ctg"/>
-      <property name="src.data.dir.includes" value="ctg-studies-all-fields.json"/>
+      <property name="src.data.dir.includes" value="ctg.json"/>
       <property name="countriesFP" value="/home/ubuntu/data/countries/countryInfoCleaned.tsv"/>
       <property name="countriesAltNamesFP" value="/home/ubuntu/data/countries/20251020_countries_alt_names.csv"/>
       <property name="logDir" value="./sources_logs"/>
