@@ -40,3 +40,6 @@ sources_jars
 
 # Solr config files with ReplicationHandler
 solrconfig*.xml
+
+# PSQL hba conf
+pg_hba.conf

@@ -7,13 +7,14 @@ services:
     shm_size: 8gb
     volumes:
       - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
-      - ./pg_upd.conf:/etc/postgresql.conf
+      - ./postgresql.conf:/etc/postgresql.conf
+      - ./pg_hba.conf:/etc/postgresql/pg_hba.conf
     environment:
       POSTGRES_MULTIPLE_DATABASES: mdrmine,items-mdrmine,userprofile-mdrmine
       POSTGRES_USER_FILE: /run/secrets/postgres_user
       POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
       POSTGRES_INITDB_ARGS: '--encoding=SQL_ASCII --lc-collate=C --lc-ctype=C'
-    command: -c config_file=/etc/postgresql.conf
+    command: -c config_file=/etc/postgresql.conf -c hba_file=/etc/postgresql/pg_hba.conf
     ports:
       - "5433:5432"
     secrets:
@@ -29,13 +30,13 @@ services:
       dockerfile: ./Dockerfiles/tomcat/Dockerfile
     ports:
       # Note: changed because deploying on remote
-      - "8081:8080"
+      - "8080:8080"
     volumes:
       - webapps:/usr/local/tomcat/webapps
   bluegenes:
     # build:
-      # context: ../bluegenes
-      # dockerfile: ../bluegenes/Dockerfile
+    #   context: ../bluegenes
+    #   dockerfile: ../bluegenes/Dockerfile
     image: intermine/bluegenes:1.4.5-dx
     restart: unless-stopped
     volumes:
@@ -47,7 +48,7 @@ services:
     env_file: ~/.intermine/bluegenes.env
     ports:
       # Note: changed because deploying on remote
-      - "8091:8090" # this is 8090:8090 because of the config in bluegenes.env
+      - "8090:8090" # this is 8090:8090 because of the config in bluegenes.env
   solr:
     build:
       dockerfile: ./Dockerfiles/solr/Dockerfile

@@ -12,10 +12,10 @@ terms already fine marked with dcat
 
 -->
 
-<!-- Version 4.1 -->
+<!-- Version 4.2 -->
 <classes>
   <class name="Concept" is-interface="true" extends="Annotatable">
-    <attribute name="secondaryIdentifier" type="java.lang.String"/>
+    <!-- <attribute name="secondaryIdentifier" type="java.lang.String"/> -->
     <collection name="relationships" referenced-type="Relationship"/>
   </class>
 
@@ -29,13 +29,13 @@ terms already fine marked with dcat
   </class>
 
   <!-- Controlled vocabulary -->
-  <class name="CVTerm" is-interface="true" extends="Annotatable">
+  <class name="CVTerm" is-interface="true">
       <attribute name="type" type="java.lang.String"/>
       <attribute name="value" type="java.lang.String"/>
       <attribute name="source" type="java.lang.String"/>
   </class>
 
-  <class name="Country" is-interface="true" extends="Annotatable">
+  <class name="Country" is-interface="true">
     <attribute name="isoAlpha2" type="java.lang.String"/>
     <attribute name="isoAlpha3" type="java.lang.String"/>
     <attribute name="name" type="java.lang.String"/>
@@ -47,10 +47,7 @@ terms already fine marked with dcat
   </class>
 
   <class name="Study" is-interface="true" extends="Concept">
-    <!-- TODO: primaryIdentifier -->
     <!-- TODO: last updated date? -->
-    <attribute name="euctrID" type="java.lang.String"/> <!-- to remove -->
-    <attribute name="nctID" type="java.lang.String"/> <!-- to remove -->
     <attribute name="title" type="java.lang.String"/>
     <attribute name="scientificTitle" type="java.lang.String"/>
     <attribute name="acronym" type="java.lang.String"/>
@@ -89,8 +86,8 @@ terms already fine marked with dcat
     <collection name="ethicsApprovalNotifications" referenced-type="EthicsApprovalNotification"
                reverse-reference="study"/>
     <collection name="individualParticipantData" referenced-type="IndividualParticipantData" reverse-reference="study"/>
-    <collection name="biosamples" referenced-type="Biosample" reverse-reference="study"/>
     <!-- Many-to-many -->
+    <collection name="biosamples" referenced-type="Biosample" reverse-reference="studies"/>
     <collection name="studyConditions" referenced-type="StudyCondition" reverse-reference="studies"/>
     <collection name="interventions" referenced-type="Intervention" reverse-reference="studies"/>
     <collection name="organisations" referenced-type="Organisation" reverse-reference="studies"/>
@@ -126,12 +123,10 @@ terms already fine marked with dcat
 
   <class name="StudyIdentifier" is-interface="true">
     <reference name="study" referenced-type="Study" reverse-reference="studyIdentifiers"/>
-    <attribute name="identifierValue" type="java.lang.String"/>
-    <attribute name="identifierType" type="java.lang.String"/>
+    <attribute name="value" type="java.lang.String"/>
+    <attribute name="type" type="java.lang.String"/>
     <attribute name="source" type="java.lang.String"/>
     <attribute name="sourceRor" type="java.lang.String"/>
-    <attribute name="identifierDate" type="java.util.Date"/>
-    <attribute name="identifierLink" type="java.lang.String"/>
   </class>
 
   <class name="StudySite" is-interface="true">
@@ -153,7 +148,7 @@ terms already fine marked with dcat
   </class>
 
   <class name="StudyObject" is-interface="true" extends="Concept">
-    <attribute name="title" type="java.lang.String"/>
+    <attribute name="doi" type="java.lang.String"/>
     <reference name="managingOrg" referenced-type="Organisation" reverse-reference="objects"/>
     <attribute name="langCode" type="java.lang.String"/> <!-- TODO: populate this -->
     <attribute name="accessType" type="java.lang.String"/>
@@ -167,25 +162,25 @@ terms already fine marked with dcat
 
   <class name="RegistryResultsSummary" is-interface="true" extends="StudyObject">
     <!-- title ->? primaryidentifier -->
-    <attribute name="doi" type="java.lang.String"/> <!-- this or access url? -->
+    <!-- TODO: add details field -->
     <reference name="study" referenced-type="Study" reverse-reference="resultsSummaries"/>
   </class>
 
   <class name="Protocol" is-interface="true" extends="StudyObject">
-    <attribute name="doi" type="java.lang.String"/> <!-- this or access url? -->
+    <attribute name="title" type="java.lang.String"/>
     <attribute name="protocolSponsorId" type="java.lang.String"/>
     <reference name="study" referenced-type="Study" reverse-reference="protocols"/>
   </class>
 
   <class name="StatisticalAnalysisPlan" is-interface="true" extends="StudyObject">
     <!-- access url -> primaryidentifier -->
-    <attribute name="doi" type="java.lang.String"/> <!-- this or access url? -->
+    <attribute name="title" type="java.lang.String"/>
     <reference name="study" referenced-type="Study" reverse-reference="statisticalAnalysisPlans"/>
   </class>
 
   <class name="InformedConsentForm" is-interface="true" extends="StudyObject">
     <!-- access url -> primaryidentifier -->
-    <attribute name="doi" type="java.lang.String"/> <!-- this or access url? -->
+    <attribute name="title" type="java.lang.String"/>
     <reference name="study" referenced-type="Study" reverse-reference="informedConsentForms"/>
   </class>
   
@@ -206,6 +201,8 @@ terms already fine marked with dcat
   </class>
 
   <class name="Biosample" is-interface="true" extends="StudyObject">
+    <attribute name="title" type="java.lang.String"/>
+    <attribute name="description" type="java.lang.String"/>
     <attribute name="materialTypes" type="java.lang.String"/>
     <!-- TODO: possibly rename/remove fields and modify to Boolean -->
     <attribute name="restrictCommercial" type="java.lang.String"/>
@@ -214,7 +211,7 @@ terms already fine marked with dcat
     <attribute name="restrictResearchTypeGenetic" type="java.lang.String"/>
     <attribute name="geneticUseAllowed" type="java.lang.String"/>
     <attribute name="consentDetails" type="java.lang.String"/>
-    <reference name="study" referenced-type="Study" reverse-reference="biosamples"/>
+    <collection name="studies" referenced-type="Study" reverse-reference="biosamples"/>
   </class>
 
   <class name="Person" is-interface="true">
