@@ -101,4 +101,4 @@ These are the stages:
 - TODO: Probably other caveats regarding properties, build script, and compose file -> the various mounts and volumes
 
 ## Versioning
-- [New data source].[[Model](dbmodel/resources/mdr.xml) changes].[[Sources](https://github.com/ecrin-github/mdrmine-bio-sources) code update]
+- v{[Model](dbmodel/resources/mdr.xml) changes}.{Data update} - {Day of month, 2 digits} {Month, 3-letter abbreviation} {Year} [UI {Major releases}.{New features/fixes}] (example: v1.0 - 03 Sep 2026 [UI 1.0])
