@@ -4,6 +4,7 @@ ARG DUMP_FILE=""
 ARG EMPTY=false
 ARG DEPLOY_REMOTE=false
 ARG HOSTNAME=localhost
+ARG SKIP_PUBLICATIONS=false
 ARG SKIP_SOURCES=false
 ARG SOURCES=""
 
@@ -16,6 +17,7 @@ ARG DUMP_FILE
 ARG EMPTY
 ARG DEPLOY_REMOTE
 ARG HOSTNAME
+ARG SKIP_PUBLICATIONS
 ARG SKIP_SOURCES
 ARG SOURCES
 # TODO
@@ -24,6 +26,7 @@ ENV DEPLOY_REMOTE=${DEPLOY_REMOTE:+--deploy-remote}
 ENV DUMP_FILE=${DUMP_FILE}
 ENV EMPTY=${EMPTY:+--build-empty}
 ENV HOSTNAME=${HOSTNAME}
+ENV SKIP_PUBLICATIONS=${SKIP_PUBLICATIONS:+--skip-publications}
 ENV SKIP_SOURCES=${SKIP_SOURCES:+--skip-sources}
 ENV SOURCES=${SOURCES}
 
@@ -58,7 +61,7 @@ RUN apt-get update && apt-get install -y postgresql-client ssh && apt-get clean;
 # MDRMine full build process
 FROM mdrmine_env AS mdrmine_build
 
-ENTRYPOINT ./scripts/build_and_run.sh --skip-install --first-build --docker ${DEPLOY_REMOTE} ${BUILD_USER_DB} ${EMPTY} ${SKIP_SOURCES} --sources=${SOURCES} --hostname=${HOSTNAME} --use-dump=${DUMP_FILE}
+ENTRYPOINT ./scripts/build_and_run.sh --skip-install --first-build --docker ${DEPLOY_REMOTE} ${BUILD_USER_DB} ${EMPTY} ${SKIP_PUBLICATIONS} ${SKIP_SOURCES} --sources=${SOURCES} --hostname=${HOSTNAME} --use-dump=${DUMP_FILE}
 
 
 # Rebuild MDRMine DB, useful before transfering a remote build

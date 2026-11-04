@@ -43,3 +43,5 @@ solrconfig*.xml
 
 # PSQL hba conf
 pg_hba.conf
+
+venv
