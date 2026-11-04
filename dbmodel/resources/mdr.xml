@@ -47,7 +47,8 @@ terms already fine marked with dcat
   </class>
 
   <class name="Study" is-interface="true" extends="Concept">
-    <!-- TODO: last updated date? -->
+    <attribute name="registrationDate" type="java.util.Date"/>
+    <attribute name="lastUpdate" type="java.util.Date"/>
     <attribute name="title" type="java.lang.String"/>
     <attribute name="scientificTitle" type="java.lang.String"/>
     <attribute name="acronym" type="java.lang.String"/>
