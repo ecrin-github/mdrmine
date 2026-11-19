@@ -12,8 +12,9 @@ first_build=false
 hostname="localhost"
 properties_path="/root/.intermine/mdrmine.properties"
 skip_install=false
-skip_sources=false
 skip_postprocesses=false
+skip_publications=false
+skip_sources=false
 sources_path="/home/ubuntu/code/mdrmine-bio-sources"
 sources=""
 verbose=false
@@ -177,7 +178,7 @@ build() {
                     done
                     
                     # Running update-publications if it's not already in the list of sources
-                    if [[ "$sources" != *"update-publications"* ]]; then
+                    if [[ "$skip_publications" = false && "$sources" != *"update-publications"* ]]; then
                         echo "------------- Source: update-publications -------------"
                         $WD/gradlew integrate -Psource=update-publications --stacktrace
                     fi
@@ -270,6 +271,10 @@ for i in "$@"; do
         ;;
     -v | --verbose)
         verbose=true
+        shift
+        ;;
+    -w | --skip-publications)
+        skip_publications=true
         shift
         ;;
     -x | --skip-install)

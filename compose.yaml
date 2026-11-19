@@ -76,6 +76,7 @@ services:
         DUMP_FILE: $DUMP_FILE
         EMPTY: $EMPTY
         SKIP_SOURCES: $SKIP_SOURCES
+        SKIP_PUBLICATIONS: $SKIP_PUBLICATIONS
         HOSTNAME: db  # this needs to match Postgres service name
         SOURCES: $SOURCES
       context: .
