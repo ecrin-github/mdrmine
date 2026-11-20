@@ -125,37 +125,7 @@ deploy_remote() {
 
     mkdir -p $dump_folder
 
-    if [[ "$skip_db_steps" = false ]]; then
-        if [[ "$dump_to_use" = "" ]]; then
-            echo "Dumping local DB to $dump_folder"
-            dump_to_use="$dump_folder/$(date +"%Y%m%d_%H%M%S")_local_dump.sql"
-            pg_dump -h "$local_prod_host" -p "$local_prod_port" -U "$local_prod_user" -d "$local_prod_db" -F c > $dump_to_use
-        fi
-
-        if [[ "$backup" = true ]]; then
-            echo "Dumping remote DB to $dump_folder"
-            pg_dump -h "$remote_prod_host" -p "$remote_prod_port" -U "$remote_prod_user" -d "$remote_prod_db" -F c >  $dump_folder/$(date +"%Y%m%d_%H%M%S")_remote_dump.sql
-        fi
-        
-        # TODO: this should somehow force to use the same mdr schema as was used for the build
-        echo "Rebuilding DB on remote to align with potential model changes"
-        # TODO: Many things should be args here
-        ssh $remote_user@$remote_prod_host -o StrictHostKeyChecking=no <<EOF
-            cd $remote_mdrmine_path;
-            docker build -f Dockerfiles/main/Dockerfile --target mdrmine_builddb -t mdrmine_builddb .;
-            docker run --mount type=bind,src=/home/ubuntu/.intermine,dst=/root/.intermine_base --network=mdrmine_default mdrmine_builddb;
-EOF
-        
-        echo "Transferring local build to remote machine"
-        if [[ -f $dump_to_use ]]; then
-            pg_restore --clean -h "$remote_prod_host" -p "$remote_prod_port" -U "$remote_prod_user" -d "$remote_prod_db" $dump_to_use
-        else
-            echo "Couldn't find dump file '$dump_to_use' to load into remote DB"
-            exit 1;
-        fi
-    fi
-
-    # Solr deployment
+    # Dumping remote solr cores
     autocomplete_dump_remote="$(date +"%Y%m%d_%H%M%S")_autocomplete_dump_backup"
     search_dump_remote="$(date +"%Y%m%d_%H%M%S")_search_dump_backup"
 
@@ -171,6 +141,51 @@ EOF
         sleep 1;
     done
 
+    if [[ "$skip_db_steps" = false ]]; then
+        if [[ "$dump_to_use" = "" ]]; then
+            echo "Dumping local DB to $dump_folder"
+            dump_to_use="$dump_folder/$(date +"%Y%m%d_%H%M%S")_local_dump.sql"
+            pg_dump -h "$local_prod_host" -p "$local_prod_port" -U "$local_prod_user" -d "$local_prod_db" -F c > $dump_to_use
+        fi
+
+        if [[ "$backup" = true ]]; then
+            echo "Dumping remote DB to $dump_folder"
+            pg_dump -h "$remote_prod_host" -p "$remote_prod_port" -U "$remote_prod_user" -d "$remote_prod_db" -F c >  $dump_folder/$(date +"%Y%m%d_%H%M%S")_remote_dump.sql
+        fi
+
+        echo "Creating database to be swapped"
+        createdb -h "$remote_prod_host" -p "$remote_prod_port" -U "$remote_prod_user" mdrmine_next
+
+        echo "Transferring local build to remote machine on created database"
+        if [[ -f $dump_to_use ]]; then
+            pg_restore --clean -h "$remote_prod_host" -p "$remote_prod_port" -U "$remote_prod_user" -d mdrmine_next $dump_to_use
+        else
+            echo "Couldn't find dump file '$dump_to_use' to load into remote DB"
+            exit 1;
+        fi
+
+        echo "Swapping databases"
+        mdrmine_old="mdrmine_old_$(date +"%Y%m%d_%H%M%S")"
+        psql -h "$remote_prod_host" -p "$remote_prod_port" -U "$remote_prod_user" <<EOF
+            BEGIN;
+
+            ALTER DATABASE mdrmine ALLOW_CONNECTIONS false;
+
+            SELECT pg_terminate_backend(pid)
+            FROM pg_stat_activity
+            WHERE datname = 'mdrmine'
+            AND pid <> pg_backend_pid();
+
+            ALTER DATABASE mdrmine RENAME TO $mdrmine_old;
+            ALTER DATABASE mdrmine_next RENAME TO mdrmine;
+
+            ALTER DATABASE mdrmine ALLOW_CONNECTIONS true;
+
+            COMMIT;
+EOF
+    fi
+
+    # Solr deployment
     echo "Syncing mdrmine-search of target (follower) with this solr instance (leader)"
     curl "http://$remote_prod_host:$remote_solr_port/solr/mdrmine-search/replication?command=fetchindex"
     until curl "http://$remote_prod_host:$remote_solr_port/solr/mdrmine-search/replication?command=details" | grep "\"status\":\"success\""; do
