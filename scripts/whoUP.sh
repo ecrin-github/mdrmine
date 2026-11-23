@@ -5,14 +5,14 @@ echo
 
 # after manual download
 
-#ls -la
-#unzip OneDrive*2026.zip
+ls -la
+unzip OneDrive*2026.zip
 
-#for file in ICTRPW*.zip 
-#do
-#unzip -a "$file"
-#rm "$file"
-#done
+for file in ICTRPW*.zip 
+do
+unzip -a "$file"
+rm "$file"
+done
 
 
 FILES=`ls -1t *.csv`
@@ -29,10 +29,10 @@ if [ $i == 1 ]
 then
 cat "$file" >> res.csv
 else
-python dedup_and_append.py "$file" res.csv --no-header
+python who_dedup_and_append.py "$file" res.csv --no-header
 fi
 echo -n "res: " 
-grep -c . res
+grep -c . res.csv
 
 i=$[i + 1]
 
