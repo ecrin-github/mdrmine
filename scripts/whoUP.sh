@@ -21,7 +21,7 @@ done
 
 FILES=`ls -1t *.csv`
 i=1
-touch res.csv
+touch upd2add.csv
 
 echo "$FILES"
 echo "----------"
@@ -31,16 +31,27 @@ do
 echo "$i $file":
 if [ $i == 1 ]
 then
-cat "$file" >> res.csv
+cat "$file" >> up2add.csv
 else
-python who_dedup_and_append.py "$file" res.csv --no-header
+python who_dedup_and_append.py "$file" upd2add.csv --no-header
 fi
 echo -n "res: "
-grep -c . res.csv
+grep -c . upd2add.csv
 
 i=$[i + 1]
 
 done
 echo "done!"
+
+sed -E 's/\\+\"/"/g' upd2add.csv > upd2addpp.csv
+
+grep ^NCT06607471 current_who.csv > NCT06607471.csv
+grep -v ^NCT06607471 current_who.cvs > last_whobulk.csv
+
+python who_dedup_and_append.py last_whobulk.csv upd2addpp.csv --no-header
+
+mv upd2addpp.csv who.csv
+
+cat NCT06607471.csv >> who.csv
 
 echo `date`
